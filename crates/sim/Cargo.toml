@@ -1,0 +1,9 @@
+[package]
+name = "verdant-sim"
+version = "0.1.0"
+edition = "2021"
+
+# No graphics deps here — this crate is pure simulation logic.
+# Keeping it dependency-free means it can compile to WASM later
+# without dragging in a GPU backend.
+[dependencies]

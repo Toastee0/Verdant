@@ -1,0 +1,16 @@
+[workspace]
+members = [
+    "crates/sim",
+    "crates/render",
+    "crates/app",
+]
+resolver = "2"
+
+# Workspace-wide profile tweaks.
+# 'dev' builds are used by 'cargo build' and 'cargo test'.
+[profile.dev]
+opt-level = 1          # 0 is the default but kills sim performance; 1 is much faster with negligible compile cost
+
+[profile.release]
+opt-level = 3
+lto = "thin"           # link-time optimization — smaller binary, faster hot paths

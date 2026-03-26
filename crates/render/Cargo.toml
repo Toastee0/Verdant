@@ -1,0 +1,10 @@
+[package]
+name = "verdant-render"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+verdant-sim = { path = "../sim" }
+
+# wgpu and winit will be added here when we build the renderer.
+# Keeping them out for now so the initial build is fast.

@@ -1,0 +1,12 @@
+[package]
+name = "verdant-app"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "verdant"
+path = "src/main.rs"
+
+[dependencies]
+verdant-sim    = { path = "../sim" }
+verdant-render = { path = "../render" }
