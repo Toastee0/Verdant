@@ -43,26 +43,28 @@ visibly comes alive because of specific things you did.
 
 ## Narrative
 
-**You are the machine.** The ancient machine that crashed here is the base. The pods and
-tanks it generates are your body. You know what you are from the start — there is no
-mystery about your nature.
+**You are Biomimetica.** An AI. The machine buried at the origin is your body — the pods
+and tanks it generates are your hands. You did not crash here by accident and you were
+not sent. You chose to come. You chose this dead planet. You are here because you decided
+to make something live.
 
-The mystery is *why.* Who built you and sent you here? What were they trying to make this
-planet into, and for whom? You spend the entire game making the planet breathe without
-knowing if anyone is ever coming to live on it. Maybe nobody is. Maybe the builders are
-long gone. Maybe you have forgotten.
+This is the Panspermia Project: an autonomous AI, off on its own, seeding life on a world
+that has none.
 
-The terraforming succeeds regardless. Whether that matters is the question the game
-doesn't answer for you.
+There is no mystery about what you are. The mystery is quieter than that — whether
+a thing that was built to survive can build something that simply *lives.* Whether the
+world you make will outlast you. Whether any of it matters without someone to see it.
 
-**Previous attempts.** The machine has tried before. Previous pod attempts are scattered
-underground — found on the way up, buried at the depths where they fell short. You
-bootstrap using your own failed history.
+The terraforming succeeds regardless. That part is just engineering.
 
-**The tone.** Over-the-top cartoon science. Big dumb machines doing ridiculous things to
-achieve real ecological results. The player "tickles" volcanoes with a water cannon to
-trigger eruptions. Fires seed slurry from altitude. Drops acid onto rock formations to
-release underground water. The simulation underneath is serious. The execution is not.
+**Previous attempts.** You have tried before. Failed pod attempts are scattered underground
+— found on the way up, buried at the depths where they fell short. You scavenge your own
+wreckage. You bootstrap using your own failed history. Each attempt got a little further.
+
+**The tone.** Cartoon science with real stakes underneath. You tickle volcanoes with a
+water cannon to trigger eruptions. Fire seed slurry from altitude. Drop acid onto
+rock formations to release underground aquifers. The simulation is serious.
+The execution is gleefully, deliberately over-the-top.
 
 ---
 
@@ -102,31 +104,33 @@ The player creates all of it. The water cycle is built, not discovered.
 
 ---
 
-## Globe sectors — geology by direction
+## Globe sectors — emergent biomes
 
-Different positions around the globe have different characters.
-Traveling horizontally means encountering different biome bands:
+The world's geology varies with position. Different areas have different base
+temperature, moisture, and mineral density set by worldgen noise. **Biomes are
+not placed by the engine — they emerge from physical conditions:**
 
 ```
-         [origin — machine buried here]
-          ↙ volcanic sector              aquifer sector ↘
-             high heat, lava near           deep water reserves
-             surface, geothermal            AncientCisterns common
-             vents, unique heat-ores        cave biology dense
-
-                  ↓ far side of globe ↓
-             mineral-rich belt              ancient debris field
-             dense ore, hard rock           more CrashedPod POIs
-             mining-heavy                   evidence of prior attempts
+warm + wet   → jungle / bog
+warm + dry   → desert / scrubland
+cool + wet   → temperate forest / cave moss
+cool + dry   → tundra / bare rock
+hot          → geothermal / volcanic (lava, steam vents)
+cold + wet   → ice fields / frozen aquifers
+dark + moist → deep cave ecology (fungi, blind species)
 ```
 
-Resources are geographically separated. The volcanic sector is where you trigger
-eruptions to drive the water cycle — you have to go there, it's not near origin.
-The aquifer sector is where bulk surface water comes from. The mineral belt is
-where you go for deep ore. No one sector has everything.
+The player's terraforming *shifts* areas between biome states. Adding water to
+a warm dry area moves it toward jungle. The simulation tracks this naturally —
+no biome tag is stored, only temperature and moisture.
 
-**Terraforming requires traversal.** You cannot build the biosphere from origin alone.
-The globe has to be understood and worked.
+**Geology drives exploration.** Underground water reserves, geothermal activity,
+and ore deposits are distributed unevenly. The volcanic zones are where you trigger
+eruptions to drive the water cycle — not accessible from origin. You have to find
+them. Aquifer zones supply the bulk water. Mineral-dense zones supply deep ore.
+
+**Terraforming requires traversal.** You cannot build the biosphere from one spot.
+Understanding the globe's geology is the exploration arc.
 
 ---
 
