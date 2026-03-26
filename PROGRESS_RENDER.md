@@ -1,8 +1,8 @@
-# Render Crate — Progress
+# Render + Engine — Progress
 
 **Date:** 2026-03-25
 **Author:** Render agent (Claude)
-**Status:** Initial implementation complete — builds, passes tests, window opens
+**Status:** Render pipeline + gamepad input + worldgen complete — builds, 61 tests pass, window opens with generated geology
 
 ---
 
@@ -71,14 +71,44 @@
 
 - winit 0.30 `ApplicationHandler` pattern (not deprecated `run()`)
 - Window: 1280×720 logical size, title "Verdant"
-- Input:
-  - WASD / arrow keys: pan camera
-  - +/- / numpad: zoom
-  - Mouse wheel: zoom
-  - Left mouse drag: pan
-  - Escape: quit
-- Per-frame: `world.tick_high_frequency()` → upload visible chunks → `renderer.present()`
+- Unified InputState (keyboard + gamepad → one struct):
+  - Keyboard: WASD/arrows rotate pod or move tank, Space thrust/fire, E drill/fire, Q switch vehicle, +/- zoom, Escape pause
+  - Mouse: wheel zoom, left-drag pan (always available as debug camera)
+  - Gamepad (gilrs 0.11): d-pad rotate (pod) or cycle payload (tank), RT thrust/fire, LT fire/drill, right stick camera look-ahead, Y switch vehicle, Start pause
+  - Circular deadzone (0.15) on analog sticks
+- Per-frame: `begin_frame()` → `poll_gamepad()` → `apply_keyboard_held()` → sim tick → upload visible chunks → `present()` → `end_frame()`
 - Test content seeded in origin chunk: rock band, soil layer, water pool, mud, plant (root→stem→leaves)
+
+### 7. Gamepad + input abstraction (`crates/app/src/input.rs`)
+
+- `InputState` — unified input struct. Both keyboard and gamepad write into it; game loop reads only this.
+- `PodInput` — Solar Jetman controls: 16-angle rotation (d-pad with frame-rate accumulator), analog thrust (RT), fire (LT), shield (d-pad up/down cuts tow)
+- `TankInput` — Scorched Earth controls: left stick/keys for movement, right stick/keys for aim elevation, RT fire, LT drill, d-pad payload cycle, B tow, A interact
+- `ActiveVehicle` — enum (Pod/Tank), toggled by Y button or Q key
+- `ANGLE_TABLE` — 16 precomputed (dx, dy) unit vectors for thrust directions
+- `apply_deadzone(x, y, threshold)` — circular deadzone (not per-axis) to prevent diagonal drift
+- Camera look-ahead: right stick offsets camera center without moving vehicle
+- 8 passing tests: angle table validation, rotation wrapping, deadzone, thrust scaling, vehicle switch
+
+### 8. Instance buffer pooling (`crates/render/src/lib.rs`)
+
+- Replaced per-chunk per-frame buffer allocation with a single reusable instance buffer
+- Created once at init, rewritten via `write_buffer` for each chunk draw call
+- Eliminates GPU buffer allocation pressure at higher chunk counts
+
+### 9. Worldgen (`crates/sim/src/worldgen/`)
+
+Full procedural world generation per HANDOFF_SIM_WORLDGEN.md spec:
+
+- **noise.rs** — `WorldNoise` struct: 5 Fbm<Perlin> generators (surface, layers, caves, ore, geothermal). Deterministic chunk seed. Surface flattened near origin.
+- **geology.rs** — `generate_cell()`: vertical depth profile (sky → soil → rock → impact zone → deep rock → geothermal). Cave carving via noise threshold (deeper = more caves, suppressed in impact zone). Depth-gated ore placement (iron 80–250, fuel 200–350, deep ore 400–600).
+- **Sector variation**: 5 biome bands wrapping horizontally across 128 chunks — Origin, Volcanic (+30 temp, lava veins), MineralRich (+20 mineral, +ore density), DeepWater (+20 water), Debris (more caves).
+- **Machine pocket**: elliptical cavity at chunk (0,1), local_y≈80. Hard rock walls. Player start location.
+- **Lava core**: chunks at cy≥16 are solid max-mineral/max-temp sentinel.
+- **Wired to ChunkManager**: `generate_chunk()` calls `worldgen::generate()`. Chunks are procedurally generated on first discovery.
+- **App starts at machine pocket**: camera centered on (256, 592), active radius 2 (5×5 = 25 chunks).
+- 16 passing tests: determinism, sky/rock/lava validation, sector wrapping, pocket air, noise properties.
+- Added `noise = "0.9"` to sim Cargo.toml.
 
 ---
 
@@ -86,8 +116,8 @@
 
 ```
 cargo build     — compiles (0 errors, 0 warnings)
-cargo test      — 37 tests pass (31 sim + 6 render)
-cargo run       — opens window, renders test scene
+cargo test      — 61 tests pass (47 sim + 6 render + 8 input)
+cargo run       — opens window, renders procedurally generated geology
 ```
 
 ---
@@ -96,7 +126,6 @@ cargo run       — opens window, renders test scene
 
 | Item | Notes |
 |------|-------|
-| **Per-frame instance buffer allocation** | Each visible chunk creates a tiny instance buffer every frame. Fine for 9 chunks, would need a pooled instance buffer for 50+. |
 | **Lighting pass** | `cell.light` and `cell.sunlight` are always 0. The `cell_to_rgba` fallback renders at full brightness. GPU compute lighting pass is the next big render task. |
 | **Fog of war / void** | Currently renders all loaded chunks. No "unknown" state. Scanner overlay doc (HANDOFF_RENDER_SCANNER.md) specifies the three-state system needed. |
 | **Scanner overlay** | Not started. See review notes below and HANDOFF_RENDER_SCANNER.md. |
@@ -104,6 +133,8 @@ cargo run       — opens window, renders test scene
 | **No worldgen visuals** | All chunks except origin are empty air (black). Worldgen is sim-side; once it produces geology, the renderer will show it automatically. |
 | **Daily pass UI** | No sleep intermission screen. `tick_daily_pass()` can be called but has no visual feedback. |
 | **Zoom labels** | No HUD, no coordinate display, no chunk grid overlay. |
+| **Rumble / force feedback** | gilrs supports ff module. Not yet wired — add when impact events exist. |
+| **Pod/tank physics** | Vehicles don't exist in sim yet. InputState writes thrust/fire/drill but nothing reads them for physics. Camera still uses debug pan. |
 
 ---
 
@@ -221,13 +252,25 @@ partial cave reveals).
 crates/render/
 ├── Cargo.toml         — deps: wgpu 24, winit 0.30, bytemuck 1, pollster, log, env_logger
 └── src/
-    ├── lib.rs         — Renderer struct, wgpu init, pipeline, chunk textures (515 lines)
+    ├── lib.rs         — Renderer struct, wgpu init, pipeline, chunk textures, pooled instance buffer
     ├── camera.rs      — Camera struct, ortho projection, viewport culling
     └── cell_color.rs  — cell_to_rgba, cells_to_rgba, palette logic, 6 tests
 
 assets/shaders/
 └── chunk.wgsl         — vertex + fragment shader for chunk quads
 
-crates/app/src/
-└── main.rs            — winit event loop, input handling, sim↔render wiring
+crates/app/
+├── Cargo.toml         — deps: verdant-sim, verdant-render, winit, pollster, log, env_logger, gilrs 0.11
+└── src/
+    ├── main.rs        — winit event loop, InputState wiring, sim↔render frame loop
+    └── input.rs       — InputState, PodInput, TankInput, angle table, deadzone, 8 tests
+
+crates/sim/
+├── Cargo.toml         — deps: noise 0.9
+└── src/
+    ├── worldgen/
+    │   ├── mod.rs     — generate() entry point, special cases (machine pocket, lava core)
+    │   ├── noise.rs   — WorldNoise, 5 Fbm<Perlin> generators, surface height, cave threshold
+    │   └── geology.rs — generate_cell(), sector biomes, ore placement, machine pocket carving
+    └── (cell.rs, chunk.rs, chunk_manager.rs, boundary.rs, water/ — existing sim code)
 ```

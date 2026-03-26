@@ -14,8 +14,7 @@ mod input;
 
 use input::InputState;
 use verdant_render::{Camera, Renderer};
-use verdant_sim::cell::Cell;
-use verdant_sim::chunk::{ChunkCoord, CHUNK_AREA, CHUNK_WIDTH, CHUNK_HEIGHT};
+use verdant_sim::chunk::ChunkCoord;
 use verdant_sim::chunk_manager::ChunkManager;
 
 use gilrs::Gilrs;
@@ -23,7 +22,7 @@ use winit::application::ApplicationHandler;
 use winit::dpi::LogicalSize;
 use winit::event::{ElementState, KeyEvent, MouseScrollDelta, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
-use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::keyboard::PhysicalKey;
 use winit::window::{Window, WindowId};
 
 use std::sync::Arc;
@@ -70,7 +69,7 @@ impl ApplicationHandler for App {
 
         let size = window.inner_size();
         let renderer = Renderer::new(window.clone());
-        let camera = Camera::new(size.width as f32, size.height as f32);
+        let mut camera = Camera::new(size.width as f32, size.height as f32);
 
         // Gamepad init. Gilrs::new() scans for connected controllers.
         // If no controller is found, everything still works — keyboard only.
@@ -87,33 +86,18 @@ impl ApplicationHandler for App {
 
         let input = InputState::new();
 
-        // Sim setup: active radius 1 = 3×3 chunks around the player.
-        let mut world = ChunkManager::new(1);
-        let origin = ChunkCoord::new(0, 0);
-        world.set_player_chunk(origin);
+        // Sim setup: active radius 2 = 5×5 = 25 chunks around the player.
+        // The machine pocket is at chunk (0, 1), world-pixel center ≈ (256, 592).
+        let mut world = ChunkManager::new(2);
+        let start_chunk = ChunkCoord::new(0, 1); // machine pocket chunk
+        world.set_player_chunk(start_chunk);
 
-        // Seed some test content so the world isn't invisible on first launch.
-        // Place water, rock, soil, and a plant in the origin chunk for visual verification.
-        if let Some(chunk) = world.get_mut(origin) {
-            // A band of rock near the bottom.
-            chunk.fill_rect(0, 400, CHUNK_WIDTH, CHUNK_HEIGHT, Cell::rock());
-            // Soil layer on top of rock.
-            chunk.fill_rect(0, 380, CHUNK_WIDTH, 400, Cell::loose_soil());
-            // A pool of water.
-            chunk.fill_rect(100, 350, 300, 380, Cell::new_water());
-            // Some mud at the waterline.
-            chunk.fill_rect(100, 378, 300, 382, Cell::mud());
-            // A plant: root + stem + leaves.
-            chunk.fill_rect(250, 370, 255, 380, Cell::plant_tile(1, 1, 200, 200, 378, 252)); // root
-            chunk.fill_rect(250, 340, 255, 370, Cell::plant_tile(1, 2, 180, 180, 378, 252)); // stem
-            chunk.fill_rect(240, 330, 265, 340, Cell::plant_tile(1, 3, 160, 220, 378, 252)); // leaves
-        }
+        // Camera starts centered on the machine pocket.
+        // Pocket center: chunk (0,1) local (256, 80) → world (256, 512+80) = (256, 592).
+        camera.x = 256.0;
+        camera.y = 592.0;
 
-        log::info!(
-            "Verdant — {} chunks loaded, {} bytes/chunk (double-buffered)",
-            world.loaded_count(),
-            CHUNK_AREA * std::mem::size_of::<Cell>() * 2,
-        );
+        log::info!("Verdant — {} chunks loaded", world.loaded_count());
 
         self.state = Some(GameState {
             window,

@@ -224,21 +224,18 @@ impl ChunkManager {
 // ── Procedural chunk generation ───────────────────────────────────────────────
 //
 // Called the first time a chunk enters active range ("discovery").
-// Currently a stub: returns an empty air chunk.
-//
-// TODO: wire to worldgen module for full geological generation:
+// Delegates to the worldgen module for full geological generation:
 //   - Layered noise for rock/soil/ore placement
-//   - Cave system carving
-//   - Ore deposit seeding
-//   - POI (points of interest) placement: ruins, old pumping stations,
-//     overgrown fields from previous attempts
+//   - Cave system carving (Perlin threshold)
+//   - Ore deposit seeding (depth-gated)
+//   - Sector biome variation (Volcanic, MineralRich, DeepWater, Debris)
+//   - Machine pocket (elliptical cavity at cx=0, cy=1)
+//   - Lava core sentinel (cy >= 16)
 //
 // The seed for deterministic generation is derived from the coord so the
 // same chunk always generates identically regardless of visit order.
 fn generate_chunk(coord: ChunkCoord) -> Chunk {
-    // Stub: empty world. worldgen::generate(coord) will replace this.
-    let _ = coord; // suppress unused-variable warning until worldgen is wired
-    Chunk::new(coord)
+    crate::worldgen::generate(coord)
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

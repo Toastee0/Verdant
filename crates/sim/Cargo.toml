@@ -7,3 +7,4 @@ edition = "2021"
 # Keeping it dependency-free means it can compile to WASM later
 # without dragging in a GPU backend.
 [dependencies]
+noise = "0.9"

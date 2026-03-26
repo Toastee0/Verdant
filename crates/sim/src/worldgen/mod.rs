@@ -9,85 +9,167 @@
 //
 // ── Generation pipeline ───────────────────────────────────────────────────────
 //
-//  1. Geological base layer
+//  1. Geological base layer (geology.rs)
 //       Layered noise selects: hard rock / rock / packed dirt / loose soil / air
 //       Depth from the surface drives the mix (deeper = harder rock, more ore).
-//       The impact crater at (0,0) is factored in — shattered rock, glass, debris.
+//       Impact compression zone near origin (280-450 cells deep).
 //
-//  2. Cave carving
-//       Worm-algorithm caves through the geological base.
-//       Cave frequency increases at depth; some caves are flooded (proto-water).
+//  2. Cave carving (noise.rs threshold)
+//       Perlin noise caves. Frequency increases at depth.
+//       Suppressed in impact compression zone.
 //
-//  3. Ore placement
-//       Ore deposits seeded by noise + depth rules.
-//       Different ore types at different depth bands.
+//  3. Ore placement (geology.rs)
+//       Depth-gated ore deposits. Different bands for iron/fuel/deep ore.
+//       MineralRich sectors get lower thresholds.
 //
-//  4. Points of interest (POI)
-//       Placed after base generation. See poi.rs for the full system.
-//       Examples: old pumping stations, overgrown previous-attempt fields,
-//       debris from earlier machine impacts.
+//  4. Sector variation (geology.rs)
+//       Horizontal biome bands: Origin, Volcanic, MineralRich, DeepWater, Debris.
 //
-// ── POI system overview ───────────────────────────────────────────────────────
+//  5. Special cases:
+//       - Machine pocket at (cx=0, cy=1): elliptical cavity
+//       - Lava core (cy >= 16): solid max-heat sentinel
 //
-// A POI is a pre-authored feature stencil placed into the generated chunk.
-// They tell the story of the ancient machine's previous attempts.
-// All POI types are data-driven: defined as JSON templates in assets/data/pois/.
-//
-// POI placement rules (per chunk, evaluated during generation):
-//   - Depth band: each POI has a min/max depth range in which it can appear.
-//   - Rarity: a seeded probability roll using (chunk_coord + world_seed + poi_id).
-//   - Exclusion: a chunk can have at most one POI (highest-priority roll wins).
-//
-// POI types (from GDD narrative — "the planet's history is written in garbage"):
-//
-//   OldWaterPump
-//     Broken machinery embedded in rock. Residual moisture nearby.
-//     May still function if repaired — grants a permanent underground water source.
-//     Equivalent to an Aquifer Tap super item, but discovered rather than built.
-//     Depth band: mid-depth. Rarity: uncommon.
-//
-//   OvergrownField
-//     A sealed chamber where a previous attempt succeeded locally.
-//     Contains an established colony of an early-game plant species
-//     (moss, cave lichen, cave fern). Pre-built ecosystem the player finds intact.
-//     Lets the player skip bootstrapping that species — harvest seeds/biomass,
-//     or study what a working garden looks like.
-//     Depth band: mid-to-shallow. Rarity: rare.
-//
-//   ImpactDebris
-//     Scattered fragments from previous machine crashes. Ore-rich.
-//     May contain salvageable components. Surface-to-shallow.
-//     Rarity: common near origin, uncommon elsewhere.
-//
-//   AncientCistern
-//     A large sealed rock cavity containing preserved water from a previous cycle.
-//     When breached, releases a significant water volume into the local water cycle.
-//     Deep only. Rarity: rare.
-//
-// (More POI types will be added as the narrative develops.)
-//
-// ── Module structure (to be implemented) ─────────────────────────────────────
+// ── Module structure ──────────────────────────────────────────────────────────
 //
 //   worldgen/
 //     mod.rs        — this file; top-level generate() entry point
-//     noise.rs      — integer noise functions (no floats)
-//     geology.rs    — base layer + cave carving + ore placement
-//     poi.rs        — POI template loading, placement, stencil application
+//     noise.rs      — Fbm<Perlin> noise generators, WorldNoise
+//     geology.rs    — cell generation, sector logic, machine pocket
 
-use crate::chunk::{Chunk, ChunkCoord};
+pub mod noise;
+pub mod geology;
+
+use crate::chunk::{Chunk, ChunkCoord, CHUNK_WIDTH, CHUNK_HEIGHT};
+use noise::WorldNoise;
+use geology::{sector, generate_cell, carve_machine_pocket, generate_lava_core,
+              LAVA_CORE_DEPTH_CHUNKS, MACHINE_POCKET_CY};
+
+/// The default world seed. Eventually this will come from save file / user input.
+const WORLD_SEED: u64 = 12345;
+
+/// Lazily-initialized noise generators. Using a function that creates on demand.
+/// In a real setup this would be stored in the ChunkManager, but for now we
+/// recreate it per generate() call. The noise crate's Perlin is cheap to create
+/// (just a permutation table copy), so this is fine for worldgen which runs
+/// once per chunk discovery.
+fn world_noise() -> WorldNoise {
+    WorldNoise::new(WORLD_SEED)
+}
 
 /// Generate a chunk at the given coordinates.
 ///
 /// This is the single entry point called by chunk_manager when a chunk
 /// is first discovered. The result is deterministic for a given coord.
-///
-/// Currently a stub — returns an empty air chunk.
-/// TODO: implement full geological generation pipeline.
 pub fn generate(coord: ChunkCoord) -> Chunk {
-    // TODO: derive world seed from a global config or save file
-    // TODO: call geology::generate_base(coord, seed)
-    // TODO: call geology::carve_caves(coord, seed, &mut chunk)
-    // TODO: call geology::place_ores(coord, seed, &mut chunk)
-    // TODO: call poi::maybe_place(coord, seed, &mut chunk)
-    Chunk::new(coord)
+    let noise = world_noise();
+    let mut chunk = Chunk::new(coord);
+
+    // Special case: lava core (below the simulated world)
+    if coord.cy >= LAVA_CORE_DEPTH_CHUNKS {
+        generate_lava_core(&mut chunk);
+        return chunk;
+    }
+
+    // Special case: machine pocket chunk
+    if coord.cx == 0 && coord.cy == MACHINE_POCKET_CY {
+        carve_machine_pocket(&mut chunk, &noise);
+        return chunk;
+    }
+
+    // Normal generation: iterate every cell in the chunk
+    let sec = sector(coord.cx);
+    let wx0 = coord.cx * CHUNK_WIDTH as i32;
+    let wy0 = coord.cy * CHUNK_HEIGHT as i32;
+
+    for ly in 0..CHUNK_HEIGHT {
+        for lx in 0..CHUNK_WIDTH {
+            let wx = wx0 + lx as i32;
+            let wy = wy0 + ly as i32;
+            let cell = generate_cell(wx, wy, sec, &noise);
+            chunk.set_front(lx, ly, cell);
+        }
+    }
+
+    chunk
 }
+
+// ── Tests ─────────────────────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cell::*;
+
+    #[test]
+    fn generate_origin_chunk_not_all_air() {
+        // The origin chunk at (0,0) includes sky + surface. Should have some rock.
+        let chunk = generate(ChunkCoord::new(0, 0));
+        let has_rock = (0..CHUNK_HEIGHT).any(|y| {
+            (0..CHUNK_WIDTH).any(|x| chunk.get(x, y).mineral >= MINERAL_ROCK)
+        });
+        // Origin chunk cy=0 starts at wy=0. Surface is at ~y=0.
+        // The lower portion of this chunk should have geology.
+        assert!(has_rock, "origin chunk should contain some rock");
+    }
+
+    #[test]
+    fn generate_sky_chunk_is_mostly_air() {
+        // A chunk well above surface
+        let chunk = generate(ChunkCoord::new(0, -2));
+        let air_count = (0..CHUNK_HEIGHT)
+            .flat_map(|y| (0..CHUNK_WIDTH).map(move |x| (x, y)))
+            .filter(|&(x, y)| {
+                let c = chunk.get(x, y);
+                c.mineral < MINERAL_TRACE
+            })
+            .count();
+        let total = CHUNK_WIDTH * CHUNK_HEIGHT;
+        let air_ratio = air_count as f64 / total as f64;
+        assert!(air_ratio > 0.90,
+            "sky chunk should be mostly air, got {:.1}% air", air_ratio * 100.0);
+    }
+
+    #[test]
+    fn generate_deep_chunk_is_solid() {
+        // A chunk at mid-depth, away from origin
+        let chunk = generate(ChunkCoord::new(10, 3));
+        let solid_count = (0..CHUNK_HEIGHT)
+            .flat_map(|y| (0..CHUNK_WIDTH).map(move |x| (x, y)))
+            .filter(|&(x, y)| chunk.get(x, y).mineral >= MINERAL_ROCK)
+            .count();
+        let total = CHUNK_WIDTH * CHUNK_HEIGHT;
+        let solid_ratio = solid_count as f64 / total as f64;
+        // Deep chunk should be mostly solid (with some caves)
+        assert!(solid_ratio > 0.50,
+            "deep chunk should be mostly solid, got {:.1}% solid", solid_ratio * 100.0);
+    }
+
+    #[test]
+    fn generate_lava_core_is_hot() {
+        let chunk = generate(ChunkCoord::new(5, LAVA_CORE_DEPTH_CHUNKS));
+        let cell = chunk.get(256, 256);
+        assert_eq!(cell.mineral, 255, "lava core should be max mineral");
+        assert_eq!(cell.temperature, 255, "lava core should be max temperature");
+    }
+
+    #[test]
+    fn machine_pocket_has_air() {
+        let chunk = generate(ChunkCoord::new(0, MACHINE_POCKET_CY));
+        // Center of the pocket should be air
+        let center = chunk.get(256, 80);
+        assert!(center.is_air(), "machine pocket center should be air, got mineral={}", center.mineral);
+    }
+
+    #[test]
+    fn generation_is_deterministic() {
+        let c1 = generate(ChunkCoord::new(5, 2));
+        let c2 = generate(ChunkCoord::new(5, 2));
+        for y in 0..CHUNK_HEIGHT {
+            for x in 0..CHUNK_WIDTH {
+                assert_eq!(c1.get(x, y), c2.get(x, y),
+                    "generation must be deterministic at ({x}, {y})");
+            }
+        }
+    }
+}
+

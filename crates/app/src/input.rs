@@ -8,7 +8,6 @@
 // is active. Press Y (North) to switch when near the other vehicle.
 
 use gilrs::{Axis, Button, Gilrs, Event as GilrsEvent};
-use winit::event::{ElementState, MouseScrollDelta};
 use winit::keyboard::KeyCode;
 
 // ── 16-angle thrust table (Solar Jetman) ──────────────────────────────────────
@@ -19,6 +18,7 @@ use winit::keyboard::KeyCode;
 
 /// (dx, dy) unit vectors for the 16 thrust directions.
 /// Indexed by `PodInput::facing_angle` (0..15).
+#[allow(dead_code)] // used when pod physics come online
 pub const ANGLE_TABLE: [(f32, f32); 16] = [
     ( 1.000,  0.000),  //  0:   0°   right
     ( 0.924, -0.383),  //  1:  22.5° right-up
@@ -104,6 +104,7 @@ impl PodInput {
     }
 
     /// Get the thrust vector for the current facing angle, scaled by thrust magnitude.
+    #[allow(dead_code)] // used when pod physics come online
     pub fn thrust_vector(&self) -> (f32, f32) {
         let (dx, dy) = ANGLE_TABLE[self.facing_angle as usize];
         (dx * self.thrust, dy * self.thrust)
@@ -474,12 +475,14 @@ mod tests {
 
     #[test]
     fn pod_rotation_wraps() {
+        // Clockwise (-1) from angle 0 should wrap to 15.
         let mut pod = PodInput::new();
-        pod.facing_angle = 15;
+        pod.facing_angle = 0;
         pod.rotate_dir = -1; // clockwise
         pod.rotation_accumulator = ROTATION_FRAMES_PER_STEP - 1;
         pod.tick_rotation();
-        assert_eq!(pod.facing_angle, 0, "should wrap from 15 to 0");
+        // 0 + 0xFF (which is -1 as u8) = 255, & 0xF = 15
+        assert_eq!(pod.facing_angle, 15, "should wrap from 0 to 15 going clockwise");
     }
 
     #[test]

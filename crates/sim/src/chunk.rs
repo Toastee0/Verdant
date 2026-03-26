@@ -317,6 +317,14 @@ impl Chunk {
         }
     }
 
+    /// Write a single cell directly into the FRONT buffer.
+    /// Used by worldgen for per-cell generation (more efficient than fill_rect
+    /// when setting individual cells in a generation loop).
+    #[inline]
+    pub fn set_front(&mut self, x: usize, y: usize, cell: Cell) {
+        self.front[Self::idx(x, y)] = cell;
+    }
+
     /// Read-only view of the front buffer as a flat byte slice.
     /// Used by the renderer to upload chunk data as a GPU texture.
     /// Each Cell is 16 bytes (#[repr(C)]), so this is safe to reinterpret.
