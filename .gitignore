@@ -14,5 +14,8 @@ Thumbs.db
 # Claude Code session memory (local only)
 .claude/
 
+# Test output / visual inspection dumps
+test_output/
+
 # Cargo.lock is intentionally committed for binary crates (this is a game).
 # See: https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargo.lock-in-version-control-but-not-libraries
