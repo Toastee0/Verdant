@@ -10,3 +10,7 @@ path = "src/main.rs"
 [dependencies]
 verdant-sim    = { path = "../sim" }
 verdant-render = { path = "../render" }
+winit = "0.30"
+pollster = "0.4"
+log = "0.4"
+env_logger = "0.11"
