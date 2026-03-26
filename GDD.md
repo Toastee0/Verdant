@@ -126,9 +126,22 @@ environment, not mechanical ability.
 
 **Movement:** free flight in all directions. Fuel limits range from base per launch.
 
+**Controls (NES Solar Jetman, adapted for gamepad):**
+- D-pad left/right: rotate facing through 16 angles (smooth, continuous while held)
+- D-pad up/down: shield (also cuts tow cable — see below)
+- Right trigger: thrust (analog, fires in current facing direction)
+- Left trigger: fire defensive shot
+
+**Tow cable — automatic, no button:**
+Attaches when pod enters range of a towable object. Spring physics (k=0.000488).
+Cut tow by: (1) flying to a drop zone and slowing down, or (2) activating shield.
+Shield always cuts tow, even without the shield upgrade. You cannot carry cargo and
+defend simultaneously. This is an intentional design constraint.
+
 **Tools:**
-- **Tow cable** — lifts cargo from ground to transport
+- **Tow cable** — auto-attach, lifts cargo from ground to transport
 - **Scanner** — reveals surface then subsurface geology as upgrades unlock
+- **Defensive weapon** — small shot, starts available, not upgradeable (part of base kit)
 - **Payload drop** — later upgrade; dispense seeds/water from altitude
 
 ---
