@@ -41,19 +41,92 @@ visibly comes alive because of specific things you did.
 
 ---
 
+## Narrative
+
+**You are the machine.** The ancient machine that crashed here is the base. The pods and
+tanks it generates are your body. You know what you are from the start — there is no
+mystery about your nature.
+
+The mystery is *why.* Who built you and sent you here? What were they trying to make this
+planet into, and for whom? You spend the entire game making the planet breathe without
+knowing if anyone is ever coming to live on it. Maybe nobody is. Maybe the builders are
+long gone. Maybe you have forgotten.
+
+The terraforming succeeds regardless. Whether that matters is the question the game
+doesn't answer for you.
+
+**Previous attempts.** The machine has tried before. Previous pod attempts are scattered
+underground — found on the way up, buried at the depths where they fell short. You
+bootstrap using your own failed history.
+
+**The tone.** Over-the-top cartoon science. Big dumb machines doing ridiculous things to
+achieve real ecological results. The player "tickles" volcanoes with a water cannon to
+trigger eruptions. Fires seed slurry from altitude. Drops acid onto rock formations to
+release underground water. The simulation underneath is serious. The execution is not.
+
+---
+
 ## World architecture
 
-The world is an infinite 2D side-scrolling grid of **cells**. Each cell is 16 bytes.
-Cells group into **chunks** of 512×512. Chunks generate only when the player first
-enters their range — the world is frozen in geological time until you arrive.
+The world is a **fake globe** — a large rectangle of chunks that wraps horizontally.
+Go far enough in one direction and you return from the other side. Going deep enough
+hits the lava core: an inaccessible zone that is never simulated, just rendered as
+molten rock. The geometric problem of a real globe (sides curving and overlapping)
+is solved by the inert center — the planet pretends to be round without needing to be.
 
-Physics simulation runs on CPU (Noita architecture). Rendering runs on GPU.
-The GPU never writes to simulation state.
+```
+  ══════════════════════════════════════════  atmosphere / sky
+  │  ←  surface wraps left-to-right  →  ←  │
+  │                                         │
+  │    underground — caves, ore, biology    │
+  │                                         │
+  │       ▓▓▓▓▓  LAVA CORE  ▓▓▓▓▓          │  never simulated
+  ╚═════════════════════════════════════════╝
+       left edge connects to right edge
+```
+
+**The machine starts underground.** The impact was so hard the rock flowed closed behind
+it — like a finger pushed into clay that seals over. No surface crater. No visible scar.
+The planet looks untouched. The player is buried at depth with no way out yet.
+
+The early game is vertical: mine upward through compressed impact rock, then normal rock,
+then soil, then break through to open sky. That breakthrough is a major story moment.
+
+**The surface starts dead and dry.** No ocean, no atmosphere worth breathing, no life.
+The player creates all of it. The water cycle is built, not discovered.
 
 **Chunk states:**
 - **Active** — near the player, ticked every frame
 - **KeepAlive** — off-screen but has flowing water / living biology, keeps simulating
 - **Dormant** — no activity, serialized to disk and frozen
+
+---
+
+## Globe sectors — geology by direction
+
+Different positions around the globe have different characters.
+Traveling horizontally means encountering different biome bands:
+
+```
+         [origin — machine buried here]
+          ↙ volcanic sector              aquifer sector ↘
+             high heat, lava near           deep water reserves
+             surface, geothermal            AncientCisterns common
+             vents, unique heat-ores        cave biology dense
+
+                  ↓ far side of globe ↓
+             mineral-rich belt              ancient debris field
+             dense ore, hard rock           more CrashedPod POIs
+             mining-heavy                   evidence of prior attempts
+```
+
+Resources are geographically separated. The volcanic sector is where you trigger
+eruptions to drive the water cycle — you have to go there, it's not near origin.
+The aquifer sector is where bulk surface water comes from. The mineral belt is
+where you go for deep ore. No one sector has everything.
+
+**Terraforming requires traversal.** You cannot build the biosphere from origin alone.
+The globe has to be understood and worked.
 
 ---
 
