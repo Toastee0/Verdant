@@ -3,20 +3,22 @@
 #include <string.h>
 
 // === WORLD ===
-#define WORLD_W    480
-#define WORLD_H    270
-#define CELL_AIR     0
-#define CELL_STONE   1
+#define WORLD_W      480
+#define WORLD_H      270
+#define CELL_AIR       0
+#define CELL_STONE     1
+#define CELL_PLATFORM  2   // one-way: stand on top, jump/walk through
 
 // === CHARACTER ===
 #define CHAR_W  4
 #define CHAR_H  8
 
 // Physics — pixels per frame at ~60 fps
-#define GRAVITY     0.35f
-#define JUMP_VEL   -5.5f
-#define WALK_SPEED  1.5f
-#define MAX_FALL   10.0f
+#define GRAVITY       0.35f
+#define JUMP_VEL     -5.5f
+#define WALK_SPEED    1.5f
+#define MAX_FALL     10.0f
+#define MAX_STEP_UP   3     // auto-step-up height for stairs (pixels)
 
 // 2-frame walk cycle: [frame][row][col]
 // Palette: 0=transparent  1=skin  2=shirt (blue)  3=pants (dark blue)
@@ -50,21 +52,21 @@ static const Color PAL[4] = {
     { 40,  60, 120, 255},   // 3  pants
 };
 
-// Solid if out-of-bounds or stone cell.
-static int is_solid(const uint8_t *w, int wx, int wy) {
-    if (wx < 0 || wx >= WORLD_W) return 1;
-    if (wy < 0 || wy >= WORLD_H) return 1;
-    return w[wy * WORLD_W + wx] == CELL_STONE;
-}
-
-// 1 if the axis-aligned box at (bx,by) size (bw x bh) overlaps any solid cell.
-// Uses floor(bx)/floor(by) so a position of 238.9 still only tests column 238.
-static int box_solid(const uint8_t *w, float bx, float by, int bw, int bh) {
-    int x0 = (int)bx,        x1 = (int)bx + bw - 1;
-    int y0 = (int)by,        y1 = (int)by + bh - 1;
-    for (int y = y0; y <= y1; y++)
-        for (int x = x0; x <= x1; x++)
-            if (is_solid(w, x, y)) return 1;
+// ── Collision ──────────────────────────────────────────────────────────────
+// include_platform: treat CELL_PLATFORM as solid (used for downward collision only)
+// Out-of-bounds always solid.
+static int box_solid_ex(const uint8_t *w, float bx, float by,
+                         int bw, int bh, int include_platform) {
+    int x0 = (int)bx,  x1 = (int)bx + bw - 1;
+    int y0 = (int)by,  y1 = (int)by + bh - 1;
+    for (int y = y0; y <= y1; y++) {
+        for (int x = x0; x <= x1; x++) {
+            if (x < 0 || x >= WORLD_W || y < 0 || y >= WORLD_H) return 1;
+            uint8_t c = w[y * WORLD_W + x];
+            if (c == CELL_STONE) return 1;
+            if (c == CELL_PLATFORM && include_platform) return 1;
+        }
+    }
     return 0;
 }
 
@@ -73,52 +75,78 @@ int main(void)
     SetConfigFlags(FLAG_BORDERLESS_WINDOWED_MODE | FLAG_VSYNC_HINT);
     InitWindow(0, 0, "VERDANT F1 — Scaled Canvas");
 
-    // --- WORLD ---
+    // ── World setup ───────────────────────────────────────────────────────
     uint8_t world[WORLD_W * WORLD_H];
     memset(world, CELL_AIR, sizeof(world));
     const int stoneStart = (WORLD_H * 2) / 3;   // row 180
+
+    // Flat stone floor
     for (int y = stoneStart; y < WORLD_H; y++)
         memset(&world[y * WORLD_W], CELL_STONE, WORLD_W);
+
+    // Staircase: x=300..479, rises 1px per 4 columns up to +20px, then plateau
+    // Each column x gets extra stone rows added above the base floor.
+    for (int x = 300; x < WORLD_W; x++) {
+        int extra   = (x < 380) ? ((x - 300) / 4 + 1) : 20;
+        int surface = stoneStart - extra;
+        for (int y = surface; y < stoneStart; y++)
+            world[y * WORLD_W + x] = CELL_STONE;
+    }
+
+    // Pass-through platforms: 20px wide, 4px tall, brown wood
+    typedef struct { int x, y, w, h; } PlatDef;
+    PlatDef plats[] = {
+        {  50, 158, 20, 4 },   // low  — easy first hop from floor
+        { 110, 143, 20, 4 },   // high — jump from platform 1 or floor
+        { 180, 150, 20, 4 },   // mid  — jump across from platform 2
+    };
+    for (int i = 0; i < 3; i++)
+        for (int py = plats[i].y; py < plats[i].y + plats[i].h; py++)
+            for (int px = plats[i].x; px < plats[i].x + plats[i].w; px++)
+                if (px < WORLD_W && py < WORLD_H)
+                    world[py * WORLD_W + px] = CELL_PLATFORM;
 
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
     Texture2D worldTex = LoadTextureFromImage(worldImg);
     SetTextureFilter(worldTex, TEXTURE_FILTER_POINT);
 
-    // --- CHARACTER STATE ---
-    float cx = (float)((WORLD_W - CHAR_W) / 2);  // centre of world
-    float cy = (float)(stoneStart - CHAR_H);       // feet just above stone
+    // ── Character state ───────────────────────────────────────────────────
+    float cx = 30.0f;
+    float cy = (float)(stoneStart - CHAR_H);   // spawn left, above floor
     float cvx = 0.0f, cvy = 0.0f;
-    int grounded   = 0;
-    int facing     = 1;    // 1=right  -1=left
-    int anim_frame = 0;
-    int anim_timer = 0;
+    int grounded           = 0;
+    int facing             = 1;    // 1=right  -1=left
+    int anim_frame         = 0;
+    int anim_timer         = 0;
+    int fall_through_timer = 0;    // frames remaining where platforms pass through
 
     while (!WindowShouldClose())
     {
-        // --- WINDOW ---
+        // ── Window / scale ─────────────────────────────────────────────────
         if (IsKeyPressed(KEY_F11))    ToggleBorderlessWindowed();
         if (IsKeyPressed(KEY_ESCAPE)) break;
 
-        int screenW = GetScreenWidth();
-        int screenH = GetScreenHeight();
-        int scaleX  = screenW / WORLD_W;
-        int scaleY  = screenH / WORLD_H;
+        int screenW = GetScreenWidth(),  screenH = GetScreenHeight();
+        int scaleX  = screenW / WORLD_W, scaleY  = screenH / WORLD_H;
         int scale   = (scaleX < scaleY) ? scaleX : scaleY;
         if (scale < 1) scale = 1;
-        int scaledW = WORLD_W * scale,  scaledH = WORLD_H * scale;
+        int scaledW = WORLD_W * scale,   scaledH = WORLD_H * scale;
         int offsetX = (screenW - scaledW) / 2;
         int offsetY = (screenH - scaledH) / 2;
 
-        // --- INPUT ---
+        // ── Input ──────────────────────────────────────────────────────────
         int move_left  = IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT);
         int move_right = IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT);
         int do_jump    = IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP)
                       || IsKeyPressed(KEY_SPACE);
+        int do_fall    = IsKeyDown(KEY_S)  || IsKeyDown(KEY_DOWN);
 
         if (IsGamepadAvailable(0)) {
             float ax = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
+            float ay = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
             if (ax < -0.3f) move_left  = 1;
             if (ax >  0.3f) move_right = 1;
+            if (ay >  0.5f) do_fall    = 1;
             if (IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) do_jump = 1;
         }
 
@@ -127,93 +155,110 @@ int main(void)
         int mwx = (int)((mouse.x - offsetX) / scale);
         int mwy = (int)((mouse.y - offsetY) / scale);
 
-        // --- PHYSICS ---
+        // ── Physics ────────────────────────────────────────────────────────
 
-        // Ground contact: probe one pixel below feet.
-        // Checked before gravity so we don't accumulate downward vel while standing.
-        grounded = box_solid(world, cx, cy + 1.0f, CHAR_W, CHAR_H);
+        if (fall_through_timer > 0) fall_through_timer--;
+        int include_plat = (fall_through_timer <= 0);
 
-        // Gravity — only when airborne
+        // Ground contact: probe one pixel below feet
+        grounded = box_solid_ex(world, cx, cy + 1.0f, CHAR_W, CHAR_H, include_plat);
+
+        // Fall-through (S while standing on platform, not stone)
+        if (do_fall && grounded && include_plat) {
+            int fy = (int)(cy + CHAR_H);
+            int on_plat = 0;
+            for (int fx = (int)cx; fx <= (int)cx + CHAR_W - 1 && !on_plat; fx++)
+                if (fx >= 0 && fx < WORLD_W && fy >= 0 && fy < WORLD_H)
+                    if (world[fy * WORLD_W + fx] == CELL_PLATFORM) on_plat = 1;
+            if (on_plat) {
+                fall_through_timer = 15;
+                include_plat = 0;
+                grounded     = 0;
+            }
+        }
+
+        // Gravity (only when airborne)
         if (!grounded) {
             cvy += GRAVITY;
             if (cvy > MAX_FALL) cvy = MAX_FALL;
         } else if (cvy > 0.0f) {
-            cvy = 0.0f;   // clear any residual downward vel on landing
+            cvy = 0.0f;
         }
 
-        // Jump — requires ground contact
-        if (do_jump && grounded) {
-            cvy      = JUMP_VEL;
-            grounded = 0;
-        }
+        // Jump
+        if (do_jump && grounded) { cvy = JUMP_VEL; grounded = 0; }
 
-        // Horizontal — Terraria-style: instant speed, no acceleration
+        // Horizontal (platforms never block sideways)
         cvx = 0.0f;
         if (move_left)  { cvx = -WALK_SPEED; facing = -1; }
         if (move_right) { cvx =  WALK_SPEED; facing =  1; }
 
-        // Apply horizontal (clamped to world edges; wrap comes with camera later)
         if (cvx != 0.0f) {
             float new_x = cx + cvx;
             if (new_x < 0)                 new_x = 0;
             if (new_x + CHAR_W > WORLD_W)  new_x = (float)(WORLD_W - CHAR_W);
-            if (!box_solid(world, new_x, cy, CHAR_W, CHAR_H))
+
+            if (!box_solid_ex(world, new_x, cy, CHAR_W, CHAR_H, 0)) {
                 cx = new_x;
-            // else: wall, discard horizontal movement silently
+            } else if (grounded) {
+                // Auto-step-up: lift 1..MAX_STEP_UP pixels to walk up stairs
+                for (int s = 1; s <= MAX_STEP_UP; s++) {
+                    if (!box_solid_ex(world, new_x, cy - (float)s, CHAR_W, CHAR_H, 0)) {
+                        cx = new_x;
+                        cy -= (float)s;
+                        break;
+                    }
+                }
+            }
         }
 
-        // Apply vertical
+        // Vertical
         if (cvy != 0.0f) {
-            float new_y = cy + cvy;
-            if (!box_solid(world, cx, new_y, CHAR_W, CHAR_H)) {
+            float new_y      = cy + cvy;
+            int   plat_solid = (cvy > 0.0f) && include_plat;  // platforms only block falling
+
+            if (!box_solid_ex(world, cx, new_y, CHAR_W, CHAR_H, plat_solid)) {
                 cy = new_y;
             } else {
                 if (cvy > 0.0f) {
-                    // Landing: snap feet to integer pixel boundary above stone.
-                    // Step down one integer pixel at a time from floor(cy)
-                    // so the final position is always an exact pixel.
-                    float floor_y = (float)(int)cy;
-                    while (!box_solid(world, cx, floor_y + 1.0f, CHAR_W, CHAR_H))
-                        floor_y += 1.0f;
-                    cy = floor_y;
+                    // Snap to integer pixel at floor
+                    float fy = (float)(int)cy;
+                    while (!box_solid_ex(world, cx, fy + 1.0f, CHAR_W, CHAR_H, plat_solid))
+                        fy += 1.0f;
+                    cy       = fy;
                     grounded = 1;
                 }
-                // Ceiling hit (cvy < 0): position unchanged, just kill upward vel
                 cvy = 0.0f;
             }
         }
 
-        // Hard clamp to world bounds
-        if (cy < 0)                  { cy = 0;                          cvy = 0; }
-        if (cy + CHAR_H > WORLD_H)   { cy = (float)(WORLD_H - CHAR_H); cvy = 0; grounded = 1; }
+        // World bounds
+        if (cy < 0)                { cy = 0;                          cvy = 0; }
+        if (cy + CHAR_H > WORLD_H) { cy = (float)(WORLD_H - CHAR_H); cvy = 0; grounded = 1; }
 
-        // Walk animation: toggle frame every 8 ticks while moving
+        // Walk animation
         if (move_left || move_right) {
             if (++anim_timer >= 8) { anim_timer = 0; anim_frame ^= 1; }
-        } else {
-            anim_frame = 0;
-            anim_timer = 0;
-        }
+        } else { anim_frame = 0; anim_timer = 0; }
 
-        // --- RENDER WORLD TO PIXEL BUFFER ---
+        // ── Render world ──────────────────────────────────────────────────
         Color *pixels = worldImg.data;
         for (int i = 0; i < WORLD_W * WORLD_H; i++) {
-            pixels[i] = (world[i] == CELL_STONE)
-                ? (Color){128, 128, 128, 255}
-                : (Color){255, 255, 255,   0};
+            switch (world[i]) {
+                case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
+                case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
+                default:            pixels[i] = (Color){255, 255, 255,   0}; break;
+            }
         }
 
-        // --- DRAW CHARACTER INTO PIXEL BUFFER ---
-        int draw_x = (int)cx;
-        int draw_y = (int)cy;
+        // ── Draw character ────────────────────────────────────────────────
+        int draw_x = (int)cx, draw_y = (int)cy;
         for (int row = 0; row < CHAR_H; row++) {
             for (int col = 0; col < CHAR_W; col++) {
-                // Mirror sprite columns when facing left
-                int src_col = (facing < 0) ? (CHAR_W - 1 - col) : col;
-                uint8_t idx = SPRITE[anim_frame][row][src_col];
-                if (idx == 0) continue;   // transparent pixel
-                int wx = draw_x + col;
-                int wy = draw_y + row;
+                int     src = (facing < 0) ? (CHAR_W - 1 - col) : col;
+                uint8_t idx = SPRITE[anim_frame][row][src];
+                if (!idx) continue;
+                int wx = draw_x + col, wy = draw_y + row;
                 if (wx < 0 || wx >= WORLD_W || wy < 0 || wy >= WORLD_H) continue;
                 pixels[wy * WORLD_W + wx] = PAL[idx];
             }
@@ -221,27 +266,25 @@ int main(void)
 
         UpdateTexture(worldTex, pixels);
 
-        // --- SCREEN COMPOSITE ---
+        // ── Draw ──────────────────────────────────────────────────────────
         BeginDrawing();
             ClearBackground(BLACK);
             DrawTexturePro(
                 worldTex,
                 (Rectangle){0, 0, WORLD_W, WORLD_H},
                 (Rectangle){(float)offsetX, (float)offsetY, (float)scaledW, (float)scaledH},
-                (Vector2){0, 0},
-                0.0f,
-                WHITE
+                (Vector2){0, 0}, 0.0f, WHITE
             );
-            // HUD
             DrawText(TextFormat("Screen: %dx%d  Scale: %dx  World: %dx%d",
                 screenW, screenH, scale, WORLD_W, WORLD_H),
                 8, 8, 16, GREEN);
-            DrawText(TextFormat("Pos: (%.0f, %.0f)  Vel: (%.1f, %.1f)  %s",
-                cx, cy, cvx, cvy, grounded ? "GROUNDED" : "AIR"),
+            DrawText(TextFormat("Pos:(%.0f,%.0f) Vel:(%.1f,%.1f) %s%s",
+                cx, cy, cvx, cvy,
+                grounded ? "GROUNDED" : "AIR",
+                fall_through_timer > 0 ? " FALLTHRU" : ""),
                 8, 28, 16, YELLOW);
-            DrawText(TextFormat("Mouse: (%d, %d)", mwx, mwy),
-                8, 48, 16, SKYBLUE);
-            DrawText("WASD/Arrows=Move  Space/W=Jump  F11=Fullscreen  ESC=Quit",
+            DrawText(TextFormat("Mouse:(%d,%d)", mwx, mwy), 8, 48, 16, SKYBLUE);
+            DrawText("WASD=Move  Space=Jump  S=FallThru  F11=Fullscreen  ESC=Quit",
                 8, 68, 16, GRAY);
         EndDrawing();
     }
