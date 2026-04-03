@@ -19,6 +19,10 @@
 #define WALK_SPEED  1.5f
 #define MAX_FALL   10.0f
 
+// Inventory
+#define PICKUP_RADIUS 18    // world-pixel radius for harvest
+#define INV_MAX       99
+
 // 2-frame walk cycle: [frame][row][col]
 // Palette: 0=transparent  1=skin  2=shirt (blue)  3=pants (dark blue)
 static const uint8_t SPRITE[2][CHAR_H][CHAR_W] = {
@@ -99,6 +103,14 @@ int main(void)
     int facing     = 1;    // 1=right  -1=left
     int anim_frame = 0;
     int anim_timer = 0;
+
+    // --- INVENTORY ---
+    int inv_dirt = 0;
+
+    // --- SELECTION & INPUT STATE ---
+    int sel_wx     = -1, sel_wy = -1;  // selected cell in world coords (-1 = none)
+    int last_mx    = -1, last_my = -1; // previous mouse world pos (mode detection)
+    int input_mode = 0;                // 0=KB/M  1=Gamepad
 
     while (!WindowShouldClose())
     {
@@ -202,6 +214,81 @@ int main(void)
             anim_timer = 0;
         }
 
+        // --- CELL SELECTION & INVENTORY ACTIONS ---
+
+        // Player centre in world coords (radius tests and overlay circle)
+        float pcx = cx + CHAR_W * 0.5f;
+        float pcy = cy + CHAR_H * 0.5f;
+        int   pr2  = PICKUP_RADIUS * PICKUP_RADIUS;
+
+        // Input mode switching: any KB/M activity → 0; any gamepad activity → 1.
+        // Both can fire in the same frame — KB/M wins only if we test it last,
+        // so we test gamepad first, then KB/M overwrites.
+        int mouse_moved = (mwx != last_mx || mwy != last_my);
+        last_mx = mwx;  last_my = mwy;
+
+        if (IsGamepadAvailable(0)) {
+            float ax = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
+            float ay = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
+            if (ax < -0.3f || ax > 0.3f || ay < -0.3f || ay > 0.3f) input_mode = 1;
+            if (IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN))  input_mode = 1;
+        }
+        if (mouse_moved || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ||
+                IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) ||
+                move_left || move_right || do_jump || GetKeyPressed() != 0)
+            input_mode = 0;
+
+        // KB/M: facing follows mouse cursor, not movement direction
+        if (input_mode == 0)
+            facing = (mwx >= (int)pcx) ? 1 : -1;
+
+        // Cell selection
+        if (input_mode == 0) {
+            // Mouse mode: cell under cursor, only if within pickup radius
+            sel_wx = -1;  sel_wy = -1;
+            if (mwx >= 0 && mwx < WORLD_W && mwy >= 0 && mwy < WORLD_H) {
+                float dx = mwx - pcx, dy = mwy - pcy;
+                if (dx*dx + dy*dy <= (float)pr2)
+                    { sel_wx = mwx; sel_wy = mwy; }
+            }
+        } else {
+            // Gamepad mode: nearest CELL_DIRT in front-facing arc within radius
+            sel_wx = -1;  sel_wy = -1;
+            float best = (float)(pr2 + 1);
+            int bx0 = (int)pcx - PICKUP_RADIUS,  bx1 = (int)pcx + PICKUP_RADIUS;
+            int by0 = (int)pcy - PICKUP_RADIUS,  by1 = (int)pcy + PICKUP_RADIUS;
+            for (int wy = by0; wy <= by1; wy++) {
+                for (int wx = bx0; wx <= bx1; wx++) {
+                    if (wx < 0 || wx >= WORLD_W || wy < 0 || wy >= WORLD_H) continue;
+                    float dx = wx - pcx, dy = wy - pcy;
+                    if (dx * facing < 0.0f) continue;   // wrong half-plane
+                    float d2 = dx*dx + dy*dy;
+                    if (d2 > (float)pr2 || d2 >= best) continue;
+                    if (world[wy * WORLD_W + wx] == CELL_DIRT)
+                        { best = d2; sel_wx = wx; sel_wy = wy; }
+                }
+            }
+        }
+
+        // Harvest: one press = one cell (LMB or E)
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsKeyPressed(KEY_E)) {
+            if (sel_wx >= 0 && inv_dirt < INV_MAX
+                    && world[sel_wy * WORLD_W + sel_wx] == CELL_DIRT) {
+                world[sel_wy * WORLD_W + sel_wx] = CELL_AIR;
+                inv_dirt++;
+            }
+        }
+
+        // Place: RMB — place CELL_DIRT at mouse world position
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+            if (mwx >= 0 && mwx < WORLD_W && mwy >= 0 && mwy < WORLD_H) {
+                if (world[mwy * WORLD_W + mwx] == CELL_AIR && inv_dirt > 0) {
+                    world[mwy * WORLD_W + mwx] = CELL_DIRT;
+                    inv_dirt--;
+                }
+            }
+        }
+
         // --- RENDER WORLD TO PIXEL BUFFER ---
         Color *pixels = worldImg.data;
         for (int i = 0; i < WORLD_W * WORLD_H; i++) {
@@ -239,6 +326,32 @@ int main(void)
                 0.0f,
                 WHITE
             );
+            // --- WORLD-SPACE OVERLAYS (drawn at screen scale) ---
+
+            // Pickup radius circle around player centre
+            DrawCircleLines(
+                offsetX + (int)(pcx * scale),
+                offsetY + (int)(pcy * scale),
+                PICKUP_RADIUS * scale,
+                (Color){255, 255, 100, 80}
+            );
+
+            // Selected cell: 1px outline only, no fill.
+            // Yellow = mouse mode; cyan = gamepad auto-select.
+            if (sel_wx >= 0) {
+                Color outline = (input_mode == 0)
+                    ? (Color){255, 255,  50, 230}   // yellow — mouse
+                    : (Color){100, 220, 255, 230};  // cyan  — gamepad
+                DrawRectangleLinesEx(
+                    (Rectangle){
+                        (float)(offsetX + sel_wx * scale),
+                        (float)(offsetY + sel_wy * scale),
+                        (float)scale, (float)scale
+                    },
+                    1.0f, outline
+                );
+            }
+
             // HUD
             DrawText(TextFormat("Screen: %dx%d  Scale: %dx  World: %dx%d",
                 screenW, screenH, scale, WORLD_W, WORLD_H),
@@ -246,9 +359,10 @@ int main(void)
             DrawText(TextFormat("Pos: (%.0f, %.0f)  Vel: (%.1f, %.1f)  %s",
                 cx, cy, cvx, cvy, grounded ? "GROUNDED" : "AIR"),
                 8, 28, 16, YELLOW);
-            DrawText(TextFormat("Mouse: (%d, %d)", mwx, mwy),
+            DrawText(TextFormat("Mouse: (%d, %d)  Dirt: %d/%d",
+                mwx, mwy, inv_dirt, INV_MAX),
                 8, 48, 16, SKYBLUE);
-            DrawText("WASD/Arrows=Move  Space/W=Jump  F11=Fullscreen  ESC=Quit",
+            DrawText("WASD/Arrows=Move  Space/W=Jump  LMB/E=Dig  RMB=Place  F11=Fullscreen  ESC=Quit",
                 8, 68, 16, GRAY);
         EndDrawing();
     }
