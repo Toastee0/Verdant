@@ -8,6 +8,7 @@
 #define CELL_AIR       0
 #define CELL_STONE     1
 #define CELL_PLATFORM  2   // one-way: stand on top, jump/walk through
+#define CELL_DIRT      3   // solid like stone, topsoil layer
 
 // === CHARACTER ===
 #define CHAR_W  4
@@ -63,7 +64,7 @@ static int box_solid_ex(const uint8_t *w, float bx, float by,
         for (int x = x0; x <= x1; x++) {
             if (x < 0 || x >= WORLD_W || y < 0 || y >= WORLD_H) return 1;
             uint8_t c = w[y * WORLD_W + x];
-            if (c == CELL_STONE) return 1;
+            if (c == CELL_STONE || c == CELL_DIRT) return 1;
             if (c == CELL_PLATFORM && include_platform) return 1;
         }
     }
@@ -105,6 +106,18 @@ int main(void)
             for (int px = plats[i].x; px < plats[i].x + plats[i].w; px++)
                 if (px < WORLD_W && py < WORLD_H)
                     world[py * WORLD_W + px] = CELL_PLATFORM;
+
+    // Dirt layer: top 8 stone cells in each column become dirt.
+    // Scans from the top so it follows the staircase contour naturally.
+    for (int x = 0; x < WORLD_W; x++) {
+        int count = 0;
+        for (int y = 0; y < WORLD_H && count < 8; y++) {
+            if (world[y * WORLD_W + x] == CELL_STONE) {
+                world[y * WORLD_W + x] = CELL_DIRT;
+                count++;
+            }
+        }
+    }
 
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
     Texture2D worldTex = LoadTextureFromImage(worldImg);
@@ -246,6 +259,7 @@ int main(void)
         for (int i = 0; i < WORLD_W * WORLD_H; i++) {
             switch (world[i]) {
                 case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
+                case CELL_DIRT:     pixels[i] = (Color){ 96,  60,  25, 255}; break;
                 case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
                 default:            pixels[i] = (Color){255, 255, 255,   0}; break;
             }
