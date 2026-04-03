@@ -7,6 +7,7 @@
 #define WORLD_H    270
 #define CELL_AIR     0
 #define CELL_STONE   1
+#define CELL_DIRT    2
 
 // === CHARACTER ===
 #define CHAR_W  4
@@ -54,7 +55,8 @@ static const Color PAL[4] = {
 static int is_solid(const uint8_t *w, int wx, int wy) {
     if (wx < 0 || wx >= WORLD_W) return 1;
     if (wy < 0 || wy >= WORLD_H) return 1;
-    return w[wy * WORLD_W + wx] == CELL_STONE;
+    uint8_t c = w[wy * WORLD_W + wx];
+    return c == CELL_STONE || c == CELL_DIRT;
 }
 
 // 1 if the axis-aligned box at (bx,by) size (bw x bh) overlaps any solid cell.
@@ -80,13 +82,18 @@ int main(void)
     for (int y = stoneStart; y < WORLD_H; y++)
         memset(&world[y * WORLD_W], CELL_STONE, WORLD_W);
 
+    // 10px dirt topsoil layer sitting on top of stone
+    const int dirtStart = stoneStart - 10;      // row 170
+    for (int y = dirtStart; y < stoneStart; y++)
+        memset(&world[y * WORLD_W], CELL_DIRT, WORLD_W);
+
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
     Texture2D worldTex = LoadTextureFromImage(worldImg);
     SetTextureFilter(worldTex, TEXTURE_FILTER_POINT);
 
     // --- CHARACTER STATE ---
     float cx = (float)((WORLD_W - CHAR_W) / 2);  // centre of world
-    float cy = (float)(stoneStart - CHAR_H);       // feet just above stone
+    float cy = (float)(dirtStart - CHAR_H);        // feet just above dirt layer
     float cvx = 0.0f, cvy = 0.0f;
     int grounded   = 0;
     int facing     = 1;    // 1=right  -1=left
@@ -198,9 +205,9 @@ int main(void)
         // --- RENDER WORLD TO PIXEL BUFFER ---
         Color *pixels = worldImg.data;
         for (int i = 0; i < WORLD_W * WORLD_H; i++) {
-            pixels[i] = (world[i] == CELL_STONE)
-                ? (Color){128, 128, 128, 255}
-                : (Color){255, 255, 255,   0};
+            if      (world[i] == CELL_STONE) pixels[i] = (Color){128, 128, 128, 255};
+            else if (world[i] == CELL_DIRT)  pixels[i] = (Color){139,  90,  43, 255};
+            else                             pixels[i] = (Color){255, 255, 255,   0};
         }
 
         // --- DRAW CHARACTER INTO PIXEL BUFFER ---
