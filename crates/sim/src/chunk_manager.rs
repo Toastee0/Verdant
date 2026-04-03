@@ -219,6 +219,24 @@ impl ChunkManager {
     pub fn iter_chunks(&self) -> impl Iterator<Item = (&ChunkCoord, &Chunk)> {
         self.chunks.iter()
     }
+
+    /// Look up a single cell by world-cell coordinates.
+    ///
+    /// Returns None if the chunk containing (wx, wy) isn't currently loaded.
+    /// Callers that need a safe fallback for unloaded chunks should treat None
+    /// as solid (see walker::is_solid).
+    ///
+    /// div_euclid / rem_euclid handle negative coordinates correctly — e.g.,
+    /// wx=-1 lands in chunk cx=-1, local lx=511 (not cx=0, lx=-1 which would panic).
+    /// In C you'd write a manual floor-divide: cx = (wx < 0) ? (wx - W + 1) / W : wx / W
+    pub fn get_cell_world(&self, wx: i32, wy: i32) -> Option<crate::cell::Cell> {
+        use crate::chunk::{CHUNK_WIDTH, CHUNK_HEIGHT};
+        let cx = wx.div_euclid(CHUNK_WIDTH as i32);
+        let cy = wy.div_euclid(CHUNK_HEIGHT as i32);
+        let lx = wx.rem_euclid(CHUNK_WIDTH as i32) as usize;
+        let ly = wy.rem_euclid(CHUNK_HEIGHT as i32) as usize;
+        self.chunks.get(&ChunkCoord::new(cx, cy)).map(|c| c.get(lx, ly))
+    }
 }
 
 // ── Procedural chunk generation ───────────────────────────────────────────────

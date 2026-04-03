@@ -53,9 +53,14 @@ pub fn liquid_fall(chunk: &mut Chunk, x: usize, y: usize, cell: Cell,
 pub fn powder_fall(chunk: &mut Chunk, x: usize, y: usize, cell: Cell,
                    lx: i32, ly: i32, slide_right_first: bool) -> bool
 {
-    // Try straight down
+    // Try straight down.
+    // Powder displaces air and less-dense non-liquid material, but NOT liquid —
+    // dry soil is less dense than water (mineral*3+water: 275 vs 255 raw, but
+    // real soil doesn't dissolve into water on contact).  Blocking liquid
+    // displacement prevents the "standing waves" artifact where cascading soil
+    // churns a pool indefinitely.  Soil rests on water's surface instead.
     let below = chunk.get_with_ghost(lx, ly + 1);
-    if below.density() < cell.density() {
+    if below.density() < cell.density() && !below.is_liquid() {
         write_swap(chunk, x, y, cell, lx, ly + 1, below);
         return true;
     }
@@ -65,7 +70,9 @@ pub fn powder_fall(chunk: &mut Chunk, x: usize, y: usize, cell: Cell,
     for dx in &sides {
         let side = chunk.get_with_ghost(lx + dx, ly);
         let diag = chunk.get_with_ghost(lx + dx, ly + 1);
-        if side.density() < cell.density() && diag.density() < cell.density() {
+        if side.density() < cell.density() && !side.is_liquid()
+            && diag.density() < cell.density() && !diag.is_liquid()
+        {
             write_swap(chunk, x, y, cell, lx + dx, ly + 1, diag);
             return true;
         }

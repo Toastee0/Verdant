@@ -14,6 +14,65 @@
 pub mod camera;
 pub mod cell_color;
 
+// ── Sprite frame ──────────────────────────────────────────────────────────────
+
+/// One frame of a sprite atlas to draw this tick.
+///
+/// `col` / `row` index into the atlas grid (0-based).
+/// The atlas is 16 columns × 14 rows (lemming_anim.png).
+/// `x`, `y` = world-space top-left corner of the sprite quad (in cells).
+/// `w`, `h` = world-space size of the sprite quad (in cells).
+/// `flip_x`  = mirror horizontally (left-facing sprites).
+pub struct SpriteFrame {
+    pub col:    u32,
+    pub row:    u32,
+    pub x:      f32,
+    pub y:      f32,
+    pub w:      f32,
+    pub h:      f32,
+    pub flip_x: bool,
+}
+
+/// Atlas dimensions — lemming_anim.png is 16 × 14 frames.
+const ATLAS_COLS: f32 = 16.0;
+const ATLAS_ROWS: f32 = 14.0;
+
+/// GPU-side uniform for one sprite draw call.
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct SpriteUniform {
+    rect:    [f32; 4], // x, y, w, h world cells
+    uv_rect: [f32; 4], // u0, v0, u1, v1 atlas UV
+    flip_x:  f32,
+    _pad:    [f32; 3],
+}
+
+// ── Entity rect ───────────────────────────────────────────────────────────────
+
+/// A world-space rectangle to draw as a solid color overlay (entities, debug).
+///
+/// Coordinates are in world cells (same space as the simulation).
+/// Color is linear RGBA (not gamma-encoded / sRGB). The entity shader handles
+/// the surface format, so pass values in [0.0, 1.0] linear space.
+pub struct EntityRect {
+    pub x: f32,
+    pub y: f32,
+    pub w: f32,
+    pub h: f32,
+    pub color: [f32; 4], // RGBA linear
+}
+
+/// GPU-side representation of EntityRect. Uploaded to the entity uniform buffer.
+///
+/// #[repr(C)]  — same as C struct: no field reordering, explicit layout.
+/// Pod + Zeroable — required by bytemuck::bytes_of() for safe cast to &[u8].
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct EntityUniform {
+    rect:  [f32; 4], // x, y, w, h
+    color: [f32; 4], // RGBA
+}
+
 use std::collections::HashMap;
 use verdant_sim::cell::Cell;
 use verdant_sim::chunk::{ChunkCoord, CHUNK_WIDTH, CHUNK_HEIGHT};
@@ -88,6 +147,23 @@ pub struct Renderer {
     /// ChunkInstance (8 bytes) and gets rewritten for each chunk
     /// draw call. Creating buffers per-frame was the #1 perf hazard.
     instance_buffer:     wgpu::Buffer,
+
+    // ── Entity pipeline (solid-color rect overlay) ────────────────────────
+    entity_pipeline:          wgpu::RenderPipeline,
+    entity_uniform_buf:       wgpu::Buffer,
+    entity_bind_group:        wgpu::BindGroup,
+    #[allow(dead_code)]
+    entity_bind_group_layout: wgpu::BindGroupLayout,
+
+    // ── Sprite pipeline (textured atlas quads) ────────────────────────────
+    sprite_pipeline:          wgpu::RenderPipeline,
+    sprite_uniform_buf:       wgpu::Buffer,
+    sprite_uniform_bind:      wgpu::BindGroup,   // group 1: SpriteUniform
+    sprite_atlas_bind:        wgpu::BindGroup,   // group 2: texture + sampler
+    #[allow(dead_code)]
+    sprite_uniform_layout:    wgpu::BindGroupLayout,
+    #[allow(dead_code)]
+    sprite_atlas_layout:      wgpu::BindGroupLayout,
 }
 
 impl Renderer {
@@ -320,6 +396,266 @@ impl Renderer {
             mapped_at_creation: false,
         });
 
+        // ── Entity pipeline ───────────────────────────────────────────────
+        //
+        // Draws solid-color rectangles on top of the chunk layer.
+        // Group 0 = camera (shared with chunk pipeline).
+        // Group 1 = EntityData uniform (rect + color, 32 bytes).
+        // No vertex buffer — positions computed from vertex_index + rect.
+
+        let entity_shader_src = include_str!("../../../assets/shaders/entity.wgsl");
+        let entity_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("entity-shader"),
+            source: wgpu::ShaderSource::Wgsl(entity_shader_src.into()),
+        });
+
+        // Bind group layout for group 1: one uniform buffer (EntityData).
+        // Visible to both VERTEX (reads rect) and FRAGMENT (reads color).
+        let entity_bind_group_layout = device.create_bind_group_layout(
+            &wgpu::BindGroupLayoutDescriptor {
+                label: Some("entity-bind-layout"),
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+            },
+        );
+
+        // 32-byte uniform buffer: rect (4 floats) + color (4 floats).
+        // COPY_DST so we can queue.write_buffer() it each entity each frame.
+        let entity_uniform_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("entity-uniform"),
+            size: std::mem::size_of::<EntityUniform>() as u64, // 32 bytes
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let entity_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("entity-bind-group"),
+            layout: &entity_bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: entity_uniform_buf.as_entire_binding(),
+            }],
+        });
+
+        // Pipeline layout: group 0 = camera (same as chunk), group 1 = entity data.
+        let entity_pipeline_layout = device.create_pipeline_layout(
+            &wgpu::PipelineLayoutDescriptor {
+                label: Some("entity-pipeline-layout"),
+                bind_group_layouts: &[&camera_bind_layout, &entity_bind_group_layout],
+                push_constant_ranges: &[],
+            },
+        );
+
+        let entity_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("entity-pipeline"),
+            layout: Some(&entity_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &entity_shader,
+                entry_point: Some("vs_main"),
+                // No vertex buffer — vs_main uses @builtin(vertex_index).
+                buffers: &[],
+                compilation_options: Default::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &entity_shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    // Alpha blend so entities can be semi-transparent later.
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: Default::default(),
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                strip_index_format: None,
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: None,
+                polygon_mode: wgpu::PolygonMode::Fill,
+                unclipped_depth: false,
+                conservative: false,
+            },
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState::default(),
+            multiview: None,
+            cache: None,
+        });
+
+        // ── Sprite pipeline ───────────────────────────────────────────────
+        //
+        // Group 0: camera (reused from chunk pipeline — same layout)
+        // Group 1: SpriteUniform (rect, uv_rect, flip_x) — written per sprite
+        // Group 2: atlas texture + sampler
+
+        // Decode lemming_anim.png at compile time → raw RGBA pixels
+        let atlas_png_bytes = include_bytes!("../../../assets/sprites/lemming_anim.png");
+        let (atlas_rgba, atlas_w, atlas_h) = {
+            let decoder = png::Decoder::new(atlas_png_bytes.as_slice());
+            let mut reader = decoder.read_info().expect("png decode failed");
+            let mut buf = vec![0u8; reader.output_buffer_size()];
+            let info = reader.next_frame(&mut buf).expect("png frame failed");
+            let w = info.width;
+            let h = info.height;
+            // Convert RGB → RGBA if needed
+            let rgba: Vec<u8> = match info.color_type {
+                png::ColorType::Rgb => buf[..info.buffer_size()]
+                    .chunks(3)
+                    .flat_map(|c| [c[0], c[1], c[2], 255u8])
+                    .collect(),
+                png::ColorType::Rgba => buf[..info.buffer_size()].to_vec(),
+                _ => panic!("unsupported png color type"),
+            };
+            (rgba, w, h)
+        };
+
+        let atlas_texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("sprite-atlas"),
+            size: wgpu::Extent3d { width: atlas_w, height: atlas_h, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &atlas_texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &atlas_rgba,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(atlas_w * 4),
+                rows_per_image: Some(atlas_h),
+            },
+            wgpu::Extent3d { width: atlas_w, height: atlas_h, depth_or_array_layers: 1 },
+        );
+        let atlas_view = atlas_texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        let sprite_atlas_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("sprite-atlas-layout"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture {
+                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                        view_dimension: wgpu::TextureViewDimension::D2,
+                        multisampled: false,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
+                    count: None,
+                },
+            ],
+        });
+
+        // Nearest-neighbour sampler for pixel-art sprites — same as chunk sampler
+        let sprite_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("sprite-sampler"),
+            mag_filter: wgpu::FilterMode::Nearest,
+            min_filter: wgpu::FilterMode::Nearest,
+            ..Default::default()
+        });
+
+        let sprite_atlas_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("sprite-atlas-bind"),
+            layout: &sprite_atlas_layout,
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) },
+                wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&sprite_sampler) },
+            ],
+        });
+
+        let sprite_uniform_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("sprite-uniform-layout"),
+            entries: &[wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer {
+                    ty: wgpu::BufferBindingType::Uniform,
+                    has_dynamic_offset: false,
+                    min_binding_size: None,
+                },
+                count: None,
+            }],
+        });
+
+        let sprite_uniform_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("sprite-uniform"),
+            size: std::mem::size_of::<SpriteUniform>() as u64,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
+        let sprite_uniform_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("sprite-uniform-bind"),
+            layout: &sprite_uniform_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: sprite_uniform_buf.as_entire_binding(),
+            }],
+        });
+
+        let sprite_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("sprite-shader"),
+            source: wgpu::ShaderSource::Wgsl(
+                include_str!("../../../assets/shaders/sprite.wgsl").into()
+            ),
+        });
+
+        let sprite_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("sprite-pipeline-layout"),
+            bind_group_layouts: &[&camera_bind_layout, &sprite_uniform_layout, &sprite_atlas_layout],
+            push_constant_ranges: &[],
+        });
+
+        let sprite_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("sprite-pipeline"),
+            layout: Some(&sprite_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &sprite_shader,
+                entry_point: Some("vs_main"),
+                buffers: &[], // no vertex buffer — built from vertex_index
+                compilation_options: Default::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &sprite_shader,
+                entry_point: Some("fs_main"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: Default::default(),
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                cull_mode: None,
+                ..Default::default()
+            },
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState::default(),
+            multiview: None,
+            cache: None,
+        });
+
         Renderer {
             surface,
             device,
@@ -334,6 +670,16 @@ impl Renderer {
             chunk_textures: HashMap::new(),
             pixel_buf: vec![0u8; CHUNK_WIDTH * CHUNK_HEIGHT * 4],
             instance_buffer,
+            entity_pipeline,
+            entity_uniform_buf,
+            entity_bind_group,
+            entity_bind_group_layout,
+            sprite_pipeline,
+            sprite_uniform_buf,
+            sprite_uniform_bind,
+            sprite_atlas_bind,
+            sprite_uniform_layout,
+            sprite_atlas_layout,
         }
     }
 
@@ -432,11 +778,13 @@ impl Renderer {
 
     // ── Frame rendering ───────────────────────────────────────────────────
 
-    /// Render one frame: draw all chunks that have uploaded textures.
+    /// Render one frame: draw all chunks that have uploaded textures, then
+    /// overlay entity rectangles on top.
     ///
     /// `camera` provides the view-projection matrix and viewport culling.
     /// Chunks outside the viewport are skipped (no draw call emitted).
-    pub fn present(&mut self, camera: &Camera) {
+    /// `entities` is a slice of world-space colored rectangles drawn after chunks.
+    pub fn present(&mut self, camera: &Camera, entities: &[EntityRect], sprites: &[SpriteFrame]) {
         // Upload camera matrix to GPU.
         let matrix = camera.view_proj_matrix();
         self.queue.write_buffer(
@@ -513,6 +861,89 @@ impl Renderer {
                 render_pass.set_bind_group(1, &gpu_data.bind_group, &[]);
                 render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
                 render_pass.draw(0..QUAD_VERTICES.len() as u32, 0..1);
+            }
+        }
+
+        // ── Entity pass: solid-color rects drawn on top of chunks ─────────
+        //
+        // LoadOp::Load preserves the chunk pixels — we draw on top rather than
+        // clearing to the background color again.
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("entity-pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load:  wgpu::LoadOp::Load,    // preserve chunk pixels beneath
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+
+            pass.set_pipeline(&self.entity_pipeline);
+            pass.set_bind_group(0, &self.camera_bind_group, &[]);
+
+            for ent in entities {
+                // Upload this entity's rect + color to the 32-byte uniform buffer.
+                // We reuse a single buffer, writing it before each draw call.
+                // This is fine because submit() happens after all passes — the GPU
+                // hasn't consumed the buffer yet at write time.
+                let uniform = EntityUniform {
+                    rect:  [ent.x, ent.y, ent.w, ent.h],
+                    color: ent.color,
+                };
+                self.queue.write_buffer(
+                    &self.entity_uniform_buf,
+                    0,
+                    bytemuck::bytes_of(&uniform),
+                );
+                pass.set_bind_group(1, &self.entity_bind_group, &[]);
+                // 6 vertices (2 triangles), 1 instance.
+                pass.draw(0..6, 0..1);
+            }
+        }
+
+        // ── Sprite pass: textured atlas quads drawn on top of entities ────
+        if !sprites.is_empty() {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("sprite-pass"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load:  wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    },
+                })],
+                depth_stencil_attachment: None,
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+
+            pass.set_pipeline(&self.sprite_pipeline);
+            pass.set_bind_group(0, &self.camera_bind_group, &[]);
+            pass.set_bind_group(2, &self.sprite_atlas_bind, &[]);
+
+            for spr in sprites {
+                let u0 = spr.col as f32 / ATLAS_COLS;
+                let v0 = spr.row as f32 / ATLAS_ROWS;
+                let u1 = (spr.col + 1) as f32 / ATLAS_COLS;
+                let v1 = (spr.row + 1) as f32 / ATLAS_ROWS;
+                let uniform = SpriteUniform {
+                    rect:    [spr.x, spr.y, spr.w, spr.h],
+                    uv_rect: [u0, v0, u1, v1],
+                    flip_x:  if spr.flip_x { 1.0 } else { 0.0 },
+                    _pad:    [0.0; 3],
+                };
+                self.queue.write_buffer(
+                    &self.sprite_uniform_buf, 0, bytemuck::bytes_of(&uniform),
+                );
+                pass.set_bind_group(1, &self.sprite_uniform_bind, &[]);
+                pass.draw(0..6, 0..1);
             }
         }
 

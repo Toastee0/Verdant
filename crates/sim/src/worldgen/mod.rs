@@ -38,6 +38,7 @@
 
 pub mod noise;
 pub mod geology;
+pub mod maptiles;
 
 use crate::chunk::{Chunk, ChunkCoord, CHUNK_WIDTH, CHUNK_HEIGHT};
 use noise::WorldNoise;
@@ -64,7 +65,7 @@ pub fn generate(coord: ChunkCoord) -> Chunk {
     let noise = world_noise();
     let mut chunk = Chunk::new(coord);
 
-    // Special case: lava core (below the simulated world)
+    // Special case: lava core (below the simulated world) — no maptiles here
     if coord.cy >= LAVA_CORE_DEPTH_CHUNKS {
         generate_lava_core(&mut chunk);
         return chunk;
@@ -73,22 +74,25 @@ pub fn generate(coord: ChunkCoord) -> Chunk {
     // Special case: machine pocket chunk
     if coord.cx == 0 && coord.cy == MACHINE_POCKET_CY {
         carve_machine_pocket(&mut chunk, &noise);
-        return chunk;
-    }
+    } else {
+        // Normal generation: iterate every cell in the chunk
+        let sec = sector(coord.cx);
+        let wx0 = coord.cx * CHUNK_WIDTH as i32;
+        let wy0 = coord.cy * CHUNK_HEIGHT as i32;
 
-    // Normal generation: iterate every cell in the chunk
-    let sec = sector(coord.cx);
-    let wx0 = coord.cx * CHUNK_WIDTH as i32;
-    let wy0 = coord.cy * CHUNK_HEIGHT as i32;
-
-    for ly in 0..CHUNK_HEIGHT {
-        for lx in 0..CHUNK_WIDTH {
-            let wx = wx0 + lx as i32;
-            let wy = wy0 + ly as i32;
-            let cell = generate_cell(wx, wy, sec, &noise);
-            chunk.set_front(lx, ly, cell);
+        for ly in 0..CHUNK_HEIGHT {
+            for lx in 0..CHUNK_WIDTH {
+                let wx = wx0 + lx as i32;
+                let wy = wy0 + ly as i32;
+                let cell = generate_cell(wx, wy, sec, &noise);
+                chunk.set_front(lx, ly, cell);
+            }
         }
     }
+
+    // Stamp any hand-authored tiles that belong in this chunk.
+    // Runs after geology so tiles override worldgen, not the other way around.
+    maptiles::stamp_if_needed(&mut chunk, coord);
 
     chunk
 }

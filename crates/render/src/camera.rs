@@ -51,14 +51,14 @@ impl Camera {
         self.y -= dy / self.zoom;
     }
 
-    /// Multiply zoom by `factor`. Clamped to [0.25, 8.0].
+    /// Multiply zoom by `factor`. Clamped to [0.5, 32.0].
     pub fn zoom_by(&mut self, factor: f32) {
-        self.zoom = (self.zoom * factor).clamp(0.25, 8.0);
+        self.zoom = (self.zoom * factor).clamp(0.5, 32.0);
     }
 
-    /// Set zoom to an exact level. Clamped to [0.25, 8.0].
+    /// Set zoom to an exact level. Clamped to [0.5, 32.0].
     pub fn set_zoom(&mut self, z: f32) {
-        self.zoom = z.clamp(0.25, 8.0);
+        self.zoom = z.clamp(0.5, 32.0);
     }
 
     /// Half-width of the visible area in world pixels.
@@ -99,9 +99,9 @@ impl Camera {
         //
         // wgpu uses clip space z in [0, 1] (not [-1, 1] like OpenGL).
         let sx = 2.0 / (right - left);
-        let sy = 2.0 / (bottom - top);
+        let sy = -2.0 / (bottom - top); // negate: world Y-down → clip Y-up
         let tx = -(right + left) / (right - left);
-        let ty = -(bottom + top) / (bottom - top);
+        let ty =  (bottom + top) / (bottom - top);
 
         // Column-major: columns are contiguous in memory.
         // Column 0: [sx, 0, 0, 0]

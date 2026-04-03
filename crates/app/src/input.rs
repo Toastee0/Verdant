@@ -160,6 +160,22 @@ impl Default for TankInput {
     fn default() -> Self { Self::new() }
 }
 
+// ── Walker input ──────────────────────────────────────────────────────────────
+
+/// Input slice consumed by the walker entity each frame.
+///
+/// Filled from keyboard (arrows/space) and gamepad (left stick X + A).
+/// Independent of active_vehicle — the walker always accepts input so the
+/// player can move around regardless of which vehicle they're operating.
+pub struct WalkerInput {
+    /// Horizontal move: -1.0 = full left, 0.0 = stopped, 1.0 = full right.
+    pub move_x: f32,
+
+    /// Set true on the single frame that jump is pressed. Cleared in begin_frame().
+    /// This is a "just pressed" flag — holding the key does NOT re-trigger a jump.
+    pub jump_just_pressed: bool,
+}
+
 // ── Unified InputState ────────────────────────────────────────────────────────
 //
 // The game loop reads this. Both keyboard and gamepad write into it.
@@ -168,6 +184,9 @@ pub struct InputState {
     pub active_vehicle: ActiveVehicle,
     pub pod:  PodInput,
     pub tank: TankInput,
+
+    /// Walker input — always populated regardless of active_vehicle.
+    pub walker: WalkerInput,
 
     /// Camera look-ahead offset from right stick (both vehicles).
     /// In world-pixel units, scaled by some look-ahead distance.
@@ -209,6 +228,7 @@ impl InputState {
             active_vehicle: ActiveVehicle::Pod,
             pod:  PodInput::new(),
             tank: TankInput::new(),
+            walker: WalkerInput { move_x: 0.0, jump_just_pressed: false },
             camera_offset_x: 0.0,
             camera_offset_y: 0.0,
             zoom_delta: 0.0,
@@ -229,6 +249,9 @@ impl InputState {
         self.tank.payload_cycle = 0;
         self.tank.tow_toggle = false;
         self.tank.interact = false;
+        // Walker jump is a "just pressed" flag — clear it at frame start so
+        // holding the key doesn't keep triggering jumps.
+        self.walker.jump_just_pressed = false;
     }
 
     // ── Keyboard input ────────────────────────────────────────────────────
@@ -240,7 +263,15 @@ impl InputState {
             KeyCode::KeyS | KeyCode::ArrowDown  => self.keys_held.down  = pressed,
             KeyCode::KeyA | KeyCode::ArrowLeft  => self.keys_held.left  = pressed,
             KeyCode::KeyD | KeyCode::ArrowRight => self.keys_held.right = pressed,
-            KeyCode::Space                      => self.keys_held.fire  = pressed,
+            KeyCode::Space => {
+                self.keys_held.fire = pressed;
+                // Walker jump fires on the press edge only, not while held.
+                // begin_frame() clears jump_just_pressed each frame, so this
+                // single assignment is the entire "just pressed" mechanism.
+                if pressed {
+                    self.walker.jump_just_pressed = true;
+                }
+            }
             KeyCode::KeyE                       => self.keys_held.drill = pressed,
             KeyCode::KeyQ if pressed            => self.switch_vehicle_pressed = true,
             KeyCode::Escape if pressed          => self.pause_pressed = true,
@@ -253,6 +284,14 @@ impl InputState {
     /// Apply held keyboard state to the active vehicle's input.
     /// Call once per frame after all key events have been processed.
     pub fn apply_keyboard_held(&mut self) {
+        // Walker move_x is always set from left/right keys — independent of
+        // which vehicle is active. The walker is always controllable.
+        self.walker.move_x = match (self.keys_held.left, self.keys_held.right) {
+            (true, false) => -1.0,
+            (false, true) =>  1.0,
+            _ => 0.0,
+        };
+
         match self.active_vehicle {
             ActiveVehicle::Pod => {
                 // D-pad left/right → rotation direction.
@@ -316,6 +355,16 @@ impl InputState {
             // 100.0 = max offset when stick is fully deflected.
             self.camera_offset_x = rsx * 100.0;
             self.camera_offset_y = -rsy * 100.0; // invert Y (stick up = world up = -y)
+
+            // ── Walker: left stick X (always, regardless of vehicle) ──────
+            // Walker input is independent of active_vehicle. Even while flying
+            // the pod the player's feet are somewhere.
+            let (lsx, _) = apply_deadzone(
+                gamepad.value(Axis::LeftStickX),
+                gamepad.value(Axis::LeftStickY),
+                DEADZONE,
+            );
+            self.walker.move_x = lsx;
 
             match self.active_vehicle {
                 ActiveVehicle::Pod => {
@@ -397,8 +446,10 @@ impl InputState {
                 }
             }
 
-            // A (South) = interact (tank only).
+            // A (South) = jump (walker always) + interact (tank).
+            // Walker gets jump regardless of which vehicle is active.
             Button::South if pressed => {
+                self.walker.jump_just_pressed = true;
                 if self.active_vehicle == ActiveVehicle::Tank {
                     self.tank.interact = true;
                 }
