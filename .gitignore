@@ -17,5 +17,8 @@ Thumbs.db
 # Test output / visual inspection dumps
 test_output/
 
+# Compiled binaries
+*.exe
+
 # Cargo.lock is intentionally committed for binary crates (this is a game).
 # See: https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargo.lock-in-version-control-but-not-libraries
