@@ -19,3 +19,4 @@ test_output/
 
 # Cargo.lock is intentionally committed for binary crates (this is a game).
 # See: https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargo.lock-in-version-control-but-not-libraries
+.claire/
