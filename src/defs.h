@@ -24,6 +24,32 @@
 #define FLAG_STICKY    0x80
 #define CELL_TYPE(c)   ((c) & 0x7F)
 
+// ── World cell ─────────────────────────────────────────────────────────────
+// 4 bytes per cell. type uses the same CELL_* / FLAG_STICKY encoding as before.
+// water: 0–255 liquid amount (only meaningful when type == CELL_AIR).
+// temp:  0–255, initialised to 128 (ambient); reserved for thermal sim.
+// vector: 0–255, initialised to 0; reserved for flow/force direction.
+typedef struct {
+    uint8_t type;    // CELL_AIR/STONE/DIRT/PLATFORM + FLAG_STICKY in bit 7
+    uint8_t water;   // 0–255 water amount
+    uint8_t temp;    // 0–255 temperature (128 = ambient)
+    uint8_t vector;  // reserved
+} Cell;
+
+// === BLOB PRESSURE SIM ===
+// A blob is a connected region of CELL_AIR cells (4-connectivity).
+// blob_id[WORLD_W*WORLD_H] maps each cell to its owning blob (BLOB_NONE=unassigned/solid).
+#define MAX_BLOBS  2048
+#define BLOB_NONE  0    // sentinel: solid or unassigned cell
+
+typedef struct {
+    float   water_sum;  // total water amount across all cells in this blob
+    float   volume;     // cell count
+    uint8_t sealed;     // 1=fully enclosed by solid (no world-boundary contact)
+    int     dirty;      // 1=topology changed, needs re-flood-fill before next tick
+    int     active;     // 1=slot in use
+} Blob;
+
 // === PLAYER ===
 #define CHAR_W  4
 #define CHAR_H  8

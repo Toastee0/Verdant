@@ -4,6 +4,7 @@
 #include "world.h"
 #include "sim/dirt.h"
 #include "sim/water.h"
+#include "sim/blob.h"
 #include "player.h"
 #include "rover.h"
 #include "rover_arm.h"
@@ -14,9 +15,12 @@ int main(void) {
     InitWindow(0, 0, "VERDANT F1 — Scaled Canvas");
 
     // ── World ─────────────────────────────────────────────────────────────
-    static uint8_t world[WORLD_W * WORLD_H];
-    static uint8_t water[WORLD_W * WORLD_H];   // parallel water-amount array (0..255)
-    terrain_generate(world, water);
+    static Cell     cells[WORLD_W * WORLD_H];
+    static Blob     blobs[MAX_BLOBS];
+    static uint16_t blob_id[WORLD_W * WORLD_H];
+    static int      blob_count;
+    terrain_generate(cells);
+    blob_init(cells, blobs, blob_id, &blob_count);
 
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
     Texture2D worldTex = LoadTextureFromImage(worldImg);
@@ -72,10 +76,11 @@ int main(void) {
         if (inp.quit)              break;
 
         // ── Dirt + water simulation ────────────────────────────────────────
-        tick_dirt(world, frame & 1);
-        tick_water(world, water, frame & 1);
-        tick_water(world, water, (frame + 1) & 1);
-        tick_water(world, water, frame & 1);
+        tick_dirt(cells, frame & 1);
+        blob_update(cells, blobs, blob_id, &blob_count);
+        tick_water(cells, blob_id, frame & 1);
+        tick_water(cells, blob_id, (frame + 1) & 1);
+        tick_water(cells, blob_id, frame & 1);
 
         // ── Rover enter / exit (F key) ─────────────────────────────────────
         float pcx_f = player.x + CHAR_W  * 0.5f;
@@ -93,7 +98,7 @@ int main(void) {
                 float ey   = rover.y + ROVER_H - CHAR_H;
                 float exit_x = (rover.facing > 0) ? ex_r : ex_l;
                 float alt_x  = (rover.facing > 0) ? ex_l : ex_r;
-                if (box_solid_ex(world, exit_x, ey, CHAR_W, CHAR_H, 0))
+                if (box_solid_ex(cells, exit_x, ey, CHAR_W, CHAR_H, 0))
                     exit_x = alt_x;
                 player.x      = exit_x;
                 player.y      = ey;
@@ -115,7 +120,7 @@ int main(void) {
             arm.ammo_type = (arm.ammo_type + 1) % AMMO_COUNT;
 
         // ── Rover physics ──────────────────────────────────────────────────
-        rover_update(&rover, world,
+        rover_update(&rover, cells,
                      inp.move_left, inp.move_right, inp.do_fall);
 
         // ── Arm + projectile ──────────────────────────────────────────────
@@ -123,15 +128,20 @@ int main(void) {
             arm_update(&arm, &rover, inp.angle_delta, inp.power_delta);
             if (inp.do_fire) arm_fire(&arm, &proj, &rover);
         }
-        proj_update(&proj, world);
+        {
+            int was_active = proj.active;
+            int proj_ix = (int)proj.x, proj_iy = (int)proj.y;
+            proj_update(&proj, cells);
+            if (was_active && !proj.active)
+                blob_mark_dirty(blobs, blob_id, proj_ix, proj_iy);
+        }
 
         // ── Player physics (on foot only) ──────────────────────────────────
         if (!rover.in_rover) {
-            player_update(&player, world,
+            player_update(&player, cells,
                           inp.move_left, inp.move_right,
                           inp.do_jump, inp.do_fall);
 
-            // Mouse facing: player faces cursor in mouse mode
             if (inp.input_mode == 0)
                 player.facing = (inp.mouse_wx >= (int)(player.x + CHAR_W * 0.5f)) ? 1 : -1;
         }
@@ -144,16 +154,14 @@ int main(void) {
             int   pr2  = PICKUP_RADIUS * PICKUP_RADIUS;
 
             if (inp.input_mode == 0) {
-                // Mouse mode: hover cell under cursor within pickup radius
                 if (inp.mouse_wx >= 0 && inp.mouse_wx < WORLD_W &&
                     inp.mouse_wy >= 0 && inp.mouse_wy < WORLD_H) {
                     float dx = inp.mouse_wx - pcx, dy = inp.mouse_wy - pcy;
                     if (dx*dx + dy*dy <= (float)pr2 &&
-                        CELL_TYPE(world[inp.mouse_wy * WORLD_W + inp.mouse_wx]) != CELL_AIR)
+                        CELL_TYPE(cells[inp.mouse_wy * WORLD_W + inp.mouse_wx].type) != CELL_AIR)
                         { sel_wx = inp.mouse_wx; sel_wy = inp.mouse_wy; }
                 }
             } else {
-                // Gamepad mode: nearest dirt cell in facing direction within pickup radius
                 float best = (float)(pr2 + 1);
                 int bx0 = (int)pcx - PICKUP_RADIUS, bx1 = (int)pcx + PICKUP_RADIUS;
                 int by0 = (int)pcy - PICKUP_RADIUS, by1 = (int)pcy + PICKUP_RADIUS;
@@ -164,7 +172,7 @@ int main(void) {
                         if (dx * player.facing < 0.0f) continue;
                         float d2 = dx*dx + dy*dy;
                         if (d2 > (float)pr2 || d2 >= best) continue;
-                        if (CELL_TYPE(world[wy * WORLD_W + wx]) == CELL_DIRT)
+                        if (CELL_TYPE(cells[wy * WORLD_W + wx].type) == CELL_DIRT)
                             { best = d2; sel_wx = wx; sel_wy = wy; }
                     }
                 }
@@ -175,12 +183,13 @@ int main(void) {
             if (inp.dig_just || (inp.dig_held && dig_timer <= 0.0)) {
                 if (inp.dig_just || dig_timer <= 0.0) dig_timer = DIG_REPEAT_MS / 1000.0;
                 if (sel_wx >= 0 && player.inv_dirt < INV_MAX &&
-                    CELL_TYPE(world[sel_wy * WORLD_W + sel_wx]) == CELL_DIRT) {
-                    world[sel_wy * WORLD_W + sel_wx] = CELL_AIR;
+                    CELL_TYPE(cells[sel_wy * WORLD_W + sel_wx].type) == CELL_DIRT) {
+                    cells[sel_wy * WORLD_W + sel_wx].type = CELL_AIR;
                     player.inv_dirt++;
-                    unstick(world, sel_wx,     sel_wy - 1);
-                    unstick(world, sel_wx - 1, sel_wy - 1);
-                    unstick(world, sel_wx + 1, sel_wy - 1);
+                    unstick(cells, sel_wx,     sel_wy - 1);
+                    unstick(cells, sel_wx - 1, sel_wy - 1);
+                    unstick(cells, sel_wx + 1, sel_wy - 1);
+                    blob_mark_dirty(blobs, blob_id, sel_wx, sel_wy);
                 }
             }
 
@@ -188,10 +197,11 @@ int main(void) {
             if (inp.place_just) {
                 int wx = inp.mouse_wx, wy = inp.mouse_wy;
                 if (wx >= 0 && wx < WORLD_W && wy >= 0 && wy < WORLD_H) {
-                    if (CELL_TYPE(world[wy * WORLD_W + wx]) == CELL_AIR &&
+                    if (CELL_TYPE(cells[wy * WORLD_W + wx].type) == CELL_AIR &&
                         player.inv_dirt > 0) {
-                        world[wy * WORLD_W + wx] = CELL_DIRT;
+                        cells[wy * WORLD_W + wx].type = CELL_DIRT;
                         player.inv_dirt--;
+                        blob_mark_dirty(blobs, blob_id, wx, wy);
                     }
                 }
             }
@@ -199,8 +209,8 @@ int main(void) {
 
         // ── Render ────────────────────────────────────────────────────────
         Color *pixels = worldImg.data;
-        render_world_to_pixels(pixels, world, water);
-        render_rover_to_pixels(pixels, world, &rover, &arm, &proj);
+        render_world_to_pixels(pixels, cells);
+        render_rover_to_pixels(pixels, cells, &rover, &arm, &proj);
         if (!rover.in_rover)
             render_player_to_pixels(pixels, &player);
         UpdateTexture(worldTex, pixels);
@@ -214,7 +224,7 @@ int main(void) {
                              (float)scaledW, (float)scaledH},
                 (Vector2){0, 0}, 0.0f, WHITE
             );
-            render_screen_overlay(&player, &rover, &arm, &proj, world,
+            render_screen_overlay(&player, &rover, &arm, &proj, cells,
                                   sel_wx, sel_wy, show_debug, near_rover,
                                   inp.input_mode,
                                   offsetX, offsetY, scaledW, scaledH, scale);

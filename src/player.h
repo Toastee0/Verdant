@@ -18,5 +18,5 @@ typedef struct {
 // move_left/move_right: directional input flags
 // do_jump: jump pressed this frame (edge-triggered)
 // do_fall: fall-through pressed (held; S or Down)
-void player_update(PlayerState *p, const uint8_t *world,
+void player_update(PlayerState *p, const Cell *cells,
                    int move_left, int move_right, int do_jump, int do_fall);

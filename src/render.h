@@ -9,14 +9,14 @@
 // Write all terrain cells to the pixel buffer.
 // Water is read from the parallel water[] amount array (0..255 per cell).
 // Surface water (full cell, partial above) renders bright; deep water renders dark.
-void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water);
+void render_world_to_pixels(Color *pixels, const Cell *cells);
 
 // Write player sprite into the pixel buffer (skip when in_rover).
 void render_player_to_pixels(Color *pixels, const PlayerState *p);
 
 // Write rover sprite (slope-sheared) into the pixel buffer.
 // Also draws the arm line when in_rover, and the projectile dot when active.
-void render_rover_to_pixels(Color *pixels, const uint8_t *world,
+void render_rover_to_pixels(Color *pixels, const Cell *cells,
                              const RoverState *r, const ArmState *a,
                              const ProjState *proj);
 
@@ -28,7 +28,7 @@ void render_rover_to_pixels(Color *pixels, const uint8_t *world,
 // near_rover: player is within entry range but not in rover
 void render_screen_overlay(const PlayerState *p, const RoverState *r,
                             const ArmState *a, const ProjState *proj,
-                            const uint8_t *world,
+                            const Cell *cells,
                             int sel_wx, int sel_wy,
                             int show_debug, int near_rover, int input_mode,
                             int offsetX, int offsetY,

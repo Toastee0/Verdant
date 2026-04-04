@@ -15,9 +15,10 @@ sprites.h     ← defs.h
 noise         ← defs.h
 world         ← defs.h
 sim/dirt      ← defs.h, world.h
+sim/blob      ← defs.h
 sim/water     ← defs.h
 sim/impact    ← defs.h, sim/water.h
-terrain       ← defs.h, noise.h, sim/water.h
+terrain       ← defs.h, noise.h
 input         ← defs.h, raylib
 player        ← defs.h, world.h
 rover         ← defs.h, world.h, sprites.h
@@ -36,21 +37,47 @@ No functions. Exports only `#define` constants and the `CELL_TYPE` macro.
 ```c
 WORLD_W = 480          // world width in pixels
 WORLD_H = 270          // world height in pixels
-CELL_AIR     = 0
-CELL_STONE   = 1
-CELL_DIRT    = 2
+CELL_AIR      = 0
+CELL_STONE    = 1
+CELL_DIRT     = 2
 CELL_PLATFORM = 3      // one-way: solid from above only
-// NOTE: CELL_WATER removed — water is now a parallel uint8_t water[] amount array
-FLAG_STICKY  = 0x80    // bit 7 of cell byte: dirt won't fall
-CELL_TYPE(c) = (c) & 0x7F   // mask flags to get type
+FLAG_STICKY   = 0x80   // bit 7 of Cell.type: dirt won't fall
+CELL_TYPE(c)  = (c) & 0x7F   // mask flags to get type
 ```
 
-**Water amount thresholds** (for the parallel `water[]` array)
+**Cell struct** (4 bytes per world cell, in `cells[WORLD_W * WORLD_H]`)
+```c
+typedef struct {
+    uint8_t type;    // CELL_* constant + FLAG_STICKY in bit 7
+    uint8_t water;   // 0–255 liquid amount (only meaningful when type == CELL_AIR)
+    uint8_t temp;    // 0–255 temperature; initialised to 128 (ambient); reserved
+    uint8_t vector;  // reserved; initialised to 0
+} Cell;
+```
+
+**Water amount thresholds** (on `Cell.water`)
 ```c
 WATER_DRY      = 0     // completely dry
 WATER_DAMP     = 8     // below this: render as dry air
 WATER_SHALLOW  = 64    // below this: surface/shallow color
 WATER_FULL     = 200   // at or above: solid saturated water color
+```
+
+**Blob pressure constants**
+```c
+MAX_BLOBS = 2048       // max simultaneous connected air regions
+BLOB_NONE = 0          // sentinel: solid cell or unassigned
+```
+
+**Blob struct** (in `blobs[MAX_BLOBS]`, alongside `blob_id[WORLD_W*WORLD_H]`)
+```c
+typedef struct {
+    float   water_sum;  // total Cell.water across all cells in this blob
+    float   volume;     // cell count
+    uint8_t sealed;     // 1=enclosed by solid (no world-boundary contact)
+    int     dirty;      // 1=topology changed; blob_update will re-flood-fill
+    int     active;     // 1=slot in use
+} Blob;
 ```
 
 **Player constants**
@@ -127,11 +154,11 @@ float spike(float x, float p)
 Read-only queries against the world array.
 
 ```c
-int ground_y_at(const uint8_t *w, int wx, int start_y)
+int ground_y_at(const Cell *cells, int wx, int start_y)
     // Scan down from start_y; return y of first CELL_STONE or CELL_DIRT cell.
     // Returns start_y if wx out of bounds, WORLD_H if nothing found.
 
-int box_solid_ex(const uint8_t *w, float bx, float by, int bw, int bh, int include_platform)
+int box_solid_ex(const Cell *cells, float bx, float by, int bw, int bh, int include_platform)
     // AABB collision: 1 if any cell in the box is solid, 0 if clear.
     // CELL_STONE and CELL_DIRT always solid. CELL_PLATFORM solid only if include_platform=1.
     // Out-of-bounds cells always solid.
@@ -142,42 +169,62 @@ int box_solid_ex(const uint8_t *w, float bx, float by, int bw, int bh, int inclu
 ## sim/dirt.h / dirt.c — dirt/sand simulation
 
 ```c
-void tick_dirt(uint8_t *world, int bias)
-    // Sand-fall: each unsticky CELL_DIRT falls straight down into air or water,
+void tick_dirt(Cell *cells, int bias)
+    // Sand-fall: each unsticky CELL_DIRT falls straight down into air,
     // then diagonally. bias (0 or 1) alternates scan direction per frame.
+```
+
+## sim/blob.h / blob.c — connected-region flood fill
+
+```c
+void blob_init(const Cell *cells, Blob *blobs, uint16_t *blob_id, int *blob_count)
+    // Full BFS flood fill of all CELL_AIR regions.
+    // Assigns blob_id[idx] for every air cell; populates blobs[1..blob_count].
+    // blob_id[idx]==BLOB_NONE for solid cells. Call once after terrain_generate.
+
+void blob_mark_dirty(Blob *blobs, const uint16_t *blob_id, int x, int y)
+    // Mark the blob owning (x,y) and its 4 neighbours dirty.
+    // Call whenever any cell changes type (dig, place, explosion, erosion).
+
+void blob_update(const Cell *cells, Blob *blobs, uint16_t *blob_id, int *blob_count)
+    // If any blob is dirty, re-runs blob_init (full re-flood-fill).
+    // Call once per frame before tick_water.
+    // TODO: targeted per-blob re-fill instead of full re-init.
 ```
 
 ## sim/water.h / water.c — water simulation + unstick
 
 ```c
-void tick_water(uint8_t *world, uint8_t *water, int bias)
-    // Continuous water sim using parallel water[] amount array (0..255 per CELL_AIR cell).
-    // Three rules per cell, bottom-to-top:
-    //   1. Gravity      — fall into cell below as much as will fit
-    //   2. Equalization — halve diff with each horizontal neighbour (flat surfaces / U-tubes)
-    //   3. Pressure     — fully-saturated cell under saturated cell pushes sideways
+void tick_water(Cell *cells, const uint16_t *blob_id, int bias)
+    // Continuous water sim using Cell.water (0..255 per CELL_AIR cell).
+    // Two passes per call, bottom-to-top:
+    //   Pass 1 — Gravity: fall into cell below as much as will fit.
+    //            Equalization: halve diff with each horizontal neighbour.
+    //   Pass 2 — Upward pressure: cells blocked below push water upward,
+    //            but only within the same blob (blob_id check).
+    //            Drives communicating vessels and siphons.
     // bias (0 or 1) alternates scan direction per frame.
 
-void unstick(uint8_t *world, int x, int y)
+void unstick(Cell *cells, int x, int y)
     // Clear FLAG_STICKY on the CELL_DIRT at (x,y), if present.
     // Called after digging a neighbour or on explosion.
 ```
 
 ## sim/impact.h / impact.c — projectile impacts
 
-All functions write to world[]. Only fill CELL_AIR — won't overwrite existing terrain.
+All functions write to cells[].type. Only fill CELL_AIR — won't overwrite terrain.
 
 ```c
-void explode(uint8_t *world, int cx, int cy, int radius)
+void explode(Cell *cells, int cx, int cy, int radius)
     // Carve a circular crater: remove CELL_DIRT within radius, unstick neighbours.
 
-void impact_soil_ball(uint8_t *world, int cx, int cy, int radius)
+void impact_soil_ball(Cell *cells, int cx, int cy, int radius)
     // Fill a circle of radius with loose CELL_DIRT (falls immediately via tick_dirt).
 
-void impact_sticky_soil(uint8_t *world, int cx, int cy, int radius)
+void impact_sticky_soil(Cell *cells, int cx, int cy, int radius)
     // Fill a circle of radius with CELL_DIRT | FLAG_STICKY (adheres to surfaces).
 
-void impact_liquid_soil(uint8_t *world, int cx, int cy, int radius)
+void impact_liquid_soil(Cell *cells, int cx, int cy, int radius)
     // Deposit a tall column (width=radius+2, height=radius*3) of loose CELL_DIRT.
     // Flows and fills gaps naturally via the dirt sim.
 ```
@@ -187,10 +234,11 @@ void impact_liquid_soil(uint8_t *world, int cx, int cy, int radius)
 ## terrain.h / terrain.c — world generation
 
 ```c
-void terrain_generate(uint8_t *world, uint8_t *water)
-    // Fill world[] with the starting scene; fill water[] with initial water amounts.
-    // Current scene: stone floor, sticky-dirt layer, platforms, raised ramp,
-    // procedural ceiling stalactites, communicating basins water demo.
+void terrain_generate(Cell *cells)
+    // Initialise all cells (type=AIR, water=0, temp=128, vector=0), then build
+    // the starting scene: stone floor, sticky-dirt layer, platforms, raised ramp,
+    // procedural ceiling stalactites, communicating basins U-tube demo
+    // (left basin full, right empty, equalize via bottom channel).
     // REPLACE THIS FILE when implementing proper worldgen.
 ```
 
@@ -244,7 +292,7 @@ typedef struct {
     int inv_dirt;            // carried dirt count (0..INV_MAX)
 } PlayerState;
 
-void player_update(PlayerState *p, const uint8_t *world,
+void player_update(PlayerState *p, const Cell *cells,
                    int move_left, int move_right, int do_jump, int do_fall)
     // Advance player physics one frame.
     // Applies gravity, jump, coyote time, walk, step-up, platform fall-through.
@@ -265,7 +313,7 @@ typedef struct {
     int handbrake;    // 1 = parked (no slope rolling); 0 = free
 } RoverState;
 
-void rover_update(RoverState *r, uint8_t *world,
+void rover_update(RoverState *r, Cell *cells,
                   int move_left, int move_right, int braking)
     // Advance rover physics one frame (always runs, occupied or not).
     // Handles gravity (1.4×), throttle, drag, slope rolling, step-up,
@@ -305,7 +353,7 @@ void arm_fire(const ArmState *a, ProjState *proj, const RoverState *r)
     // Spawn projectile from barrel tip. Locks ammo and charge into ProjState.
     // No-op if proj->active is already 1.
 
-void proj_update(ProjState *proj, uint8_t *world)
+void proj_update(ProjState *proj, Cell *cells)
     // Advance projectile physics one frame (no-op if !proj->active).
     // Applies PROJ_GRAVITY, moves position, checks terrain collision.
     // On hit: dispatches impact_soil_ball/sticky/liquid and sets active=0.
@@ -316,7 +364,7 @@ void proj_update(ProjState *proj, uint8_t *world)
 ## render.h / render.c — rendering
 
 ```c
-void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water)
+void render_world_to_pixels(Color *pixels, const Cell *cells)
     // Write all terrain cells to the pixel buffer.
     // Water is read from the parallel water[] amount array.
     // Full cells (≥WATER_FULL): surface bright / deep dark. Shallow/damp: bright. Dry: clear.
@@ -325,14 +373,14 @@ void render_player_to_pixels(Color *pixels, const PlayerState *p)
     // Write player sprite to pixel buffer (skip when in_rover — call only when on foot).
     // Uses p->facing for mirror, p->anim_frame for walk cycle.
 
-void render_rover_to_pixels(Color *pixels, const uint8_t *world,
+void render_rover_to_pixels(Color *pixels, const Cell *cells,
                              const RoverState *r, const ArmState *a, const ProjState *proj)
     // Write rover sprite (slope-sheared), arm line, and projectile dot to pixel buffer.
     // Arm and projectile only drawn when r->in_rover is set.
 
 void render_screen_overlay(const PlayerState *p, const RoverState *r,
                             const ArmState *a, const ProjState *proj,
-                            const uint8_t *world,
+                            const Cell *cells,
                             int sel_wx, int sel_wy,
                             int show_debug, int near_rover, int input_mode,
                             int offsetX, int offsetY, int scaledW, int scaledH, int scale)

@@ -1,19 +1,17 @@
 #pragma once
 #include "defs.h"
 
-// Continuous water simulation using a parallel water[WORLD_W*WORLD_H] amount array.
-// world[] stores cell material (AIR/STONE/DIRT/PLATFORM). water[] stores 0..255 per cell.
-// Only CELL_AIR cells participate in flow.
+// Continuous water simulation using Cell.water (0..255 per CELL_AIR cell).
 //
-// Three rules per tick, applied bottom-to-top:
-//   1. Gravity      — water falls into the cell below as much as will fit
-//   2. Equalization — halve the difference with each horizontal neighbour (flat surfaces)
-//   3. Pressure     — fully-saturated cell under another saturated cell pushes sideways
+// Two passes per call, bottom-to-top:
+//   Pass 1 — Gravity: fall into cell below as much as will fit.
+//            Equalization: halve diff with each horizontal neighbour (flat surfaces).
+//   Pass 2 — Upward pressure: cells blocked below push water upward into the
+//            same blob only (blob_id check prevents pushing through walls).
+//            Cascades the full column in one bottom-to-top sweep.
 //
-// bias: 0 or 1, alternates scan direction each frame to avoid directional drift.
-// Run 3 passes per frame (see main.c) for fast equalization across basins.
-void tick_water(uint8_t *world, uint8_t *water, int bias);
+// bias: 0 or 1, alternates scan direction each frame.
+void tick_water(Cell *cells, const uint16_t *blob_id, int bias);
 
-// Clear FLAG_STICKY on the dirt cell at (x, y) if one exists.
-// Called when a neighbouring cell is dug or destroyed.
-void unstick(uint8_t *world, int x, int y);
+// Clear FLAG_STICKY on the CELL_DIRT at (x,y), if present.
+void unstick(Cell *cells, int x, int y);

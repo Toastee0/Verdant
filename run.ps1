@@ -18,8 +18,12 @@ if ($running) {
 
 # ── 2. Build ────────────────────────────────────────────────────────────────
 Write-Host "Building $BinFile..." -ForegroundColor Cyan
-$err = & gcc verdant_f1.c -o $BinFile `
-    -I deps/raylib/include `
+$Srcs = @(
+    "src/main.c", "src/noise.c", "src/world.c", "src/terrain.c", "src/input.c",
+    "src/sim/dirt.c", "src/sim/water.c", "src/sim/impact.c", "src/sim/blob.c",
+    "src/player.c", "src/rover.c", "src/rover_arm.c", "src/render.c"
+)
+$err = & gcc -O2 -Wall -Isrc -I deps/raylib/include @Srcs -o $BinFile `
     -L deps/raylib/lib `
     -lraylibdll -lopengl32 -lgdi32 -lwinmm 2>&1
 

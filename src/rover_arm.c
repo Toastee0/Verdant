@@ -35,11 +35,11 @@ void arm_fire(const ArmState *a, ProjState *proj, const RoverState *r) {
     proj->vx     = cosf(rad) * speed;
     proj->vy     = -sinf(rad) * speed;
     proj->ammo   = a->ammo_type;
-    proj->charge = a->charge;   // locked at fire time for deposit radius
+    proj->charge = a->charge;
     proj->active = 1;
 }
 
-void proj_update(ProjState *proj, uint8_t *world) {
+void proj_update(ProjState *proj, Cell *cells) {
     if (!proj->active) return;
 
     proj->vy += PROJ_GRAVITY;
@@ -53,13 +53,16 @@ void proj_update(ProjState *proj, uint8_t *world) {
         return;
     }
 
-    uint8_t hit = CELL_TYPE(world[py * WORLD_W + px]);
+    uint8_t hit = CELL_TYPE(cells[py * WORLD_W + px].type);
     if (hit == CELL_STONE || hit == CELL_DIRT) {
+        // Back up 1 cell opposite velocity so the deposit circle lands in open air.
+        int icx = px - (proj->vx > 0.5f ? 1 : proj->vx < -0.5f ? -1 : 0);
+        int icy = py - (proj->vy > 0.5f ? 1 : proj->vy < -0.5f ? -1 : 0);
         int r = DEPOSIT_R_MIN + (int)(proj->charge * (DEPOSIT_R_MAX - DEPOSIT_R_MIN));
         switch (proj->ammo) {
-            case AMMO_SOIL_BALL:    impact_soil_ball(world, px, py, r);    break;
-            case AMMO_STICKY_SOIL:  impact_sticky_soil(world, px, py, r);  break;
-            case AMMO_LIQUID_SOIL:  impact_liquid_soil(world, px, py, r);  break;
+            case AMMO_SOIL_BALL:   impact_soil_ball(cells, icx, icy, r);   break;
+            case AMMO_STICKY_SOIL: impact_sticky_soil(cells, icx, icy, r); break;
+            case AMMO_LIQUID_SOIL: impact_liquid_soil(cells, icx, icy, r); break;
         }
         proj->active = 0;
     }

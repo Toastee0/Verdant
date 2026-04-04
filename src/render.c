@@ -7,27 +7,25 @@ static const char *AMMO_NAMES[AMMO_COUNT] = {
     "SOIL BALL", "STICKY SOIL", "LIQUID SOIL"
 };
 
-void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water) {
+void render_world_to_pixels(Color *pixels, const Cell *cells) {
     for (int y = 0; y < WORLD_H; y++) {
         for (int x = 0; x < WORLD_W; x++) {
             int i = y * WORLD_W + x;
-            switch (CELL_TYPE(world[i])) {
+            switch (CELL_TYPE(cells[i].type)) {
                 case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
                 case CELL_DIRT:     pixels[i] = (Color){139,  90,  43, 255}; break;
                 case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
                 case CELL_AIR: {
-                    uint8_t w = water[i];
+                    uint8_t w = cells[i].water;
                     if (w >= WATER_FULL) {
-                        // Surface: cell above is not fully saturated
-                        int surface = (y == 0) || (water[(y-1)*WORLD_W+x] < WATER_FULL);
+                        int surface = (y == 0) || (cells[(y-1)*WORLD_W+x].water < WATER_FULL);
                         pixels[i] = surface
                             ? (Color){ 90, 160, 230, 255}
                             : (Color){ 30,  80, 160, 255};
                     } else if (w >= WATER_DAMP) {
-                        // Shallow / surface fringe — always use the bright surface color
                         pixels[i] = (Color){ 90, 160, 230, 255};
                     } else {
-                        pixels[i] = (Color){255, 255, 255, 0};  // dry air
+                        pixels[i] = (Color){255, 255, 255, 0};
                     }
                     break;
                 }
@@ -51,7 +49,7 @@ void render_player_to_pixels(Color *pixels, const PlayerState *p) {
     }
 }
 
-void render_rover_to_pixels(Color *pixels, const uint8_t *world,
+void render_rover_to_pixels(Color *pixels, const Cell *cells,
                              const RoverState *r, const ArmState *a,
                              const ProjState *proj) {
     // Rover sprite (slope-sheared)
@@ -59,8 +57,8 @@ void render_rover_to_pixels(Color *pixels, const uint8_t *world,
         int left_wx  = (int)r->x + 3;
         int right_wx = (int)r->x + ROVER_W - 4;
         int scan_y   = (int)r->y + ROVER_H;
-        int left_g   = ground_y_at(world, left_wx,  scan_y);
-        int right_g  = ground_y_at(world, right_wx, scan_y);
+        int left_g   = ground_y_at(cells, left_wx,  scan_y);
+        int right_g  = ground_y_at(cells, right_wx, scan_y);
         int slope    = right_g - left_g;
         if (slope >  7) slope =  7;
         if (slope < -7) slope = -7;
@@ -83,9 +81,9 @@ void render_rover_to_pixels(Color *pixels, const uint8_t *world,
     // Projectile dot
     if (proj->active) {
         static const Color proj_cols[AMMO_COUNT] = {
-            {139,  90,  43, 255},   // SOIL_BALL   — dirt brown
-            { 80, 140,  60, 255},   // STICKY_SOIL — mossy green
-            {180, 130,  40, 255},   // LIQUID_SOIL — muddy gold
+            {139,  90,  43, 255},
+            { 80, 140,  60, 255},
+            {180, 130,  40, 255},
         };
         Color pcol = proj_cols[proj->ammo];
         int px = (int)proj->x, py = (int)proj->y;
@@ -100,7 +98,7 @@ void render_rover_to_pixels(Color *pixels, const uint8_t *world,
 
 void render_screen_overlay(const PlayerState *p, const RoverState *r,
                             const ArmState *a, const ProjState *proj,
-                            const uint8_t *world,
+                            const Cell *cells,
                             int sel_wx, int sel_wy,
                             int show_debug, int near_rover, int input_mode,
                             int offsetX, int offsetY,
@@ -155,7 +153,7 @@ void render_screen_overlay(const PlayerState *p, const RoverState *r,
             svy += PROJ_GRAVITY;
             sx  += svx; sy += svy;
             if (sx < 0 || sx >= WORLD_W || sy < 0 || sy >= WORLD_H) break;
-            if (CELL_TYPE(world[(int)sy * WORLD_W + (int)sx]) != CELL_AIR) break;
+            if (CELL_TYPE(cells[(int)sy * WORLD_W + (int)sx].type) != CELL_AIR) break;
             if (step % 4 == 0) {
                 int spx = offsetX + (int)(sx * scale);
                 int spy = offsetY + (int)(sy * scale);
@@ -205,5 +203,5 @@ void render_screen_overlay(const PlayerState *p, const RoverState *r,
         r->in_rover
             ? "A/D=Drive  S=Brake  P=Handbrake  Arrows=Aim  Space=Fire  Tab=Ammo  F=Exit"
             : "WASD=Move  Space=Jump  S=FallThru  LMB/E=Dig  RMB=Place  F=Rover  `=Debug  ESC=Quit",
-        8, scaledH + offsetY - 20, 16, GRAY);
+        8, scaledH + offsetY + 30, 16, GRAY);
 }

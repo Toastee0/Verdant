@@ -30,4 +30,4 @@ void arm_fire(const ArmState *a, ProjState *proj, const RoverState *r);
 // Advance projectile physics one frame.
 // Applies PROJ_GRAVITY, moves the projectile, checks for terrain collision.
 // On hit: dispatches the correct impact_* function and sets active=0.
-void proj_update(ProjState *proj, uint8_t *world);
+void proj_update(ProjState *proj, Cell *cells);

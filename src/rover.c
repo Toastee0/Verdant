@@ -2,10 +2,10 @@
 #include "world.h"
 #include "sprites.h"
 
-void rover_update(RoverState *r, uint8_t *world,
+void rover_update(RoverState *r, Cell *cells,
                   int move_left, int move_right, int braking) {
     // ── Gravity / vertical ─────────────────────────────────────────────────
-    r->grounded = box_solid_ex(world, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0);
+    r->grounded = box_solid_ex(cells, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0);
     if (!r->grounded) {
         r->vy += GRAVITY * 1.4f;
         if (r->vy > ROVER_MAX_FALL) r->vy = ROVER_MAX_FALL;
@@ -15,8 +15,8 @@ void rover_update(RoverState *r, uint8_t *world,
     int left_gx  = (int)r->x + 4;
     int right_gx = (int)r->x + ROVER_W - 5;
     int scan_base = (int)r->y + ROVER_H + 1;
-    int left_gy   = ground_y_at(world, left_gx,  scan_base);
-    int right_gy  = ground_y_at(world, right_gx, scan_base);
+    int left_gy   = ground_y_at(cells, left_gx,  scan_base);
+    int right_gy  = ground_y_at(cells, right_gx, scan_base);
     int slope_raw = right_gy - left_gy;
 
     // ── Horizontal velocity ────────────────────────────────────────────────
@@ -35,11 +35,10 @@ void rover_update(RoverState *r, uint8_t *world,
         r->handbrake = 0;
     }
 
-    // Update facing from momentum when coasting or unoccupied
     if (!throttle_left && !throttle_right && r->vx != 0.0f)
         r->facing = (r->vx < 0.0f) ? -1 : 1;
 
-    // Slope rolling — only when grounded and handbrake off
+    // Slope rolling
     if (r->grounded && !r->handbrake) {
         r->vx += slope_raw * ROVER_SLOPE_FORCE;
         if (r->vx >  ROVER_TOP_SPEED * 1.5f) r->vx =  ROVER_TOP_SPEED * 1.5f;
@@ -64,12 +63,12 @@ void rover_update(RoverState *r, uint8_t *world,
         if (new_x < 0)                 { new_x = 0;                           r->vx = 0.0f; }
         if (new_x + ROVER_W > WORLD_W) { new_x = (float)(WORLD_W - ROVER_W); r->vx = 0.0f; }
 
-        if (!box_solid_ex(world, new_x, r->y, ROVER_W, ROVER_H, 0)) {
+        if (!box_solid_ex(cells, new_x, r->y, ROVER_W, ROVER_H, 0)) {
             r->x = new_x;
         } else if (r->grounded) {
             int stepped = 0;
             for (int s = 1; s <= ROVER_STEP_UP; s++) {
-                if (!box_solid_ex(world, new_x, r->y - (float)s, ROVER_W, ROVER_H, 0)) {
+                if (!box_solid_ex(cells, new_x, r->y - (float)s, ROVER_W, ROVER_H, 0)) {
                     r->x = new_x;
                     r->y -= (float)s;
                     stepped = 1;
@@ -83,7 +82,6 @@ void rover_update(RoverState *r, uint8_t *world,
     }
 
     // ── Edge erosion ───────────────────────────────────────────────────────
-    // Rover weight unsticks exposed dirt edges in direction of travel
     if (r->grounded && r->vx != 0.0f) {
         int dir    = (r->vx > 0.0f) ? 1 : -1;
         int foot_y = (int)r->y + ROVER_H;
@@ -91,11 +89,11 @@ void rover_update(RoverState *r, uint8_t *world,
             for (int col = 0; col < ROVER_W; col++) {
                 int wx = (int)r->x + col;
                 if (wx < 0 || wx >= WORLD_W) continue;
-                if (world[foot_y * WORLD_W + wx] != (CELL_DIRT | FLAG_STICKY)) continue;
+                if (cells[foot_y * WORLD_W + wx].type != (CELL_DIRT | FLAG_STICKY)) continue;
                 int nx = wx + dir;
                 if (nx < 0 || nx >= WORLD_W) continue;
-                if (CELL_TYPE(world[foot_y * WORLD_W + nx]) == CELL_AIR)
-                    world[foot_y * WORLD_W + wx] &= ~FLAG_STICKY;
+                if (CELL_TYPE(cells[foot_y * WORLD_W + nx].type) == CELL_AIR)
+                    cells[foot_y * WORLD_W + wx].type &= ~FLAG_STICKY;
             }
         }
     }
@@ -104,25 +102,25 @@ void rover_update(RoverState *r, uint8_t *world,
     {
         int snapped = 0;
         for (int snap = 0; snap < ROVER_STEP_UP + 2; snap++) {
-            if (!box_solid_ex(world, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0)) {
+            if (!box_solid_ex(cells, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0)) {
                 r->y += 1.0f; snapped = 1;
             } else break;
         }
-        r->grounded = box_solid_ex(world, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0);
+        r->grounded = box_solid_ex(cells, r->x, r->y + 1.0f, ROVER_W, ROVER_H, 0);
         if (snapped && r->grounded) r->vy = 0.0f;
     }
 
     // ── Apply vertical movement ────────────────────────────────────────────
     if (r->vy != 0.0f) {
         float new_y = r->y + r->vy;
-        if (!box_solid_ex(world, r->x, new_y, ROVER_W, ROVER_H, 0)) {
+        if (!box_solid_ex(cells, r->x, new_y, ROVER_W, ROVER_H, 0)) {
             r->y = new_y;
         } else {
             if (r->vy > 0.0f) {
                 float fy = (float)(int)r->y;
-                while (!box_solid_ex(world, r->x, fy + 1.0f, ROVER_W, ROVER_H, 0))
+                while (!box_solid_ex(cells, r->x, fy + 1.0f, ROVER_W, ROVER_H, 0))
                     fy += 1.0f;
-                r->y       = fy;
+                r->y        = fy;
                 r->grounded = 1;
                 r->vy = -r->vy * ROVER_BOUNCE;
                 if (r->vy > -0.5f) r->vy = 0.0f;
