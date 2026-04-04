@@ -2,164 +2,150 @@
 
 ## Read this first
 
-**Before doing any work, read `GDD.md`.** It is the authoritative game design document
-and contains the full narrative, world structure, vehicle systems, upgrade trees, and
-progression arc. This file (CLAUDE.md) is a technical quick-start — the GDD is the why.
+**This is the F1 prototype** — a single C file using raylib. The old Rust/wgpu multi-crate
+prototype is in `crates/` for reference only. All active work is in `verdant_f1.c`.
 
-**Key things the GDD contains that you need to know:**
-- The player is **Biomimetica** — an AI that *chose* to come here. The Panspermia Project.
-  Not a player character piloting a machine — you ARE the machine.
-- The world is a **fake globe** — horizontal wrap, lava core, machine buried at depth.
-  No surface crater. Surface starts dead and dry. Player creates the water cycle.
-- **Tone:** over-the-top cartoon science. Serious simulation, ridiculous execution.
-- Full vehicle upgrade trees, biome system, ecological conflict model.
+**GDD is authoritative.** The game design, narrative, vehicle systems, and progression arc
+are in `GDD.md`. Key facts:
+- Player is **Biomimetica** — an AI that chose to come here. You ARE the machine.
+- World is a **fake globe** — horizontal wrap, lava core, machine buried at depth.
+- Surface starts dead and dry. Player creates the water cycle. Life follows.
+- Tone: over-the-top cartoon science. Serious simulation, ridiculous execution.
 
-**Other docs in the repo root** (check before starting work in any area):
+---
+
+## Build
+
+GCC + bundled raylib (MinGW on Windows):
+
+```sh
+gcc verdant_f1.c -o verdant_f1 \
+    -Ideps/raylib/include \
+    -Ldeps/raylib/lib \
+    -lraylibdll \
+    -lopengl32 -lgdi32 -lwinmm
 ```
-GDD.md                      — full game design, narrative, systems, progression
-HANDOFF_SIM_WORLDGEN.md     — worldgen spec: noise stack, depth profile, sectors, POIs
-HANDOFF_SIM_PLANTS.md       — plant growth system spec
-HANDOFF_RENDER.md           — render crate architecture and shader philosophy
-HANDOFF_RENDER_SCANNER.md   — scanner overlay: three knowledge states, false-color tiers
-HANDOFF_RENDER_GAMEPAD.md   — Xbox gamepad controls (NES Solar Jetman scheme for pod)
-PROGRESS_RENDER.md          — render agent's current state (written by render instance)
-```
+
+`raylib.dll` must be next to the executable (already in repo root). Run with `./verdant_f1`.
 
 ---
 
 ## Developer notes
 
-**Adrian knows C well, is new to Rust.** Code comments should bridge C → Rust
-concepts. Don't explain pointers, memory layout, bitwise ops. Do explain ownership,
-borrow checker patterns, Copy vs Clone, trait dispatch, Option/Result idioms.
-Frame Rust-specific things by analogy to C equivalents where possible.
+**Adrian knows C well.** Don't explain pointers, memory layout, or bitwise ops.
+Do explain any new math (noise functions, physics formulas) with a comment on the intent.
 
 ---
 
-## Crate structure
+## Current state — what's working
 
-```
-crates/
-├── sim/        Pure simulation. No graphics deps. WASM-portable in principle.
-│               All game logic lives here.
-├── render/     wgpu rendering layer. Consumes sim output.
-└── app/        Binary entry point. Wires sim + render, drives the game loop.
-```
+**World** (`verdant_f1.c`, top of file)
+- 480×270 pixel world stored as `uint8_t world[WORLD_W * WORLD_H]`
+- Cell types: `CELL_AIR=0`, `CELL_STONE=1`, `CELL_DIRT=2`, `CELL_PLATFORM=3`, `CELL_WATER=4`
+- `FLAG_STICKY` (bit 7) prevents dirt from falling — generated terrain starts sticky,
+  digging a neighbour clears it; rover weight erodes sticky edges
+- Static terrain: flat stone floor, raised stone ramp on right, 10px dirt layer,
+  three one-way platforms, ceiling with procedural rock+stalactite profile (fbm + spike waves),
+  communicating basins water demo (left basin fills right via channel)
 
----
+**Physics simulations** (run each frame)
+- `tick_dirt()` — sand-fall: straight down → diagonal, alternating-bias scan order
+- `tick_water()` — liquid: fall → spread sideways, communicating-vessels pressure (column height)
+  — 3 passes per frame for fast equalization
 
-## Architecture
+**Player** (`cx, cy, cvx, cvy`)
+- 4×8 pixel sprite, 2-frame walk animation, mirror-flip on turn
+- Gravity, jumping, coyote time (8 frames), step-up (3px)
+- Platform fall-through (S/down while on platform, 15-frame grace timer)
+- Dig dirt (LMB or E), place dirt (RMB), inventory cap 99
+- Pickup radius 18px, cell selection highlight; mouse vs gamepad input mode auto-switch
 
-### World: fake globe, horizontal wrap
+**Rover** (`rx, ry, rvx, rvy`) — 24×16 pixel sprite
+- Enter/exit: F key within 24px radius; player spawns at rover's facing side
+- Physics: gravity (1.4× player), acceleration/drag (roll/brake/park), step-up (4px), bounce
+- Slope sensing: samples ground under each wheel, applies roll force; sprite sheared to terrain angle
+- Handbrake (P): prevents rolling; throttle input releases it
+- Edge erosion: rover weight unsticks exposed sticky dirt cells at its footprint edge
 
-The world wraps horizontally. Chunk coordinate `cx` wraps at `WORLD_WIDTH_CHUNKS`.
-Going deep enough hits the lava core (never simulated — render only).
-The machine is buried at approximately y=600 cells below surface. No surface crater.
+**Ballistic arm** (rover-only)
+- 9px barrel, absolute angle 5–175°, clamps to facing half when driving
+- Charge-based power: hold to charge (0→1 in ~60 frames), release to fire
+- 3 ammo types (Tab/Q to cycle): SOIL BALL (loose dirt circle), STICKY SOIL (adheres to ceilings/walls),
+  LIQUID SOIL (floods impact zone, flows into gaps via dirt sim)
+- Deposit radius scales with charge: 2–5px
+- Single active projectile; trajectory preview arc (120 steps); power bar HUD
 
-```
-World coords  (wx, wy):  any i32 — global pixel position
-Chunk coords  (cx, cy):  (wx / 512, wy / 512)
-Local coords  (lx, ly):  (wx % 512, wy % 512) — position within chunk
-```
+**Rendering**
+- Pixel buffer `worldImg.data` → `UpdateTexture` → `DrawTexturePro` (pixel-perfect scaled canvas)
+- Water surface highlight: bright top row, dark below
+- Debug overlay: backtick to toggle; shows player/rover state
+- F11 borderless fullscreen toggle
 
-**Discovery rule:** Chunks do not pre-generate. A chunk enters existence only
-when the player enters its Chebyshev range. Undiscovered chunks contribute
-rock-default ghost cells to loaded neighbors.
-
-### Chunk states
-
-```
-Active    — within active_radius of player; ticked every sim step
-KeepAlive — off-screen but has active biology/water; keeps simulating
-Dormant   — no activity; evicted after IDLE_DAYS_BEFORE_DORMANT daily passes
-```
-
-### Cross-chunk stitching: ghost ring
-
-Before each physics tick, boundary.rs copies the outermost row/column of each
-neighboring chunk into a GhostRing on the target chunk. Sim rules call
-`get_with_ghost(lx, ly)` for all neighbor lookups. Rules never special-case chunk edges.
-Unloaded neighbors contribute solid rock ghost cells.
-
-### Simulation frequencies
-
-**Per-frame (high frequency):**
-- Water cycle: gravity, spread, pressure, absorption, diffusion  ← DONE
-- Particle physics: vector-based movement, collision
-- Lighting (GPU compute pass only)
-
-**Daily pass (~30 real min/in-game day):**
-- Plant growth, creature AI, population dynamics, decomposition
-- Keep-alive re-evaluation / dormancy transitions
+**Input**
+- KB+Mouse and Xbox gamepad, auto-detect and auto-switch
+- Mouse mode: click/hover for cell selection, facing follows cursor
+- Gamepad mode: left stick moves, right stick aims arm, A fires/jumps
 
 ---
 
-## Cell encoding — 16 bytes, #[repr(C)]
+## File structure
 
 ```
-Offset  Field        Type   Description
-──────  ───────────  ─────  ──────────────────────────────────────────────────
-0       water        u8     Water/moisture (0=bone dry, 255=saturated)
-1       mineral      u8     Mineral density (0=vacuum, 255=dense hard rock)
-2       temperature  u8     Thermal state (0=frozen, 128=ambient, 255=molten)
-3       vector       u8     Velocity: hi nibble=dx(i4,-8..+7), lo=dy(i4,-8..+7)
-4       species      u8     0=inorganic; 1-255=species ID
-5       tile_type    u8     TILE_AIR/ROOT/STEM/LEAF/FLOWER (only if species>0)
-6       growth       u8     Growth stage (0=seed, 255=mature)
-7       energy       u8     Stored energy (0=depleted, 255=thriving)
-8-9     root_row     i16    Absolute row of this plant's root tile
-10-11   root_col     i16    Absolute col of this plant's root tile
-12      light        u8     Computed light level (0=dark, 255=full brightness)
-13      sunlight     u8     Direct sunlight
-14-15   _pad         u16    Explicit padding; sizeof(Cell) == 16 guaranteed
-```
+verdant_f1.c    — entire game (~1250 lines)
+  CONSTANTS      — world dims, player/rover/arm params (top of file)
+  SPRITE data    — player (2 frames), rover (8-color palette)
+  HELPERS        — hash1, vnoise, fbm, triwave, spike, ground_y_at, draw_rover_sheared
+  COLLISION      — box_solid_ex (platform-aware)
+  SIMULATIONS    — tick_dirt, tick_water, unstick, explode, impact_*
+  main()
+    world setup  — terrain gen, basin construction, ceiling gen
+    game loop
+      input
+      dirt sim, water sim (3 passes)
+      rover enter/exit
+      rover physics
+      arm + projectile
+      player physics (on foot only)
+      cell selection / inventory
+      render to pixel buffer
+      draw rover, arm, projectile, player
+      upload texture, composite, HUD, debug
 
-**No discrete material type.** Behavior derives from value ratios:
-```
-high water + low mineral + high temp  → steam
-high water + low mineral + mid temp   → liquid water
-high water + low mineral + low temp   → ice
-low water  + low mineral              → air / vacuum
-high mineral + low water              → dry rock
-high mineral + medium water           → wet soil / mud
-high mineral + high temp              → lava
-```
-
-All-zero = Cell::AIR = vacuum. A calloc'd buffer is a valid empty world.
-
----
-
-## Current build status
-
-```
-cargo test -p verdant-sim   — 31/31 passing
-cargo build                 — compiles clean
-cargo run                   — window opens, renders test scene (render agent work)
-```
-
-Water simulation complete: `crates/sim/src/water/` (6 modules).
-Render crate functional: window, camera, cell→color, chunk textures.
-
----
-
-## Key GDD systems — build order
-
-```
-1. ✅ Water cycle (gravity, spread, pressure, absorption, diffusion)
-2. Worldgen — spec: HANDOFF_SIM_WORLDGEN.md
-3. Pod physics (Solar Jetman: 16 angles, spring tow, fuel)
-4. Tank ballistic arm (Scorched Earth: arc, cell-state payloads)
-5. Plant growth — spec: HANDOFF_SIM_PLANTS.md
-6. Lotka-Volterra creature populations
-7. Base upgrade progression (ore + biomass dual tracks)
+deps/raylib/    — bundled headers + lib
+assets/         — sprites, shaders (future use)
+crates/         — old Rust/wgpu prototype (reference only, not built)
+Archive/        — old docs and CLAUDE.md
 ```
 
 ---
 
-## Running
+## GDD build order — next steps
 
-```sh
-C:/Users/digit/.cargo/bin/cargo build
-C:/Users/digit/.cargo/bin/cargo test
-C:/Users/digit/.cargo/bin/cargo run --bin verdant
 ```
+1. ✅ Cell physics — dirt falls, water flows, sticky flag, erosion
+2. ✅ Player + rover — movement, enter/exit, slope shear
+3. ✅ Ballistic arm — angle/power/ammo, trajectory preview
+4. Worldgen — procedural terrain replacing the hardcoded test scene
+           — spec in Archive/HANDOFF_SIM_WORLDGEN.md
+5. Pod vehicle — Solar Jetman flight (16 angles, spring tow, fuel)
+6. Plant growth — spec in Archive/HANDOFF_SIM_PLANTS.md
+7. Ore system — dig stone yields minerals; dual-track upgrade currency
+8. Creature populations — Lotka-Volterra dynamics
+9. Base upgrade tree
+```
+
+---
+
+## Key constants (quick reference)
+
+| Constant | Value | Purpose |
+|---|---|---|
+| `WORLD_W / WORLD_H` | 480 / 270 | World dimensions in pixels |
+| `CHAR_W / CHAR_H` | 4 / 8 | Player sprite size |
+| `ROVER_W / ROVER_H` | 24 / 16 | Rover sprite size |
+| `PICKUP_RADIUS` | 18 | Dig/place range (pixels) |
+| `ARM_LEN` | 9 | Barrel length |
+| `BLAST_RADIUS` | 5 | Explosion carve radius |
+| `PROJ_GRAVITY` | 0.25 | Projectile gravity (softer arc than player) |
+| `FLAG_STICKY` | 0x80 | Bit 7 of cell byte: dirt won't fall |
+| `CELL_TYPE(c)` | `(c) & 0x7F` | Mask to get type, ignoring flags |

@@ -10,6 +10,7 @@
 #define CELL_STONE     1
 #define CELL_DIRT      2
 #define CELL_PLATFORM  3   // one-way: stand on top, jump/walk through
+#define CELL_WATER     4   // liquid — falls, spreads, equalizes
 
 // Bit 7 of a cell byte: dirt won't fall while this is set.
 // Generated terrain starts sticky. Digging a neighbour clears it.
@@ -215,6 +216,7 @@ static int box_solid_ex(const uint8_t *w, float bx, float by,
             uint8_t t = CELL_TYPE(w[y * WORLD_W + x]);
             if (t == CELL_STONE || t == CELL_DIRT) return 1;
             if (t == CELL_PLATFORM && include_platform) return 1;
+            // CELL_WATER is passable — player and rover move through it
         }
     }
     return 0;
@@ -248,6 +250,58 @@ static void tick_dirt(uint8_t *world, int bias) {
                     world[y * WORLD_W + x] = CELL_AIR;
                     break;
                 }
+            }
+        }
+    }
+}
+
+// ── Water simulation ───────────────────────────────────────────────────────
+// Bottom-up scan. Each cell tries to:
+//   1. Fall into air below
+//   2. Fall diagonally (like sand but no angle-of-repose — water fills flat)
+//   3. Spread sideways into air
+// Run multiple passes per frame for fast equalization across connected basins.
+// Water displaces nothing — it only moves into CELL_AIR.
+static void tick_water(uint8_t *world, int bias) {
+    for (int y = WORLD_H - 2; y >= 0; y--) {
+        for (int xi = 0; xi < WORLD_W; xi++) {
+            int x = bias ? xi : (WORLD_W - 1 - xi);
+            if (CELL_TYPE(world[y * WORLD_W + x]) != CELL_WATER) continue;
+
+            // 1. Fall straight down
+            if (y + 1 < WORLD_H && CELL_TYPE(world[(y+1)*WORLD_W+x]) == CELL_AIR) {
+                world[(y+1)*WORLD_W+x] = CELL_WATER;
+                world[y*WORLD_W+x]     = CELL_AIR;
+                continue;
+            }
+
+            // 2. Spread sideways — try both directions, prefer the side whose
+            //    water column is shorter (communicating vessels).
+            //    Measure column height: count water cells upward from y+1.
+            int col_l = 0, col_r = 0;
+            int lx = x - 1, rx2 = x + 1;
+            int can_l = (lx >= 0        && CELL_TYPE(world[y*WORLD_W+lx])  == CELL_AIR);
+            int can_r = (rx2 < WORLD_W  && CELL_TYPE(world[y*WORLD_W+rx2]) == CELL_AIR);
+
+            if (can_l || can_r) {
+                // Count water height on each side (how many water rows above the spread target)
+                if (can_l) for (int cy2 = y-1; cy2 >= 0; cy2--)
+                    { if (CELL_TYPE(world[cy2*WORLD_W+lx]) == CELL_WATER) col_l++; else break; }
+                if (can_r) for (int cy2 = y-1; cy2 >= 0; cy2--)
+                    { if (CELL_TYPE(world[cy2*WORLD_W+rx2]) == CELL_WATER) col_r++; else break; }
+
+                // Pick the shorter column (or use bias to break ties)
+                int go_left = 0, go_right = 0;
+                if (can_l && can_r) {
+                    if      (col_l < col_r) go_left  = 1;
+                    else if (col_r < col_l) go_right = 1;
+                    else { if (bias) go_left = 1; else go_right = 1; }
+                } else if (can_l) { go_left  = 1; }
+                  else             { go_right = 1; }
+
+                int tx = go_left ? lx : rx2;
+                world[y*WORLD_W+tx] = CELL_WATER;
+                world[y*WORLD_W+x]  = CELL_AIR;
             }
         }
     }
@@ -360,6 +414,56 @@ int main(void)
             for (int px = plats[i].x; px < plats[i].x + plats[i].w; px++)
                 if (px < WORLD_W && py < WORLD_H)
                     world[py * WORLD_W + px] = CELL_PLATFORM;
+
+    // ── Communicating basins (water equalization demo) ────────────────────
+    // Two stone-walled chambers connected by a 3px channel at the base.
+    // Left basin starts full; right basin starts empty.
+    // Goal: water equalizes through the channel, then overflows the lower lip.
+    {
+        const int BX   = 148;   // left outer wall x
+        const int BY   = 108;   // top of basin interior
+        const int BW   = 50;    // interior width of each basin
+        const int WALL = 2;     // wall thickness
+        const int DIV  = 4;     // divider thickness
+        const int BH   = dirtStart - BY - WALL;  // interior height (reaches dirt floor)
+        const int CHW  = 3;     // channel width (pixels)
+        const int CHH  = 20;    // channel height from bottom — left higher than right
+
+        // Helper: fill a rect with a cell type
+        #define FILL(X,Y,W,H,C) do { \
+            for (int _y=(Y);_y<(Y)+(H);_y++) \
+                for (int _x=(X);_x<(X)+(W);_x++) \
+                    if (_x>=0&&_x<WORLD_W&&_y>=0&&_y<WORLD_H) \
+                        world[_y*WORLD_W+_x]=(C); \
+        } while(0)
+
+        int lx  = BX;                        // left basin interior x
+        int div = BX + WALL + BW;            // divider x
+        int rx  = div + DIV;                 // right basin interior x
+        int bot = BY + BH;                   // interior bottom y (= dirtStart)
+
+        // Outer walls (left, right, top, bottom)
+        FILL(lx - WALL,     BY - WALL, WALL, BH + WALL*2, CELL_STONE); // left wall
+        FILL(rx + BW,       BY - WALL, WALL, BH + WALL*2, CELL_STONE); // right wall
+        FILL(lx - WALL,     BY - WALL, rx + BW + WALL - (lx-WALL), WALL, CELL_STONE); // top
+        FILL(lx - WALL,     bot,       rx + BW + WALL - (lx-WALL), WALL, CELL_STONE); // bottom
+
+        // Divider — full stone first, then carve the channel at the base
+        FILL(div, BY - WALL, DIV, BH + WALL*2, CELL_STONE);
+        // Channel: left basin connects lower than right to show pressure differential
+        // Left channel mouth is CHH px from floor; right mouth is CHH-6 px from floor
+        int ch_y = bot - CHH;
+        FILL(div, ch_y, DIV, CHH, CELL_AIR);   // carve channel through divider
+
+        // Clear basin interiors (overwrite any dirt from floor gen)
+        FILL(lx, BY, BW, BH, CELL_AIR);
+        FILL(rx, BY, BW, BH, CELL_AIR);
+
+        // Fill left basin with water to the brim
+        FILL(lx, BY, BW, BH, CELL_WATER);
+
+        #undef FILL
+    }
 
     // ── Ceiling: rock base + sticky dirt stalactites ──────────────────────
     // For each column, compute:
@@ -536,6 +640,11 @@ int main(void)
 
         // ── Dirt simulation ────────────────────────────────────────────────
         tick_dirt(world, frame & 1);
+
+        // ── Water simulation — 3 passes for fast equalization ──────────────
+        tick_water(world, frame & 1);
+        tick_water(world, (frame + 1) & 1);
+        tick_water(world, frame & 1);
 
         // ── Rover enter / exit ─────────────────────────────────────────────
         // Player centre distance to rover centre.
@@ -935,12 +1044,23 @@ int main(void)
 
         // ── Render world to pixel buffer ───────────────────────────────────
         Color *pixels = worldImg.data;
-        for (int i = 0; i < WORLD_W * WORLD_H; i++) {
-            switch (CELL_TYPE(world[i])) {
-                case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
-                case CELL_DIRT:     pixels[i] = (Color){139,  90,  43, 255}; break;
-                case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
-                default:            pixels[i] = (Color){255, 255, 255,   0}; break;
+        for (int y = 0; y < WORLD_H; y++) {
+            for (int x = 0; x < WORLD_W; x++) {
+                int i = y * WORLD_W + x;
+                switch (CELL_TYPE(world[i])) {
+                    case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
+                    case CELL_DIRT:     pixels[i] = (Color){139,  90,  43, 255}; break;
+                    case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
+                    case CELL_WATER: {
+                        // Surface highlight: water cell with air directly above
+                        int surface = (y == 0) || (CELL_TYPE(world[(y-1)*WORLD_W+x]) != CELL_WATER);
+                        pixels[i] = surface
+                            ? (Color){ 90, 160, 230, 255}   // bright surface
+                            : (Color){ 30,  80, 160, 255};  // deep water
+                        break;
+                    }
+                    default:            pixels[i] = (Color){255, 255, 255,   0}; break;
+                }
             }
         }
 
