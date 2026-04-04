@@ -10,4 +10,4 @@
 // This function is the sole owner of the starting world state.
 // It will be replaced / upgraded when proper worldgen is implemented
 // (see Archive/HANDOFF_SIM_WORLDGEN.md for the full spec).
-void terrain_generate(uint8_t *world);
+void terrain_generate(uint8_t *world, uint8_t *water);

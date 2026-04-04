@@ -10,8 +10,7 @@ void tick_dirt(uint8_t *world, int bias) {
             if (c & FLAG_STICKY) continue;
 
             int below = (y + 1) * WORLD_W + x;
-            if (CELL_TYPE(world[below]) == CELL_AIR ||
-                CELL_TYPE(world[below]) == CELL_WATER) {
+            if (CELL_TYPE(world[below]) == CELL_AIR) {
                 world[below] = c;
                 world[y * WORLD_W + x] = CELL_AIR;
                 continue;
@@ -23,10 +22,8 @@ void tick_dirt(uint8_t *world, int bias) {
                 if (nx < 0 || nx >= WORLD_W) continue;
                 int diag = (y + 1) * WORLD_W + nx;
                 int side = y       * WORLD_W + nx;
-                uint8_t diag_t = CELL_TYPE(world[diag]);
-                uint8_t side_t = CELL_TYPE(world[side]);
-                if ((diag_t == CELL_AIR || diag_t == CELL_WATER) &&
-                    (side_t == CELL_AIR || side_t == CELL_WATER)) {
+                if (CELL_TYPE(world[diag]) == CELL_AIR &&
+                    CELL_TYPE(world[side]) == CELL_AIR) {
                     world[diag] = c;
                     world[y * WORLD_W + x] = CELL_AIR;
                     break;

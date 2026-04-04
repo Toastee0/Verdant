@@ -15,7 +15,8 @@ int main(void) {
 
     // ── World ─────────────────────────────────────────────────────────────
     static uint8_t world[WORLD_W * WORLD_H];
-    terrain_generate(world);
+    static uint8_t water[WORLD_W * WORLD_H];   // parallel water-amount array (0..255)
+    terrain_generate(world, water);
 
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
     Texture2D worldTex = LoadTextureFromImage(worldImg);
@@ -72,9 +73,9 @@ int main(void) {
 
         // ── Dirt + water simulation ────────────────────────────────────────
         tick_dirt(world, frame & 1);
-        tick_water(world, frame & 1);
-        tick_water(world, (frame + 1) & 1);
-        tick_water(world, frame & 1);
+        tick_water(world, water, frame & 1);
+        tick_water(world, water, (frame + 1) & 1);
+        tick_water(world, water, frame & 1);
 
         // ── Rover enter / exit (F key) ─────────────────────────────────────
         float pcx_f = player.x + CHAR_W  * 0.5f;
@@ -198,7 +199,7 @@ int main(void) {
 
         // ── Render ────────────────────────────────────────────────────────
         Color *pixels = worldImg.data;
-        render_world_to_pixels(pixels, world);
+        render_world_to_pixels(pixels, world, water);
         render_rover_to_pixels(pixels, world, &rover, &arm, &proj);
         if (!rover.in_rover)
             render_player_to_pixels(pixels, &player);

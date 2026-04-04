@@ -11,7 +11,13 @@
 #define CELL_STONE     1
 #define CELL_DIRT      2
 #define CELL_PLATFORM  3   // one-way: stand on top, jump/walk through
-#define CELL_WATER     4   // liquid — falls, spreads, equalizes
+
+// Water is stored in a parallel uint8_t water[WORLD_W*WORLD_H] array, not as a cell type.
+// A CELL_AIR cell is "wet" when water[idx] > WATER_DRY (and visible at > WATER_DAMP).
+#define WATER_DRY       0    // completely dry (no water present)
+#define WATER_DAMP      8    // below this: render as dry
+#define WATER_SHALLOW  64    // below this: surface/shallow color
+#define WATER_FULL    200    // at or above: solid saturated water color
 
 // Bit 7 of a cell byte: dirt won't fall while this is set.
 // Generated terrain starts sticky. Digging a neighbour clears it.

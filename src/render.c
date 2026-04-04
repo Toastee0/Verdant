@@ -7,7 +7,7 @@ static const char *AMMO_NAMES[AMMO_COUNT] = {
     "SOIL BALL", "STICKY SOIL", "LIQUID SOIL"
 };
 
-void render_world_to_pixels(Color *pixels, const uint8_t *world) {
+void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water) {
     for (int y = 0; y < WORLD_H; y++) {
         for (int x = 0; x < WORLD_W; x++) {
             int i = y * WORLD_W + x;
@@ -15,12 +15,20 @@ void render_world_to_pixels(Color *pixels, const uint8_t *world) {
                 case CELL_STONE:    pixels[i] = (Color){128, 128, 128, 255}; break;
                 case CELL_DIRT:     pixels[i] = (Color){139,  90,  43, 255}; break;
                 case CELL_PLATFORM: pixels[i] = (Color){165, 105,  50, 255}; break;
-                case CELL_WATER: {
-                    int surface = (y == 0) ||
-                                  (CELL_TYPE(world[(y-1)*WORLD_W+x]) != CELL_WATER);
-                    pixels[i] = surface
-                        ? (Color){ 90, 160, 230, 255}
-                        : (Color){ 30,  80, 160, 255};
+                case CELL_AIR: {
+                    uint8_t w = water[i];
+                    if (w >= WATER_FULL) {
+                        // Surface: cell above is not fully saturated
+                        int surface = (y == 0) || (water[(y-1)*WORLD_W+x] < WATER_FULL);
+                        pixels[i] = surface
+                            ? (Color){ 90, 160, 230, 255}
+                            : (Color){ 30,  80, 160, 255};
+                    } else if (w >= WATER_DAMP) {
+                        // Shallow / surface fringe — always use the bright surface color
+                        pixels[i] = (Color){ 90, 160, 230, 255};
+                    } else {
+                        pixels[i] = (Color){255, 255, 255, 0};  // dry air
+                    }
                     break;
                 }
                 default: pixels[i] = (Color){255, 255, 255, 0}; break;

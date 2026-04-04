@@ -40,9 +40,17 @@ CELL_AIR     = 0
 CELL_STONE   = 1
 CELL_DIRT    = 2
 CELL_PLATFORM = 3      // one-way: solid from above only
-CELL_WATER   = 4
+// NOTE: CELL_WATER removed — water is now a parallel uint8_t water[] amount array
 FLAG_STICKY  = 0x80    // bit 7 of cell byte: dirt won't fall
 CELL_TYPE(c) = (c) & 0x7F   // mask flags to get type
+```
+
+**Water amount thresholds** (for the parallel `water[]` array)
+```c
+WATER_DRY      = 0     // completely dry
+WATER_DAMP     = 8     // below this: render as dry air
+WATER_SHALLOW  = 64    // below this: surface/shallow color
+WATER_FULL     = 200   // at or above: solid saturated water color
 ```
 
 **Player constants**
@@ -142,9 +150,12 @@ void tick_dirt(uint8_t *world, int bias)
 ## sim/water.h / water.c — water simulation + unstick
 
 ```c
-void tick_water(uint8_t *world, int bias)
-    // Liquid flow: CELL_WATER falls into air below, then spreads sideways
-    // preferring the shallower column (communicating vessels).
+void tick_water(uint8_t *world, uint8_t *water, int bias)
+    // Continuous water sim using parallel water[] amount array (0..255 per CELL_AIR cell).
+    // Three rules per cell, bottom-to-top:
+    //   1. Gravity      — fall into cell below as much as will fit
+    //   2. Equalization — halve diff with each horizontal neighbour (flat surfaces / U-tubes)
+    //   3. Pressure     — fully-saturated cell under saturated cell pushes sideways
     // bias (0 or 1) alternates scan direction per frame.
 
 void unstick(uint8_t *world, int x, int y)
@@ -176,8 +187,8 @@ void impact_liquid_soil(uint8_t *world, int cx, int cy, int radius)
 ## terrain.h / terrain.c — world generation
 
 ```c
-void terrain_generate(uint8_t *world)
-    // Fill world[] with the starting scene. Calls noise + sim functions.
+void terrain_generate(uint8_t *world, uint8_t *water)
+    // Fill world[] with the starting scene; fill water[] with initial water amounts.
     // Current scene: stone floor, sticky-dirt layer, platforms, raised ramp,
     // procedural ceiling stalactites, communicating basins water demo.
     // REPLACE THIS FILE when implementing proper worldgen.
@@ -305,9 +316,10 @@ void proj_update(ProjState *proj, uint8_t *world)
 ## render.h / render.c — rendering
 
 ```c
-void render_world_to_pixels(Color *pixels, const uint8_t *world)
+void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water)
     // Write all terrain cells to the pixel buffer.
-    // Water surface cells are bright; subsurface water is dark.
+    // Water is read from the parallel water[] amount array.
+    // Full cells (≥WATER_FULL): surface bright / deep dark. Shallow/damp: bright. Dry: clear.
 
 void render_player_to_pixels(Color *pixels, const PlayerState *p)
     // Write player sprite to pixel buffer (skip when in_rover — call only when on foot).

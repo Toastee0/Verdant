@@ -7,8 +7,9 @@
 // ── Pixel buffer phase (called before UpdateTexture) ────────────────────────
 
 // Write all terrain cells to the pixel buffer.
-// Water surface highlight: bright top row, dark below.
-void render_world_to_pixels(Color *pixels, const uint8_t *world);
+// Water is read from the parallel water[] amount array (0..255 per cell).
+// Surface water (full cell, partial above) renders bright; deep water renders dark.
+void render_world_to_pixels(Color *pixels, const uint8_t *world, const uint8_t *water);
 
 // Write player sprite into the pixel buffer (skip when in_rover).
 void render_player_to_pixels(Color *pixels, const PlayerState *p);
