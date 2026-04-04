@@ -237,6 +237,12 @@ static void tick_dirt(uint8_t *world, int bias) {
                 world[y * WORLD_W + x] = CELL_AIR;
                 continue;
             }
+            // Dirt sinks through water (displaces it upward)
+            if (CELL_TYPE(world[below]) == CELL_WATER) {
+                world[y * WORLD_W + x] = CELL_WATER;
+                world[below]           = c;
+                continue;
+            }
             int dx0 = bias ? -1 : 1, dx1 = -dx0;
             for (int pass = 0; pass < 2; pass++) {
                 int dx = (pass == 0) ? dx0 : dx1;
@@ -594,15 +600,15 @@ int main(void)
             if (shift || ctrl) {
                 // Stepped (on press only)
                 float step = ctrl ? 10.0f : 1.0f;
-                if (IsKeyPressed(KEY_LEFT))  angle_delta -= step;
-                if (IsKeyPressed(KEY_RIGHT)) angle_delta += step;
+                if (IsKeyPressed(KEY_LEFT))  angle_delta += step;
+                if (IsKeyPressed(KEY_RIGHT)) angle_delta -= step;
                 float pstep = ctrl ? 0.10f : 0.01f;
                 if (IsKeyPressed(KEY_DOWN))  power_delta -= pstep;
                 if (IsKeyPressed(KEY_UP))    power_delta += pstep;
             } else {
                 // Continuous (held)
-                if (IsKeyDown(KEY_LEFT))  angle_delta -= ARM_ANGLE_SPEED;
-                if (IsKeyDown(KEY_RIGHT)) angle_delta += ARM_ANGLE_SPEED;
+                if (IsKeyDown(KEY_LEFT))  angle_delta += ARM_ANGLE_SPEED;
+                if (IsKeyDown(KEY_RIGHT)) angle_delta -= ARM_ANGLE_SPEED;
                 if (IsKeyDown(KEY_DOWN))  power_delta -= ARM_CHARGE_RATE;
                 if (IsKeyDown(KEY_UP))    power_delta += ARM_CHARGE_RATE;
             }
@@ -950,16 +956,20 @@ int main(void)
             } else {
                 uint8_t hit = CELL_TYPE(world[py * WORLD_W + px]);
                 if (hit == CELL_STONE || hit == CELL_DIRT) {
+                    // Back up 1 cell opposite velocity so the impact circle
+                    // is centred in open air, not inside the solid surface.
+                    int icx = px - (proj_vx > 0.5f ? 1 : proj_vx < -0.5f ? -1 : 0);
+                    int icy = py - (proj_vy > 0.5f ? 1 : proj_vy < -0.5f ? -1 : 0);
                     int r = DEPOSIT_R_MIN + (int)(arm_charge * (DEPOSIT_R_MAX - DEPOSIT_R_MIN));
                     switch (proj_ammo) {
                         case AMMO_SOIL_BALL:
-                            impact_soil_ball(world, px, py, r);
+                            impact_soil_ball(world, icx, icy, r);
                             break;
                         case AMMO_STICKY_SOIL:
-                            impact_sticky_soil(world, px, py, r);
+                            impact_sticky_soil(world, icx, icy, r);
                             break;
                         case AMMO_LIQUID_SOIL:
-                            impact_liquid_soil(world, px, py, r);
+                            impact_liquid_soil(world, icx, icy, r);
                             break;
                     }
                     proj_active = 0;
@@ -1237,7 +1247,7 @@ int main(void)
                 in_rover
                     ? "A/D=Drive  S=Brake  P=Handbrake  W/Dn=Aim  ]/[=Power  Space=Fire  F=Exit"
                     : "WASD=Move  Space=Jump  S=FallThru  LMB/E=Dig  RMB=Place  F=Rover  `=Debug  ESC=Quit",
-                8, scaledH + offsetY - 20, 16, GRAY);
+                8, scaledH + offsetY + 30, 16, GRAY);
         EndDrawing();
 
         frame++;
