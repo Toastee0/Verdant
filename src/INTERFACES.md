@@ -65,18 +65,27 @@ WATER_FULL     = 200   // at or above: solid saturated water color
 
 **Blob pressure constants**
 ```c
-MAX_BLOBS = 2048       // max simultaneous connected air regions
-BLOB_NONE = 0          // sentinel: solid cell or unassigned
+MAX_BLOBS             = 2048
+BLOB_NONE             = 0       // sentinel: solid cell or unassigned
+PRESSURE_ATM          = 1.0f    // atmospheric baseline (open blobs)
+HYDROSTATIC_K         = 0.04f   // pressure per cell of water depth
+PRESSURE_EPSILON      = 0.02f   // ΔP below this is ignored
+TRANSFER_RATE         = 0.25f   // fraction of ΔP → water per tick
+MAX_TRANSFER_PER_TICK = 48      // stability clamp per interface per tick
 ```
 
 **Blob struct** (in `blobs[MAX_BLOBS]`, alongside `blob_id[WORLD_W*WORLD_H]`)
 ```c
 typedef struct {
-    float   water_sum;  // total Cell.water across all cells in this blob
-    float   volume;     // cell count
-    uint8_t sealed;     // 1=enclosed by solid (no world-boundary contact)
-    int     dirty;      // 1=topology changed; blob_update will re-flood-fill
-    int     active;     // 1=slot in use
+    float   water_sum;        // total Cell.water across all cells
+    float   volume;           // air cell count
+    uint8_t sealed;           // 1=enclosed by solid
+    int     dirty;            // 1=topology changed; blob_update re-flood-fills
+    int     active;           // 1=slot in use
+    int     min_x, max_x;    // bounding box (set during flood fill)
+    int     min_y, max_y;
+    float   gas_pressure;    // open: PRESSURE_ATM; sealed: Boyle base
+    float   initial_gas_vol; // sealed: air cell count when first enclosed
 } Blob;
 ```
 
@@ -174,40 +183,43 @@ void tick_dirt(Cell *cells, int bias)
     // then diagonally. bias (0 or 1) alternates scan direction per frame.
 ```
 
-## sim/blob.h / blob.c — connected-region flood fill
+## sim/blob.h / blob.c — connected-region flood fill + column-scan pressure
 
 ```c
 void blob_init(const Cell *cells, Blob *blobs, uint16_t *blob_id, int *blob_count)
-    // Full BFS flood fill of all CELL_AIR regions.
-    // Assigns blob_id[idx] for every air cell; populates blobs[1..blob_count].
-    // blob_id[idx]==BLOB_NONE for solid cells. Call once after terrain_generate.
+    // Full BFS flood fill. Sets blob_id[], populates blobs[1..blob_count].
+    // Each blob gets bounding box, volume, water_sum, sealed, gas_pressure.
+    // Call once after terrain_generate.
 
 void blob_mark_dirty(Blob *blobs, const uint16_t *blob_id, int x, int y)
     // Mark the blob owning (x,y) and its 4 neighbours dirty.
     // Call whenever any cell changes type (dig, place, explosion, erosion).
 
 void blob_update(const Cell *cells, Blob *blobs, uint16_t *blob_id, int *blob_count)
-    // If any blob is dirty, re-runs blob_init (full re-flood-fill).
-    // Call once per frame before tick_water.
-    // TODO: targeted per-blob re-fill instead of full re-init.
+    // If any blob is dirty, re-runs blob_init. Call once per frame,
+    // before blob_pressure_tick.
+
+void blob_pressure_tick(Cell *cells, Blob *blobs, const uint16_t *blob_id, int blob_count)
+    // Column-scan pressure model. For each active blob:
+    //   1. Column scan — find water surface and height per column.
+    //   2. Interface scan — find adjacent cells with different blob_ids.
+    //   3. Compute ΔP = (gas_p_a + depth_a*K) - (gas_p_b + depth_b*K) at each interface.
+    //   4. Transfer water from high to low pressure: pop from top of src blob,
+    //      place at interface cell on dst side for CA settling.
+    // Sealed blobs: gas_pressure tracked via Boyle's law (initial_gas_vol / current_gas_vol).
 ```
 
-## sim/water.h / water.c — water simulation + unstick
+## sim/water.h / water.c — CA water settling + unstick
 
 ```c
-void tick_water(Cell *cells, const uint16_t *blob_id, int bias)
-    // Continuous water sim using Cell.water (0..255 per CELL_AIR cell).
-    // Two passes per call, bottom-to-top:
-    //   Pass 1 — Gravity: fall into cell below as much as will fit.
-    //            Equalization: halve diff with each horizontal neighbour.
-    //   Pass 2 — Upward pressure: cells blocked below push water upward,
-    //            but only within the same blob (blob_id check).
-    //            Drives communicating vessels and siphons.
+void tick_water(Cell *cells, int bias)
+    // CA-only water settling. Does NOT handle cross-blob pressure.
+    //   Pass 1 — Gravity: water falls into cell below as much as will fit.
+    //   Pass 2 — Equalization: halve diff with each horizontal neighbour.
     // bias (0 or 1) alternates scan direction per frame.
 
 void unstick(Cell *cells, int x, int y)
     // Clear FLAG_STICKY on the CELL_DIRT at (x,y), if present.
-    // Called after digging a neighbour or on explosion.
 ```
 
 ## sim/impact.h / impact.c — projectile impacts
@@ -366,8 +378,13 @@ void proj_update(ProjState *proj, Cell *cells)
 ```c
 void render_world_to_pixels(Color *pixels, const Cell *cells)
     // Write all terrain cells to the pixel buffer.
-    // Water is read from the parallel water[] amount array.
-    // Full cells (≥WATER_FULL): surface bright / deep dark. Shallow/damp: bright. Dry: clear.
+    // Full water (≥WATER_FULL): surface bright / deep dark. Shallow/damp: bright. Dry: clear.
+
+void render_pressure_overlay(Color *pixels, const Cell *cells,
+                             const uint16_t *blob_id, const Blob *blobs)
+    // Overwrite water cells with a pressure heat map (blue=low, red=high).
+    // Pressure = blob.gas_pressure + depth_from_surface * HYDROSTATIC_K.
+    // Toggle with backtick (show_debug). Call after render_world_to_pixels.
 
 void render_player_to_pixels(Color *pixels, const PlayerState *p)
     // Write player sprite to pixel buffer (skip when in_rover — call only when on foot).

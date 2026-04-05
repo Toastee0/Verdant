@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 
 // === WORLD ===
 #define WORLD_W      480
@@ -33,7 +34,7 @@ typedef struct {
     uint8_t type;    // CELL_AIR/STONE/DIRT/PLATFORM + FLAG_STICKY in bit 7
     uint8_t water;   // 0–255 water amount
     uint8_t temp;    // 0–255 temperature (128 = ambient)
-    uint8_t vector;  // reserved
+    uint8_t vector;  // packed velocity: hi nibble=dx, lo nibble=dy (VEC_ZERO=at rest)
 } Cell;
 
 // === BLOB PRESSURE SIM ===
@@ -42,12 +43,25 @@ typedef struct {
 #define MAX_BLOBS  2048
 #define BLOB_NONE  0    // sentinel: solid or unassigned cell
 
+// Pressure constants for the column-scan analytical model.
+// Pressure at a point = gas_pressure + depth_in_water_cells * HYDROSTATIC_K.
+// Depth is measured from the topmost water cell in the column (which is at gas_pressure).
+#define PRESSURE_ATM           1.0f   // atmospheric baseline (open blobs)
+#define HYDROSTATIC_K          0.04f  // pressure added per water cell of depth
+#define PRESSURE_EPSILON       0.02f  // ΔP below this is ignored
+#define TRANSFER_RATE          0.25f  // fraction of ΔP → water moved per tick
+#define MAX_TRANSFER_PER_TICK  48     // stability clamp per interface per tick
+
 typedef struct {
-    float   water_sum;  // total water amount across all cells in this blob
-    float   volume;     // cell count
-    uint8_t sealed;     // 1=fully enclosed by solid (no world-boundary contact)
-    int     dirty;      // 1=topology changed, needs re-flood-fill before next tick
-    int     active;     // 1=slot in use
+    float   water_sum;        // total Cell.water across all cells in this blob
+    float   volume;           // air cell count
+    uint8_t sealed;           // 1=enclosed by solid (no world-boundary contact)
+    int     dirty;            // 1=topology changed, needs re-flood-fill
+    int     active;           // 1=slot in use
+    int     min_x, max_x;    // bounding box (set during flood fill)
+    int     min_y, max_y;
+    float   gas_pressure;    // sealed blobs: Boyle base pressure; open: PRESSURE_ATM
+    float   initial_gas_vol; // sealed blobs: air cell count when first sealed
 } Blob;
 
 // === PLAYER ===
@@ -89,6 +103,28 @@ typedef struct {
 // Deposit radius scales with power: DEPOSIT_R_MIN + charge * range = 2..5
 #define DEPOSIT_R_MIN      2
 #define DEPOSIT_R_MAX      5
+
+// === VELOCITY / VECTOR ENCODING ===
+// Cell.vector byte encodes two signed 4-bit velocity components.
+// hi nibble = dx, lo nibble = dy. Range -8..+7 per axis.
+// 0x00 = at rest.
+static inline uint8_t vec_encode(int dx, int dy) {
+    return (uint8_t)(((dx & 0xF) << 4) | (dy & 0xF));
+}
+static inline int vec_dx(uint8_t v) {
+    int raw = (v >> 4) & 0xF;
+    return raw >= 8 ? raw - 16 : raw;
+}
+static inline int vec_dy(uint8_t v) {
+    int raw = v & 0xF;
+    return raw >= 8 ? raw - 16 : raw;
+}
+#define VEC_ZERO            0x00
+
+#define VELOCITY_K          1.0f    // sqrt(height_delta) scaling → velocity magnitude
+#define GRAVITY_TICK        1       // dy increment per tick (constant downward accel)
+#define DRAG_FACTOR_NUM     7       // horizontal drag = v * 7/8
+#define DRAG_FACTOR_DEN     8
 
 // === BALLISTIC ARM ===
 #define ARM_LEN            9      // barrel length in pixels

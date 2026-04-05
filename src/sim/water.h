@@ -1,17 +1,17 @@
 #pragma once
 #include "defs.h"
 
-// Continuous water simulation using Cell.water (0..255 per CELL_AIR cell).
+// CA-only water tick: gravity + equalization within blobs.
+// Does NOT handle cross-blob pressure — that is blob_pressure_tick() in blob.c.
 //
-// Two passes per call, bottom-to-top:
-//   Pass 1 — Gravity: fall into cell below as much as will fit.
-//            Equalization: halve diff with each horizontal neighbour (flat surfaces).
-//   Pass 2 — Upward pressure: cells blocked below push water upward into the
-//            same blob only (blob_id check prevents pushing through walls).
-//            Cascades the full column in one bottom-to-top sweep.
-//
+// Pass 0: Vectored movement — cells with vector != VEC_ZERO fly ballistically.
+//   Gravity (+1 dy/tick) and horizontal drag (7/8 per tick) applied each step.
+//   Stops on solid wall, world boundary, or entering a full water body.
+// Pass 1: Gravity — at-rest water falls into the cell below as much as will fit.
+// Pass 2: Equalization — halve diff with each horizontal neighbour (flat surfaces).
+//   Only processes cells with vector == VEC_ZERO. In-flight water is skipped.
 // bias: 0 or 1, alternates scan direction each frame.
-void tick_water(Cell *cells, const uint16_t *blob_id, int bias);
+void tick_water(Cell *cells, int bias);
 
 // Clear FLAG_STICKY on the CELL_DIRT at (x,y), if present.
 void unstick(Cell *cells, int x, int y);

@@ -7,9 +7,12 @@
 // ── Pixel buffer phase (called before UpdateTexture) ────────────────────────
 
 // Write all terrain cells to the pixel buffer.
-// Water is read from the parallel water[] amount array (0..255 per cell).
-// Surface water (full cell, partial above) renders bright; deep water renders dark.
 void render_world_to_pixels(Color *pixels, const Cell *cells);
+
+// Overwrite water cells with a pressure heat map (blue=low, red=high).
+// Call after render_world_to_pixels when debug overlay is active.
+void render_pressure_overlay(Color *pixels, const Cell *cells,
+                             const uint16_t *blob_id, const Blob *blobs);
 
 // Write player sprite into the pixel buffer (skip when in_rover).
 void render_player_to_pixels(Color *pixels, const PlayerState *p);

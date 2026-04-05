@@ -1,6 +1,7 @@
 #include "render.h"
 #include "sprites.h"
 #include "world.h"
+#include "sim/blob.h"
 
 // Ammo display names — only used in render (HUD prompt)
 static const char *AMMO_NAMES[AMMO_COUNT] = {
@@ -31,6 +32,68 @@ void render_world_to_pixels(Color *pixels, const Cell *cells) {
                 }
                 default: pixels[i] = (Color){255, 255, 255, 0}; break;
             }
+        }
+    }
+}
+
+void render_pressure_overlay(Color *pixels, const Cell *cells,
+                             const uint16_t *blob_id, const Blob *blobs) {
+    // First pass: tint dry-air blobs so blob boundaries are visible.
+    // Sealed air = purple tint (compressed), open air = dim grey.
+    for (int i = 0; i < WORLD_W * WORLD_H; i++) {
+        if (CELL_TYPE(cells[i].type) != CELL_AIR) continue;
+        if (cells[i].water > WATER_DAMP) continue;   // water phase handled below
+        uint16_t bid = blob_id[i];
+        if (bid == BLOB_NONE || bid >= MAX_BLOBS || !blobs[bid].active) continue;
+        pixels[i] = blobs[bid].sealed
+            ? (Color){ 80,  30, 120, 255}   // purple — sealed air
+            : (Color){ 40,  40,  40, 255};  // dark grey — open air
+    }
+    // For each water cell: find the water surface in this column within its blob,
+    // compute pressure analytically, map to a blue→cyan→yellow→red gradient.
+    for (int x = 0; x < WORLD_W; x++) {
+        // Find surface_y for each blob at this column (scan top-to-bottom once).
+        // We only care about blobs that have water here, so scan lazily.
+        int surface_y[MAX_BLOBS];
+        for (int i = 0; i < MAX_BLOBS; i++) surface_y[i] = -1;
+
+        for (int y = 0; y < WORLD_H; y++) {
+            int idx = y * WORLD_W + x;
+            if (CELL_TYPE(cells[idx].type) != CELL_AIR) continue;
+            if (cells[idx].water < WATER_DAMP) continue;
+            uint16_t bid = blob_id[idx];
+            if (bid == BLOB_NONE || bid >= MAX_BLOBS) continue;
+            if (surface_y[bid] == -1) surface_y[bid] = y;
+        }
+
+        for (int y = 0; y < WORLD_H; y++) {
+            int idx = y * WORLD_W + x;
+            if (CELL_TYPE(cells[idx].type) != CELL_AIR) continue;
+            if (cells[idx].water < WATER_DAMP) continue;
+            uint16_t bid = blob_id[idx];
+            if (bid == BLOB_NONE || bid >= MAX_BLOBS) continue;
+
+            float gas_p = blobs[bid].active ? blobs[bid].gas_pressure : PRESSURE_ATM;
+            int depth   = (surface_y[bid] >= 0) ? (y - surface_y[bid]) : 0;
+            float P     = gas_p + depth * HYDROSTATIC_K;
+
+            // Map P to [0,1]: 0 = PRESSURE_ATM, 1 = ATM + 70 cells deep (~3.8)
+            float t = (P - PRESSURE_ATM) / (70.0f * HYDROSTATIC_K);
+            if (t < 0) t = 0; else if (t > 1) t = 1;
+
+            // Blue(0) → Cyan(0.33) → Yellow(0.66) → Red(1)
+            uint8_t r, g, b;
+            if (t < 0.33f) {
+                float u = t / 0.33f;
+                r = 0; g = (uint8_t)(255 * u); b = 255;
+            } else if (t < 0.66f) {
+                float u = (t - 0.33f) / 0.33f;
+                r = (uint8_t)(255 * u); g = 255; b = (uint8_t)(255 * (1 - u));
+            } else {
+                float u = (t - 0.66f) / 0.34f;
+                r = 255; g = (uint8_t)(255 * (1 - u)); b = 0;
+            }
+            pixels[idx] = (Color){r, g, b, 255};
         }
     }
 }

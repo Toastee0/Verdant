@@ -11,6 +11,7 @@ void tick_dirt(Cell *cells, int bias) {
 
             int below = (y + 1) * WORLD_W + x;
             if (CELL_TYPE(cells[below].type) == CELL_AIR) {
+                cells[below].vector        = VEC_ZERO;  // kill any in-flight water momentum
                 cells[below].type          = c;
                 cells[y * WORLD_W + x].type = CELL_AIR;
                 continue;
@@ -24,6 +25,7 @@ void tick_dirt(Cell *cells, int bias) {
                 int side = y       * WORLD_W + nx;
                 if (CELL_TYPE(cells[diag].type) == CELL_AIR &&
                     CELL_TYPE(cells[side].type) == CELL_AIR) {
+                    cells[diag].vector         = VEC_ZERO;  // kill any in-flight water momentum
                     cells[diag].type           = c;
                     cells[y * WORLD_W + x].type = CELL_AIR;
                     break;

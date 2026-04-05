@@ -19,7 +19,20 @@ int main(void) {
     static Blob     blobs[MAX_BLOBS];
     static uint16_t blob_id[WORLD_W * WORLD_H];
     static int      blob_count;
-    terrain_generate(cells);
+    // Load test.map if present (exported from editor.html), else procedural gen.
+    {
+        FILE *f = fopen("test.map", "rb");
+        if (f) {
+            size_t n = fread(cells, sizeof(Cell), WORLD_W * WORLD_H, f);
+            fclose(f);
+            if (n != (size_t)(WORLD_W * WORLD_H)) {
+                // Truncated or wrong format — fall back to generated scene.
+                terrain_generate(cells);
+            }
+        } else {
+            terrain_generate(cells);
+        }
+    }
     blob_init(cells, blobs, blob_id, &blob_count);
 
     Image     worldImg = GenImageColor(WORLD_W, WORLD_H, BLACK);
@@ -75,12 +88,17 @@ int main(void) {
         if (inp.toggle_debug)      show_debug ^= 1;
         if (inp.quit)              break;
 
-        // ── Dirt + water simulation ────────────────────────────────────────
-        tick_dirt(cells, frame & 1);
+        // ── Simulation tick order (per COLUMN-SCAN PRESSURE spec) ─────────
+        // 1. Re-flood-fill if topology changed
         blob_update(cells, blobs, blob_id, &blob_count);
-        tick_water(cells, blob_id, frame & 1);
-        tick_water(cells, blob_id, (frame + 1) & 1);
-        tick_water(cells, blob_id, frame & 1);
+        // 2. Analytical column pressure → cross-blob transfers
+        blob_pressure_tick(cells, blobs, blob_id, blob_count);
+        // 3. Sand-fall (may dirty blobs if dirt enters/exits a region)
+        tick_dirt(cells, frame & 1);
+        // 4. CA settling: gravity + equalization within blobs (no upward pressure)
+        tick_water(cells, frame & 1);
+        tick_water(cells, (frame + 1) & 1);
+        tick_water(cells, frame & 1);
 
         // ── Rover enter / exit (F key) ─────────────────────────────────────
         float pcx_f = player.x + CHAR_W  * 0.5f;
@@ -210,6 +228,8 @@ int main(void) {
         // ── Render ────────────────────────────────────────────────────────
         Color *pixels = worldImg.data;
         render_world_to_pixels(pixels, cells);
+        if (show_debug)
+            render_pressure_overlay(pixels, cells, blob_id, blobs);
         render_rover_to_pixels(pixels, cells, &rover, &arm, &proj);
         if (!rover.in_rover)
             render_player_to_pixels(pixels, &player);
