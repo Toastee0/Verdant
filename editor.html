@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Verdant Map Editor</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a1a; color: #eee; font-family: monospace; font-size: 12px;
+       display: flex; height: 100vh; overflow: hidden; }
+
+#sidebar { width: 150px; flex-shrink: 0; padding: 8px; display: flex;
+           flex-direction: column; gap: 4px; overflow-y: auto;
+           border-right: 1px solid #333; }
+#canvas-wrap { flex: 1; overflow: auto; background: #111; }
+canvas { display: block; image-rendering: pixelated; cursor: crosshair; }
+
+h2 { font-size: 11px; color: #888; text-transform: uppercase;
+     margin: 6px 0 2px; letter-spacing: 1px; }
+button { width: 100%; padding: 5px 4px; background: #2a2a2a; color: #ccc;
+         border: 1px solid #444; cursor: pointer; text-align: left; }
+button:hover { background: #383838; }
+button.active { background: #444; border-color: #aaa; color: #fff; }
+.swatch { display: inline-block; width: 10px; height: 10px;
+          margin-right: 5px; vertical-align: middle; border: 1px solid #666; }
+label { color: #888; font-size: 10px; }
+input[type=range] { width: 100%; accent-color: #5af; }
+#status { font-size: 10px; color: #666; margin-top: auto; padding-top: 8px; }
+#coords { font-size: 10px; color: #555; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <strong>Verdant Editor</strong>
+  <div id="coords">—</div>
+
+  <h2>Tool</h2>
+  <button id="t-stone"    class="active"><span class="swatch" style="background:#808080"></span>Stone</button>
+  <button id="t-dirt"    ><span class="swatch" style="background:#8b5a2b"></span>Dirt (sticky)</button>
+  <button id="t-platform"><span class="swatch" style="background:#a56932"></span>Platform</button>
+  <button id="t-air"     ><span class="swatch" style="background:#000"></span>Air (erase)</button>
+  <button id="t-water"   ><span class="swatch" style="background:#1e50a0"></span>Water</button>
+
+  <h2>Water amount</h2>
+  <label><span id="lbl-water">255</span> / 255</label>
+  <input type="range" id="sl-water" min="1" max="255" value="255">
+
+  <h2>Brush size</h2>
+  <label><span id="lbl-brush">1</span> px</label>
+  <input type="range" id="sl-brush" min="1" max="30" value="1">
+
+  <h2>Zoom</h2>
+  <label><span id="lbl-zoom">2</span>×</label>
+  <input type="range" id="sl-zoom" min="1" max="5" value="2">
+
+  <h2>File</h2>
+  <button id="btn-new">New (clear)</button>
+  <button id="btn-export">⬇ Export test.map</button>
+  <button id="btn-import">⬆ Import test.map</button>
+  <input type="file" id="file-in" style="display:none" accept=".map">
+  <button id="btn-save">Save (browser)</button>
+  <button id="btn-load">Load (browser)</button>
+
+  <div id="status">480 × 270 · 4B/cell</div>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="c"></canvas>
+</div>
+
+<script>
+const W = 480, H = 270;
+const CELL_AIR = 0, CELL_STONE = 1, CELL_DIRT = 2, CELL_PLATFORM = 3;
+const FLAG_STICKY = 0x80;
+// Binary layout matches C Cell struct: [type, water, temp, vector] per cell
+const cells = new Uint8Array(W * H * 4);
+
+function initCells() {
+  for (let i = 0; i < W * H; i++) {
+    cells[i*4]   = CELL_AIR;
+    cells[i*4+1] = 0;
+    cells[i*4+2] = 128; // ambient temp
+    cells[i*4+3] = 0;
+  }
+}
+initCells();
+
+// ── Rendering ──────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let scale = 2;
+let imgData;
+
+function cellRGBA(type, water) {
+  const t = type & 0x7f;
+  if (t === CELL_STONE)    return [128, 128, 128];
+  if (t === CELL_DIRT)     return [139,  90,  43];
+  if (t === CELL_PLATFORM) return [165, 105,  50];
+  // AIR — color by water amount
+  if (water >= 200) return [ 30,  80, 160];
+  if (water >=   8) return [ 90, 160, 230];
+  return [0, 0, 0];
+}
+
+function drawCell(x, y) {
+  const i = (y * W + x) * 4;
+  const [r, g, b] = cellRGBA(cells[i], cells[i+1]);
+  const d = imgData.data;
+  for (let sy = 0; sy < scale; sy++) {
+    for (let sx = 0; sx < scale; sx++) {
+      const p = ((y * scale + sy) * W * scale + (x * scale + sx)) * 4;
+      d[p] = r; d[p+1] = g; d[p+2] = b; d[p+3] = 255;
+    }
+  }
+}
+
+function renderAll() {
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++)
+      drawCell(x, y);
+  ctx.putImageData(imgData, 0, 0);
+}
+
+function rebuildCanvas() {
+  canvas.width  = W * scale;
+  canvas.height = H * scale;
+  imgData = ctx.createImageData(W * scale, H * scale);
+  renderAll();
+}
+
+// ── Painting ───────────────────────────────────────────────────────────────
+let tool = 'stone';
+let waterAmt = 255;
+let brushSize = 1;
+let painting = false;
+
+function applyTool(wx, wy) {
+  const half = Math.floor(brushSize / 2);
+  const changed = [];
+  for (let dy = -half; dy <= half; dy++) {
+    for (let dx = -half; dx <= half; dx++) {
+      const x = wx + dx, y = wy + dy;
+      if (x < 0 || x >= W || y < 0 || y >= H) continue;
+      const i = (y * W + x) * 4;
+      switch (tool) {
+        case 'stone':    cells[i] = CELL_STONE;    cells[i+1] = 0; break;
+        case 'dirt':     cells[i] = CELL_DIRT | FLAG_STICKY; cells[i+1] = 0; break;
+        case 'platform': cells[i] = CELL_PLATFORM; cells[i+1] = 0; break;
+        case 'air':      cells[i] = CELL_AIR;      cells[i+1] = 0; break;
+        case 'water':    cells[i] = CELL_AIR;      cells[i+1] = waterAmt; break;
+      }
+      cells[i+2] = 128; cells[i+3] = 0;
+      changed.push([x, y]);
+    }
+  }
+  for (const [x, y] of changed) drawCell(x, y);
+  ctx.putImageData(imgData, 0, 0);
+}
+
+function worldXY(e) {
+  const r = canvas.getBoundingClientRect();
+  return [
+    Math.floor((e.clientX - r.left)  / scale),
+    Math.floor((e.clientY - r.top)   / scale),
+  ];
+}
+
+canvas.addEventListener('mousedown',  e => { painting = true;  applyTool(...worldXY(e)); });
+canvas.addEventListener('mousemove',  e => {
+  const [x, y] = worldXY(e);
+  document.getElementById('coords').textContent = `x:${x}  y:${y}`;
+  if (painting) applyTool(x, y);
+});
+canvas.addEventListener('mouseup',    () => painting = false);
+canvas.addEventListener('mouseleave', () => painting = false);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+// ── Tool buttons ───────────────────────────────────────────────────────────
+['stone','dirt','platform','air','water'].forEach(t => {
+  document.getElementById('t-'+t).addEventListener('click', () => {
+    tool = t;
+    document.querySelectorAll('button[id^=t-]').forEach(b => b.classList.remove('active'));
+    document.getElementById('t-'+t).classList.add('active');
+  });
+});
+
+document.getElementById('sl-water').addEventListener('input', function() {
+  waterAmt = +this.value;
+  document.getElementById('lbl-water').textContent = waterAmt;
+});
+document.getElementById('sl-brush').addEventListener('input', function() {
+  brushSize = +this.value;
+  document.getElementById('lbl-brush').textContent = brushSize;
+});
+document.getElementById('sl-zoom').addEventListener('input', function() {
+  scale = +this.value;
+  document.getElementById('lbl-zoom').textContent = scale;
+  rebuildCanvas();
+});
+
+// ── File ops ───────────────────────────────────────────────────────────────
+document.getElementById('btn-new').addEventListener('click', () => {
+  if (confirm('Clear map?')) { initCells(); renderAll(); }
+});
+
+document.getElementById('btn-export').addEventListener('click', () => {
+  const blob = new Blob([cells.buffer], { type: 'application/octet-stream' });
+  const a = Object.assign(document.createElement('a'),
+    { href: URL.createObjectURL(blob), download: 'test.map' });
+  a.click();
+  document.getElementById('status').textContent = 'Exported test.map — place next to verdant_f1.exe';
+  setTimeout(() => document.getElementById('status').textContent = '480 × 270 · 4B/cell', 3000);
+});
+
+document.getElementById('btn-import').addEventListener('click', () =>
+  document.getElementById('file-in').click());
+
+document.getElementById('file-in').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = new Uint8Array(e.target.result);
+    const expected = W * H * 4;
+    if (data.length !== expected) {
+      alert(`Wrong size: got ${data.length} bytes, expected ${expected}`);
+      return;
+    }
+    cells.set(data);
+    renderAll();
+  };
+  reader.readAsArrayBuffer(file);
+  this.value = '';
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  localStorage.setItem('verdant_map_v1', JSON.stringify(Array.from(cells)));
+  const s = document.getElementById('status');
+  s.textContent = 'Saved to browser storage.';
+  setTimeout(() => s.textContent = '480 × 270 · 4B/cell', 2000);
+});
+
+document.getElementById('btn-load').addEventListener('click', () => {
+  const raw = localStorage.getItem('verdant_map_v1');
+  if (!raw) { alert('Nothing saved yet.'); return; }
+  cells.set(new Uint8Array(JSON.parse(raw)));
+  renderAll();
+});
+
+rebuildCanvas();
+</script>
+</body>
+</html>
