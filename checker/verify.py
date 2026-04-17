@@ -7,14 +7,20 @@ raw data fails the check, this is the divergence report — i.e., the bug.
 
 Usage:
     python verify.py <path-to-json>
+    python verify.py <path-to-json> --baseline <tick_0.json>
     python verify.py <path-to-json> --filter element=Si
     python verify.py <path-to-json> --json-report   (for AI agent consumption)
 
+Mass conservation requires a baseline (tick 0 of the same run). Without one,
+the mass check is skipped with a warning — the previous self-referential
+check was a tautology that could not detect actual mass loss.
+
 Exit codes:
-    0 — all invariants verified
+    0 — all invariants verified (or skipped with warning)
     1 — at least one invariant failed independent verification
     2 — sim self-report disagrees with independent check (most serious)
     3 — schema error, could not parse
+    4 — baseline incompatible with target (different run_id, element_table_hash, etc.)
 """
 
 import argparse
@@ -159,20 +165,77 @@ def check_flags_consistency(cells):
     )
 
 
-# ---------- Inferred expected totals (for self-contained verification) ----------
+# ---------- Expected-mass sourcing ----------
+#
+# Previously there was an `infer_expected_mass(cells)` that summed the current
+# cells' compositions — this was tautological (compared cells to themselves).
+# Expected mass MUST come from an external source: a baseline tick 0 JSON of
+# the same run. See load_baseline_expected_mass().
 
-def infer_expected_mass(cells):
-    """Sum composition across all cells to get expected mass per element."""
+
+def load_baseline_expected_mass(baseline_path):
+    """Read expected mass per element from a baseline (tick 0) JSON emission.
+
+    Prefers `totals.mass_by_element` if present (authoritative). Falls back to
+    summing the baseline's cells if totals is missing.
+
+    Returns: (expected_mass_dict, baseline_payload)
+    """
+    with open(baseline_path) as f:
+        baseline = json.load(f)
+
+    if "totals" in baseline and "mass_by_element" in baseline["totals"]:
+        return dict(baseline["totals"]["mass_by_element"]), baseline
+
+    # Fallback: compute from baseline cells directly
     totals = {}
-    for cell in cells:
+    for cell in baseline.get("cells", []):
         for element, frac in cell["composition"]:
             totals[element] = totals.get(element, 0) + frac
-    return totals
+    return totals, baseline
+
+
+def check_baseline_compatible(baseline, target):
+    """Ensure baseline and target are from the same run with the same ground-truth physics.
+
+    Returns a list of incompatibility reasons. Empty list = compatible.
+    """
+    issues = []
+    b_run = baseline.get("run_id")
+    t_run = target.get("run_id")
+    if b_run and t_run and b_run != t_run:
+        issues.append(f"run_id mismatch: baseline={b_run!r} target={t_run!r}")
+
+    b_hash = baseline.get("element_table_hash")
+    t_hash = target.get("element_table_hash")
+    if b_hash and t_hash and b_hash != t_hash:
+        issues.append(f"element_table_hash mismatch: baseline={b_hash!r} target={t_hash!r}")
+
+    b_scenario = baseline.get("scenario")
+    t_scenario = target.get("scenario")
+    if b_scenario and t_scenario and b_scenario != t_scenario:
+        issues.append(f"scenario mismatch: baseline={b_scenario!r} target={t_scenario!r}")
+
+    # Baseline should be tick 0 (or at least earlier than target)
+    b_tick = baseline.get("tick")
+    t_tick = target.get("tick")
+    if b_tick is not None and t_tick is not None and b_tick > t_tick:
+        issues.append(f"baseline tick ({b_tick}) is after target tick ({t_tick})")
+
+    return issues
 
 
 # ---------- Main verification flow ----------
 
-def verify(payload, filters=None):
+def verify(payload, filters=None, expected_mass=None):
+    """Run every independent invariant check and compare against sim's self-report.
+
+    Args:
+        payload:       the loaded target JSON (dict)
+        filters:       optional dict for cell filtering (element=, phase=)
+        expected_mass: authoritative per-element expected mass from a baseline;
+                       if None, the mass-conservation check is SKIPPED (not passed)
+    """
     filters = filters or {}
     cells = payload["cells"]
 
@@ -182,10 +245,20 @@ def verify(payload, filters=None):
     if "phase" in filters:
         cells = [c for c in cells if c["phase"] == filters["phase"]]
 
+    # Mass conservation: only meaningful with an external baseline
+    if expected_mass is None:
+        mass_check = (
+            "skipped",
+            {"reason": "no baseline provided; pass --baseline <tick_0.json> to verify "
+                       "mass conservation against an external ground truth"},
+        )
+    else:
+        mass_check = check_mass_conservation(cells, expected_mass)
+
     # Run all independent checks
     checks = {
         "composition_sum_255": check_composition_sums(cells),
-        "mass_conservation": check_mass_conservation(cells, infer_expected_mass(cells)),
+        "mass_conservation": mass_check,
         "pressure_decoding": check_pressure_decoding(cells, None),
         "mohs_range": check_mohs_range(cells),
         "bid_conservation": check_bid_conservation(cells),
@@ -193,9 +266,12 @@ def verify(payload, filters=None):
     }
 
     # Cross-check: sim self-report vs independent verdict
+    # Skipped checks don't produce divergences — we have no independent verdict to divergent with.
     sim_invariants = {inv["name"]: inv["status"] for inv in payload.get("invariants", [])}
     divergences = []
     for name, (status, _) in checks.items():
+        if status == "skipped":
+            continue
         # Map independent check names to sim-reported names (loose match)
         sim_name_candidates = [sn for sn in sim_invariants if name in sn or sn in name]
         for sn in sim_name_candidates:
@@ -237,6 +313,9 @@ def format_report(report) -> str:
                     lines.append(f"      {item}")
                 if len(d[sample_key]) > 3:
                     lines.append(f"      ... and {len(d[sample_key]) - 3} more")
+        elif result["status"] == "skipped":
+            reason = d.get("reason", "no reason given")
+            lines.append(f"      (skipped: {reason})")
 
     lines.append("")
     lines.append("SIM SELF-REPORT")
@@ -253,6 +332,13 @@ def format_report(report) -> str:
             )
         lines.append("")
 
+    # Any skipped checks? Surface a warning line so they're not invisible.
+    skipped_names = [name for name, r in report["checks"].items() if r["status"] == "skipped"]
+    if skipped_names:
+        lines.append(f"WARNINGS: {len(skipped_names)} check(s) skipped — "
+                     f"{', '.join(skipped_names)}")
+        lines.append("")
+
     # Verdict
     any_fail = any(r["status"] == "fail" for r in report["checks"].values())
     any_diverge = bool(report["divergences"])
@@ -260,6 +346,8 @@ def format_report(report) -> str:
         verdict = "DIVERGENT  (sim self-report disagrees with independent check — BUG)"
     elif any_fail:
         verdict = "FAIL  (one or more invariants violated)"
+    elif skipped_names:
+        verdict = f"PASS with warnings ({len(skipped_names)} check(s) skipped)"
     else:
         verdict = "PASS"
     lines.append(f"VERDICT: {verdict}")
@@ -269,6 +357,9 @@ def format_report(report) -> str:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("json_path", type=Path)
+    ap.add_argument("--baseline", type=Path, default=None,
+                    help="Path to a baseline (tick 0) JSON emission from the same run. "
+                         "Required to independently verify mass conservation.")
     ap.add_argument("--filter", action="append", default=[],
                     help="Filter cells by key=value (e.g. phase=solid)")
     ap.add_argument("--json-report", action="store_true",
@@ -287,13 +378,28 @@ def main():
               file=sys.stderr)
         return 3
 
+    # Load baseline if provided and confirm compatibility
+    expected_mass = None
+    if args.baseline is not None:
+        try:
+            expected_mass, baseline_payload = load_baseline_expected_mass(args.baseline)
+        except Exception as e:
+            print(f"BASELINE ERROR: could not load {args.baseline}: {e}", file=sys.stderr)
+            return 4
+        issues = check_baseline_compatible(baseline_payload, payload)
+        if issues:
+            print("BASELINE INCOMPATIBLE with target:", file=sys.stderr)
+            for issue in issues:
+                print(f"  - {issue}", file=sys.stderr)
+            return 4
+
     filters = {}
     for f in args.filter:
         if "=" in f:
             k, v = f.split("=", 1)
             filters[k] = v
 
-    report = verify(payload, filters)
+    report = verify(payload, filters, expected_mass=expected_mass)
 
     if args.json_report:
         print(json.dumps(report, indent=2))
