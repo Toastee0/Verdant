@@ -1,0 +1,18 @@
+compound_id	name	symbol	composition
+# Compound aliases. compound_id >= 200. Expanded to a composition vector at cell init.
+# The `composition` column is JSON-like: [(element_symbol, fraction_out_of_255), ...]
+# Fractions are by MASS, not by atom count (derived from molar mass × stoichiometry).
+# No compounds defined for Tier 0 (Si only). Entries appear as elements are introduced:
+#
+# Tier 1 additions (when H, O added):
+#   200	Water	H2O	[("H", 28), ("O", 227)]
+#
+# Tier 2 additions (when C, Fe added):
+#   201	CarbonDioxide	CO2	[("C", 70), ("O", 185)]
+#   202	Methane	CH4	[("H", 64), ("C", 191)]
+#   203	CastIron	Fe+C	[("C", 10), ("Fe", 245)]
+#
+# Tier 4 additions (when Na, Cl etc added):
+#   204	Halite	NaCl	[("Na", 98), ("Cl", 157)]
+#   205	Calcite	CaCO3	[("C", 30), ("O", 144), ("Ca", 102)]
+#   206	Quartz	SiO2	[("Si", 119), ("O", 136)]

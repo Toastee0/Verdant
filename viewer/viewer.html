@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VERDANT Debug Viewer</title>
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --panel: #121519;
+    --panel-2: #1a1e24;
+    --border: #252a32;
+    --text: #c8ccd0;
+    --text-dim: #6b7280;
+    --accent: #7dd3a0;
+    --accent-2: #ffb86c;
+    --fail: #ff6b6b;
+    --pass: #7dd3a0;
+    --warn: #ffb86c;
+    --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    grid-template-rows: 40px 1fr;
+    grid-template-areas:
+      "header header header"
+      "sidebar main inspector";
+    height: 100vh;
+  }
+
+  header {
+    grid-area: header;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  header .title {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+  }
+
+  header .meta {
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  header .spacer { flex: 1; }
+
+  header button, header label.file-btn {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  header button:hover, header label.file-btn:hover {
+    border-color: var(--accent);
+  }
+
+  header input[type="file"] { display: none; }
+
+  aside.sidebar {
+    grid-area: sidebar;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  aside.inspector {
+    grid-area: inspector;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  main {
+    grid-area: main;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+  }
+
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 11px;
+  }
+
+  .filter-row label {
+    color: var(--text-dim);
+    flex-shrink: 0;
+    width: 70px;
+  }
+
+  .filter-row input, .filter-row select {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    font-size: 11px;
+  }
+
+  .stat .k { color: var(--text-dim); }
+  .stat .v { color: var(--text); }
+
+  .invariant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 4px;
+    margin-bottom: 2px;
+    font-size: 11px;
+    border-left: 2px solid transparent;
+  }
+
+  .invariant.pass { border-left-color: var(--pass); }
+  .invariant.fail { border-left-color: var(--fail); }
+
+  .invariant .status {
+    font-weight: bold;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .invariant.pass .status { color: var(--pass); }
+  .invariant.fail .status { color: var(--fail); }
+
+  #grid-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .cell {
+    stroke: #000;
+    stroke-width: 0.5;
+    cursor: pointer;
+    transition: stroke-width 0.1s;
+  }
+
+  .cell:hover {
+    stroke: var(--accent);
+    stroke-width: 2;
+  }
+
+  .cell.selected {
+    stroke: var(--accent);
+    stroke-width: 2.5;
+  }
+
+  .cell.ratcheted {
+    stroke: var(--accent-2);
+    stroke-width: 1.5;
+  }
+
+  .cell.culled {
+    stroke-dasharray: 2 2;
+  }
+
+  .cell.fractured {
+    stroke: var(--fail);
+    stroke-width: 1.5;
+  }
+
+  .cell.filtered-out {
+    opacity: 0.15;
+  }
+
+  .inspector-field {
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+
+  .inspector-field .k {
+    color: var(--text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .inspector-field .v {
+    color: var(--text);
+    word-break: break-all;
+  }
+
+  .inspector-field pre {
+    background: var(--panel-2);
+    padding: 6px;
+    border: 1px solid var(--border);
+    font-size: 10px;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  .empty-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-dim);
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .drop-active {
+    background: rgba(125, 211, 160, 0.05);
+    outline: 1px dashed var(--accent);
+    outline-offset: -4px;
+  }
+
+  .legend {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(18, 21, 25, 0.9);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .legend .swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border: 1px solid #000;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span class="title">VERDANT · DEBUG VIEWER</span>
+    <span class="meta" id="file-meta">no file loaded</span>
+    <div class="spacer"></div>
+    <label class="file-btn">
+      LOAD JSON
+      <input type="file" id="file-input" accept="application/json,.json">
+    </label>
+    <button id="reset-btn">RESET FILTERS</button>
+  </header>
+
+  <aside class="sidebar">
+    <div class="section">
+      <h3>Filters</h3>
+      <div class="filter-row">
+        <label>Element</label>
+        <select id="filter-element">
+          <option value="">any</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <label>Phase</label>
+        <select id="filter-phase">
+          <option value="">any</option>
+          <option value="solid">solid</option>
+          <option value="liquid">liquid</option>
+          <option value="gas">gas</option>
+          <option value="plasma">plasma</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <label>Mohs min</label>
+        <input type="number" id="filter-mohs-min" min="0" max="10" placeholder="0">
+      </div>
+      <div class="filter-row">
+        <label>Mohs max</label>
+        <input type="number" id="filter-mohs-max" min="0" max="10" placeholder="10">
+      </div>
+      <div class="filter-row">
+        <label>Flag</label>
+        <select id="filter-flag">
+          <option value="">none</option>
+          <option value="culled">culled</option>
+          <option value="fractured">fractured</option>
+          <option value="ratcheted_this_tick">ratcheted</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Totals</h3>
+      <div id="totals-panel"></div>
+    </div>
+
+    <div class="section">
+      <h3>Invariants</h3>
+      <div id="invariants-panel"></div>
+    </div>
+
+    <div class="section">
+      <h3>Run</h3>
+      <div id="run-panel" style="font-size: 10px; color: var(--text-dim); word-break: break-all;"></div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div class="empty-state" id="empty-state">
+      Drag a schema-v1 JSON file here<br>
+      <span style="color: var(--text-dim); font-size: 11px;">or use LOAD JSON above</span>
+    </div>
+    <svg id="grid-svg" style="display:none"></svg>
+    <div class="legend" id="legend" style="display:none">
+      <strong>phase</strong><br>
+      <span class="swatch" style="background:#4a6fa5"></span>gas &nbsp;
+      <span class="swatch" style="background:#5fb3c2"></span>liquid &nbsp;
+      <span class="swatch" style="background:#8b7355"></span>solid &nbsp;
+      <span class="swatch" style="background:#c25fb3"></span>plasma<br>
+      <strong>flags</strong><br>
+      <span style="color:var(--accent-2)">━</span> ratcheted &nbsp;
+      <span style="color:var(--fail)">━</span> fractured &nbsp;
+      <span style="color:var(--text)">- - -</span> culled
+    </div>
+  </main>
+
+  <aside class="inspector">
+    <h3 style="font-size:10px; text-transform:uppercase; letter-spacing:0.15em; color:var(--text-dim); margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Cell Inspector</h3>
+    <div id="inspector-content">
+      <p style="color:var(--text-dim); font-size:11px;">click a cell to inspect</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+// ========== State ==========
+let currentData = null;
+let selectedCellId = null;
+let filters = {
+  element: '',
+  phase: '',
+  mohsMin: null,
+  mohsMax: null,
+  flag: '',
+};
+
+// ========== Hex coordinate math ==========
+// Axial (q, r) -> pixel (x, y) for pointy-top hex
+function axialToPixel(q, r, size) {
+  const x = size * Math.sqrt(3) * (q + r / 2);
+  const y = size * 1.5 * r;
+  return { x, y };
+}
+
+function hexPoints(cx, cy, size) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.PI / 180 * (60 * i - 30);
+    pts.push(`${cx + size * Math.cos(angle)},${cy + size * Math.sin(angle)}`);
+  }
+  return pts.join(' ');
+}
+
+// ========== Color encoding ==========
+function cellColor(cell) {
+  const phase = cell.phase;
+  const pressure = cell.pressure_decoded;
+  const mohs = cell.mohs_level || 1;
+
+  // Base hue per phase
+  const hues = { gas: 215, liquid: 190, solid: 30, plasma: 310 };
+  const h = hues[phase] ?? 0;
+
+  // Saturation: solid is duller (earthy), fluids more vivid
+  const s = phase === 'solid' ? 25 + mohs * 3 : 50;
+
+  // Lightness: log-normalized pressure, stays within readable band
+  let lNorm = 0.5;
+  if (pressure > 0) {
+    lNorm = Math.min(1, Math.log10(pressure + 1) / 7);
+  }
+  const l = 20 + lNorm * 40;  // 20-60%
+
+  return `hsl(${h}, ${s}%, ${l}%)`;
+}
+
+// ========== Filtering ==========
+function passesFilter(cell) {
+  if (filters.element && !cell.composition.some(([e, _]) => e === filters.element)) {
+    return false;
+  }
+  if (filters.phase && cell.phase !== filters.phase) return false;
+  if (filters.mohsMin !== null && cell.mohs_level < filters.mohsMin) return false;
+  if (filters.mohsMax !== null && cell.mohs_level > filters.mohsMax) return false;
+  if (filters.flag && !cell.flags[filters.flag]) return false;
+  return true;
+}
+
+// ========== Render ==========
+function renderGrid() {
+  const svg = document.getElementById('grid-svg');
+  svg.innerHTML = '';
+
+  if (!currentData) return;
+
+  const cells = currentData.cells;
+  const size = 28;  // hex radius in px
+
+  // Compute bounds
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  cells.forEach(c => {
+    const { x, y } = axialToPixel(c.coord[0], c.coord[1], size);
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  });
+  const pad = size * 2;
+  const vb = `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
+  svg.setAttribute('viewBox', vb);
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  cells.forEach(c => {
+    const { x, y } = axialToPixel(c.coord[0], c.coord[1], size);
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', hexPoints(x, y, size));
+    poly.setAttribute('fill', cellColor(c));
+    const classes = ['cell'];
+    if (c.flags.culled) classes.push('culled');
+    if (c.flags.fractured) classes.push('fractured');
+    if (c.flags.ratcheted_this_tick) classes.push('ratcheted');
+    if (c.id === selectedCellId) classes.push('selected');
+    if (!passesFilter(c)) classes.push('filtered-out');
+    poly.setAttribute('class', classes.join(' '));
+    poly.dataset.cellId = c.id;
+    poly.addEventListener('click', () => {
+      selectedCellId = c.id;
+      renderGrid();
+      renderInspector();
+    });
+    svg.appendChild(poly);
+
+    // Tiny coord label for debug (very faint)
+    if (size > 20) {
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('x', x);
+      label.setAttribute('y', y + 3);
+      label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('fill', 'rgba(255,255,255,0.25)');
+      label.setAttribute('font-size', '8');
+      label.setAttribute('font-family', 'monospace');
+      label.setAttribute('pointer-events', 'none');
+      label.textContent = `${c.coord[0]},${c.coord[1]}`;
+      svg.appendChild(label);
+    }
+  });
+}
+
+function renderInspector() {
+  const el = document.getElementById('inspector-content');
+  if (selectedCellId === null || !currentData) {
+    el.innerHTML = '<p style="color:var(--text-dim); font-size:11px;">click a cell to inspect</p>';
+    return;
+  }
+  const cell = currentData.cells.find(c => c.id === selectedCellId);
+  if (!cell) return;
+
+  const field = (k, v) => `
+    <div class="inspector-field">
+      <div class="k">${k}</div>
+      <div class="v">${v}</div>
+    </div>`;
+
+  el.innerHTML =
+    field('ID', cell.id) +
+    field('COORD (q, r)', cell.coord.join(', ')) +
+    field('PHASE', cell.phase) +
+    field('MOHS LEVEL', cell.mohs_level) +
+    field('PRESSURE (raw)', cell.pressure_raw) +
+    field('PRESSURE (decoded)', cell.pressure_decoded.toLocaleString()) +
+    field('ENERGY', cell.energy) +
+    field('COMPOSITION', cell.composition.map(([e, f]) =>
+      `${e}: ${f}/255 (${(f/255*100).toFixed(1)}%)`).join('<br>')) +
+    field('FLAGS', Object.entries(cell.flags)
+      .filter(([k, v]) => v)
+      .map(([k, v]) => k)
+      .join(', ') || '—') +
+    field('GRADIENT (6 dirs)', cell.gradient.join(', ')) +
+    field('BIDS SENT', `<pre>${JSON.stringify(cell.bids_sent, null, 2)}</pre>`) +
+    field('BIDS RECEIVED', `<pre>${JSON.stringify(cell.bids_received, null, 2)}</pre>`);
+}
+
+function renderSidebar() {
+  if (!currentData) return;
+
+  // Totals
+  const t = currentData.totals || {};
+  const totalsEl = document.getElementById('totals-panel');
+  let html = '';
+  if (t.mass_by_element) {
+    Object.entries(t.mass_by_element).forEach(([k, v]) => {
+      html += `<div class="stat"><span class="k">mass ${k}</span><span class="v">${v.toLocaleString()}</span></div>`;
+    });
+  }
+  if (t.energy_total !== undefined) {
+    html += `<div class="stat"><span class="k">energy</span><span class="v">${t.energy_total.toLocaleString()}</span></div>`;
+  }
+  if (t.cells_by_phase) {
+    Object.entries(t.cells_by_phase).forEach(([k, v]) => {
+      if (v > 0) html += `<div class="stat"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+    });
+  }
+  if (t.cells_ratcheted_this_tick) {
+    html += `<div class="stat"><span class="k">ratcheted</span><span class="v" style="color:var(--accent-2)">${t.cells_ratcheted_this_tick}</span></div>`;
+  }
+  if (t.cells_culled) {
+    html += `<div class="stat"><span class="k">culled</span><span class="v">${t.cells_culled}</span></div>`;
+  }
+  totalsEl.innerHTML = html;
+
+  // Invariants
+  const invEl = document.getElementById('invariants-panel');
+  invEl.innerHTML = (currentData.invariants || []).map(inv => `
+    <div class="invariant ${inv.status}">
+      <span>${inv.name}</span>
+      <span class="status">${inv.status.toUpperCase()}</span>
+    </div>
+  `).join('');
+
+  // Run meta
+  const runEl = document.getElementById('run-panel');
+  runEl.innerHTML = `
+    <div><strong>run:</strong> ${currentData.run_id || '—'}</div>
+    <div><strong>scenario:</strong> ${currentData.scenario || '—'}</div>
+    <div><strong>tick:</strong> ${currentData.tick ?? '—'}</div>
+    <div><strong>stage:</strong> ${currentData.stage || '—'}</div>
+    <div><strong>cycle:</strong> ${currentData.cycle ?? '—'}</div>
+    <div><strong>elements:</strong> ${(currentData.allowed_elements || []).join(', ') || '—'}</div>
+    <div style="margin-top:4px"><strong>hash:</strong> ${currentData.element_table_hash || '—'}</div>
+  `;
+
+  // Element dropdown
+  const elementSelect = document.getElementById('filter-element');
+  const currentVal = elementSelect.value;
+  elementSelect.innerHTML = '<option value="">any</option>';
+  (currentData.allowed_elements || []).forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e;
+    opt.textContent = e;
+    if (e === currentVal) opt.selected = true;
+    elementSelect.appendChild(opt);
+  });
+
+  // Header meta
+  document.getElementById('file-meta').textContent =
+    `${currentData.run_id || 'unknown'} · tick ${currentData.tick} · ${currentData.stage}`;
+}
+
+// ========== File loading ==========
+function loadJSON(data) {
+  if (data.schema_version !== 1) {
+    alert(`Schema version mismatch: got ${data.schema_version}, expected 1`);
+    return;
+  }
+  currentData = data;
+  selectedCellId = null;
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('grid-svg').style.display = 'block';
+  document.getElementById('legend').style.display = 'block';
+  renderSidebar();
+  renderGrid();
+  renderInspector();
+}
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      loadJSON(JSON.parse(ev.target.result));
+    } catch (err) {
+      alert(`Parse error: ${err.message}`);
+    }
+  };
+  reader.readAsText(f);
+});
+
+// Drag & drop
+const main = document.getElementById('main');
+['dragenter', 'dragover'].forEach(ev => {
+  document.addEventListener(ev, (e) => {
+    e.preventDefault();
+    main.classList.add('drop-active');
+  });
+});
+['dragleave', 'drop'].forEach(ev => {
+  document.addEventListener(ev, (e) => {
+    e.preventDefault();
+    if (ev === 'drop' || e.target === main) {
+      main.classList.remove('drop-active');
+    }
+  });
+});
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      loadJSON(JSON.parse(ev.target.result));
+    } catch (err) {
+      alert(`Parse error: ${err.message}`);
+    }
+  };
+  reader.readAsText(f);
+});
+
+// ========== Filter events ==========
+document.getElementById('filter-element').addEventListener('change', (e) => {
+  filters.element = e.target.value;
+  renderGrid();
+});
+document.getElementById('filter-phase').addEventListener('change', (e) => {
+  filters.phase = e.target.value;
+  renderGrid();
+});
+document.getElementById('filter-mohs-min').addEventListener('input', (e) => {
+  filters.mohsMin = e.target.value === '' ? null : parseInt(e.target.value);
+  renderGrid();
+});
+document.getElementById('filter-mohs-max').addEventListener('input', (e) => {
+  filters.mohsMax = e.target.value === '' ? null : parseInt(e.target.value);
+  renderGrid();
+});
+document.getElementById('filter-flag').addEventListener('change', (e) => {
+  filters.flag = e.target.value;
+  renderGrid();
+});
+document.getElementById('reset-btn').addEventListener('click', () => {
+  filters = { element: '', phase: '', mohsMin: null, mohsMax: null, flag: '' };
+  document.querySelectorAll('aside.sidebar input, aside.sidebar select').forEach(el => {
+    if (el.type === 'number') el.value = '';
+    else el.value = '';
+  });
+  renderGrid();
+});
+</script>
+</body>
+</html>
