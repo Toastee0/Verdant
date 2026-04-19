@@ -34,3 +34,4 @@ out/
 *.log
 
 # Keep sample_data/ tracked — they're reference fixtures
+runs/
