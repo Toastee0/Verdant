@@ -1,9 +1,8 @@
 # VerdantSim — Plan of Action
 
-**As of:** 2026-04-16 (framework design session)
-**Status:** Physics framework settled. Debug harness runs. Ready to build reference sim.
+**As of:** 2026-04-18 — M1, M2, and the static-scenario slice of M3 complete.
 
-This document is the forward-looking roadmap. For the *design* (what the sim is), see `wiki/README.md`.
+This document is the forward-looking roadmap. For the *design* (what the sim is), see `wiki/README.md`. For the code layout, see `reference_sim/README.md`.
 
 ---
 
@@ -11,20 +10,33 @@ This document is the forward-looking roadmap. For the *design* (what the sim is)
 
 Completed:
 - Staged Jacobi auction framework designed and agreed (see `wiki/pipeline.md`).
-- Debug harness operational: `reference_sim/sim_stub.py` emits schema-v1 JSON, `checker/verify.py` verifies independently, `viewer/viewer.html` renders. Sample data validates (`sample_data/` — 4 PASS + 1 DIVERGENT).
+- Debug harness operational: schema-v1 JSON contract shared by the reference sim, `checker/verify.py`, and `viewer/viewer.html`.
 - All major physics decisions resolved: cell struct, flags, flow primitives, overflow cascade, walls, gravity method, magnetism, precipitation, cohesion, elasticity, dt, convergence budgets.
+- **M1 done** — Tier 0 element table (Si only), NIST-sourced, SI units, power-of-2 encoding scales, validated loader (`reference_sim/element_table.py`).
+- **M2 done** — `checker/verify.py` mass-conservation tautology fixed. New `--baseline` flag loads expected mass from an external tick-0 JSON. Incompatibility checks (run_id, element_table_hash, scenario, tick ordering) return exit code 4.
+- **M3 partially done** — reference sim scaffolding, Stage 0 derives complete, Stages 1/2/3/4 skeletons in place (with correct stage boundaries and buffer handling), t0_static scenario running end-to-end with perfect conservation across 5 ticks. See `reference_sim/README.md`.
 
-Open from prior architecture (not yet closed):
-- `reference_sim/sim_stub.py` is the *schema-reference*, not the real sim. It's three ticks of canned evolution. Real sim not yet written.
-- `checker/verify.py` has a mass-conservation tautology (re-sums current state as the baseline). Needs baseline-from-tick-0 comparison.
-- No `element_table.tsv` yet. Everything in the sim is implicit/hardcoded.
-- `ARCHITECTURE.md` documents the *debug harness*, accurate for that. Physics framework now lives in `wiki/`.
+Remaining for M3:
+- Stage 1 phase resolve + ratchet + Curie + precipitation (skeleton has TODOs).
+- Stage 2 elastic strain propagation (needs cohesion-network Jacobi).
+- Stage 3 mass flow (the real auction — bidders, μ gradient, proportional distribution).
+- Stage 4 energy conduction / convection (radiation is in place).
+- Tier 0 scenarios beyond static: `t0_compression`, `t0_ratchet`, `t0_fracture`, `t0_radiate`.
+- P↔U coupling (Tier 2 overflow) and Tier 3 refund + EXCLUDED routing.
 
 ---
 
 ## Milestones
 
-### M1. Element table for Tier 0 (Si only)
+### M1. Element table for Tier 0 (Si only) — **DONE**
+
+Delivered: `data/element_table.tsv` (one Si row, 40 columns, SI units, NIST-cited), `data/element_table_sources.md` (per-field citations), `data/compounds.tsv` (stub for Tier 1+), `reference_sim/element_table.py` (loader + validator + encode/decode helpers).
+
+Power-of-2 encoding scales for shift-decode on GPU. Mohs-1 ceiling (268 MPa) sits at 2.24× Si's elastic_limit — elastic regime has real headroom before pressure saturates.
+
+*(Original spec preserved below for reference.)*
+
+
 
 Author `data/element_table.tsv` with every field the framework requires, in SI units, sourced from NIST / CRC / Wikipedia reference values. Si-only at this stage.
 
@@ -45,7 +57,15 @@ Deliverable: one TSV row (Si), cross-checked against references in a companion n
 
 **Blocks:** everything downstream. Required before any physics code can be dimensionally correct.
 
-### M2. Fix verify.py mass conservation
+### M2. Fix verify.py mass conservation — **DONE**
+
+Delivered: `checker/verify.py` now takes `--baseline <tick_0.json>`. Expected mass comes from `baseline.totals.mass_by_element` (authoritative) with a fallback to summing baseline cells. Without baseline the check is marked SKIPPED (not silently passing). Compatibility guards: run_id, element_table_hash, scenario, tick ordering → exit 4.
+
+Validated against existing samples: previously-DIVERGENT tick 99 now cleanly FAIL (exit 1); checker catches the 55-unit Si loss independently rather than requiring the sim's self-report to flag it.
+
+*(Original spec preserved below for reference.)*
+
+
 
 Current `infer_expected_mass()` sums the current cells' compositions to derive the expected mass — tautological, can't detect loss.
 
@@ -55,7 +75,27 @@ Deliverable: updated `checker/verify.py`, re-run existing samples, confirm the t
 
 **Blocks:** conservation validation for the real sim. Without this, the real sim can silently lose mass and we wouldn't know.
 
-### M3. Reference sim v1 — Si-only, 91-cell
+### M3. Reference sim v1 — Si-only, 91-cell — **IN PROGRESS**
+
+Scaffolding and static-scenario slice delivered (commits `5e89252`, `ed72950`, `2e8ddb6`, `4841fa4` on `sim-core`).
+
+**Done:**
+- `reference_sim/{grid, cell, flags, scenario, sim}.py` — module skeleton in place.
+- `reference_sim/derive.py` — Stages 0a–0e all implemented.
+- `reference_sim/resolve.py`, `propagate.py`, `reconcile.py`, `emit.py` — stage boundaries wired, buffers allocated, radiation in place.
+- `reference_sim/scenarios/t0_static.py` — passes all independent invariant checks across 5+ ticks. Mass conserved exactly. Zero deltas every tick.
+
+**Remaining for M3:**
+- **Stage 1 body**: phase resolve (P, U, composition → phase), ratchet check from Stage 2's deferred plastic overflow, Curie demag, latent-heat shedding, precipitation/dissolution. Each with TODOs marked in `resolve.py`.
+- **Stage 2 body**: cohesion-network Jacobi for elastic strain. Outputs strain updates, flags for plastic overflow (→ next tick's Stage 1 ratchet) and tensile failure (`FRACTURED`).
+- **Stage 3 body**: the mass auction. Per cell, compute excess, find downhill μ neighbors, distribute proportionally, write per-direction per-element deltas.
+- **Stage 4 body**: thermal conduction Jacobi. Convection coupling reads Stage 3's mass deltas to pick up thermal energy riding with moved mass.
+- **Stage 5**: Tier 2 P↔U coupling on pressure/energy overflow; Tier 3 refund routing + EXCLUDED flag.
+- **Scenarios**: `t0_compression`, `t0_ratchet`, `t0_fracture`, `t0_radiate` — each exercising one of the above flow mechanics.
+
+*(Original spec preserved below for reference.)*
+
+
 
 First real implementation of the framework. Python, numpy-backed, same JSON output as the stub.
 
