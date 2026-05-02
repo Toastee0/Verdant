@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "t0_radiate_20260502T194017",
+  "run_id": "t0_radiate_20260502T200639",
   "scenario": "t0_radiate",
   "tick": 5,
   "stage": "post_stage_5",
@@ -3693,9 +3693,9 @@
     }
   ],
   "stage_timing_ms": {
-    "stage_0_derive_ms": 0.1564000267535448,
-    "stage_1_resolve_ms": 0.05619996227324009,
-    "stage_2_4_propagate_ms": 0.23250002413988113,
-    "stage_5_reconcile_ms": 0.06520003080368042
+    "stage_0_derive_ms": 0.16089994460344315,
+    "stage_1_resolve_ms": 0.05600007716566324,
+    "stage_2_4_propagate_ms": 0.22789998911321163,
+    "stage_5_reconcile_ms": 0.062400009483098984
   }
 }

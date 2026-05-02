@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "t0_fracture_20260502T193927",
+  "run_id": "t0_fracture_20260502T200639",
   "scenario": "t0_fracture",
   "tick": 1,
   "stage": "post_stage_5",
@@ -3693,9 +3693,9 @@
     }
   ],
   "stage_timing_ms": {
-    "stage_0_derive_ms": 0.22580008953809738,
-    "stage_1_resolve_ms": 0.06569991819560528,
-    "stage_2_4_propagate_ms": 0.2834000624716282,
-    "stage_5_reconcile_ms": 0.10079995263367891
+    "stage_0_derive_ms": 0.2688000677153468,
+    "stage_1_resolve_ms": 0.06329989992082119,
+    "stage_2_4_propagate_ms": 0.27950003277510405,
+    "stage_5_reconcile_ms": 0.09570003021508455
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "t0_static_20260502T194203",
+  "run_id": "t0_static_20260502T200639",
   "scenario": "t0_static",
   "tick": 5,
   "stage": "post_stage_5",
@@ -3693,9 +3693,9 @@
     }
   ],
   "stage_timing_ms": {
-    "stage_0_derive_ms": 0.16250007320195436,
-    "stage_1_resolve_ms": 0.05609996151179075,
-    "stage_2_4_propagate_ms": 0.10249996557831764,
-    "stage_5_reconcile_ms": 0.07370009552687407
+    "stage_0_derive_ms": 0.1962999813258648,
+    "stage_1_resolve_ms": 0.07370009552687407,
+    "stage_2_4_propagate_ms": 0.1078000059351325,
+    "stage_5_reconcile_ms": 0.07429998368024826
   }
 }

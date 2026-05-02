@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "t0_ratchet_20260502T193813",
+  "run_id": "t0_ratchet_20260502T200639",
   "scenario": "t0_ratchet",
   "tick": 1,
   "stage": "post_stage_5",
@@ -3693,9 +3693,9 @@
     }
   ],
   "stage_timing_ms": {
-    "stage_0_derive_ms": 0.2658000448718667,
-    "stage_1_resolve_ms": 0.10890001431107521,
-    "stage_2_4_propagate_ms": 0.11619995348155499,
-    "stage_5_reconcile_ms": 0.0882000895217061
+    "stage_0_derive_ms": 0.2490000333636999,
+    "stage_1_resolve_ms": 0.09099999442696571,
+    "stage_2_4_propagate_ms": 0.11629995424300432,
+    "stage_5_reconcile_ms": 0.0879999715834856
   }
 }

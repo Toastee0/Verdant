@@ -179,7 +179,13 @@ def load_element_table(path: str | Path) -> ElementTable:
         raise ElementTableError(f"Element table not found: {p}")
 
     raw_bytes = p.read_bytes()
-    source_hash = "sha256:" + hashlib.sha256(raw_bytes).hexdigest()[:16]
+    # Normalize line endings before hashing so the hash is identical across
+    # platforms regardless of git autocrlf state. Without this, a Windows
+    # checkout (CRLF on disk) and a Linux checkout (LF on disk) produce
+    # different hashes for the same logical content, breaking
+    # element_table_hash compatibility checks (verify.py, diff_ticks.py).
+    normalized = raw_bytes.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    source_hash = "sha256:" + hashlib.sha256(normalized).hexdigest()[:16]
 
     expected = _expected_columns()
     expected_names = [n for n, _ in expected]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "t0_compression_20260502T193554",
+  "run_id": "t0_compression_20260502T200639",
   "scenario": "t0_compression",
   "tick": 5,
   "stage": "post_stage_5",
@@ -3693,9 +3693,9 @@
     }
   ],
   "stage_timing_ms": {
-    "stage_0_derive_ms": 0.21540001034736633,
-    "stage_1_resolve_ms": 0.058900099247694016,
-    "stage_2_4_propagate_ms": 0.26839994825422764,
-    "stage_5_reconcile_ms": 0.07920002099126577
+    "stage_0_derive_ms": 0.22909999825060368,
+    "stage_1_resolve_ms": 0.05609996151179075,
+    "stage_2_4_propagate_ms": 0.23910007439553738,
+    "stage_5_reconcile_ms": 0.07489998824894428
   }
 }
