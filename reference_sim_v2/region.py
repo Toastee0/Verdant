@@ -68,14 +68,17 @@ def run_region_kernels(
     derived: "DerivedFields",
     world: "WorldConfig",
     flux: FluxBuffer,
+    active_phases: set[int] | None = None,
 ) -> None:
     """Compute per-cell outgoing mass flux into `flux.mass` for every cell
-    in the grid. M5'.3 produces only the mass channel; momentum / energy /
-    stress channels stay zero (M5'.4–M5'.6 fill them in).
+    in the grid. Vectorised stencil compute; equivalent to per-cell
+    region kernels run in parallel.
 
-    The algorithm is fully vectorised — equivalent to running one
-    region_kernel per cell in parallel, but expressed as numpy ops so the
-    Python ref stays fast enough for Tier 0 grids.
+    `active_phases` selects which phase channels contribute flux this
+    sub-pass. Phases not in the set get zero flux, freezing their
+    phase_mass for this sub-pass (gen5 §"Concurrent phase sub-passes" —
+    a phase that has hit its budget stops updating). Default None = all
+    phases active (M5'.3 behaviour, unchanged for non-scheduler tests).
 
     Mutates `flux.mass` in place; expected to be called between flux.clear()
     and apply_veto().
@@ -116,9 +119,17 @@ def run_region_kernels(
         * PHASE_CONDUCTANCE[None, None, :]
     )                                                            # (N, 6, 4)
 
+    # Phase-active mask: gas/liquid/solid/plasma phases that are still
+    # within their sub-pass budget contribute; frozen phases get zero
+    # flux. Per gen5 §"Concurrent phase sub-passes".
+    if active_phases is not None:
+        mask = np.zeros(N_PHASES, dtype=np.float32)
+        for p in active_phases:
+            mask[p] = 1.0
+        phi = phi * mask[None, None, :]
+
     # Distribute across composition slots. Each slot's contribution scales
-    # with that element's fraction in the source cell. Single-element
-    # cells (Tier 0) put 100% in slot 0; mixed-composition cells split.
+    # with that element's fraction in the source cell.
     slot_frac = cells.composition[:, :, 1].astype(np.float32) / 255.0   # (N, 16)
 
     # flux.mass[i, d, slot, phase] = phi[i, d, phase] × slot_frac[i, slot]

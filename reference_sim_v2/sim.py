@@ -38,14 +38,24 @@ from .region import run_region_kernels
 from .scenario import Scenario
 
 
-# Gen5 universals (verdant_sim_design.md §"Concurrent phase sub-passes")
+# Gen5 universals (verdant_sim_design.md §"Concurrent phase sub-passes").
+# Indexed by phase id (matches cell.PHASE_SOLID etc).
+from .cell import PHASE_GAS, PHASE_LIQUID, PHASE_PLASMA, PHASE_SOLID
+
 PHASE_BUDGETS = {
-    "solid":  7,
-    "liquid": 5,
-    "gas":    3,
-    "plasma": 3,
+    PHASE_SOLID:  7,
+    PHASE_LIQUID: 5,
+    PHASE_GAS:    3,
+    PHASE_PLASMA: 3,
 }
 LONGEST_BUDGET = max(PHASE_BUDGETS.values())   # 7
+
+
+def active_phases_for_sub_pass(sub_pass: int) -> set[int]:
+    """Phases whose sub-pass budget hasn't expired yet at the given index.
+    Sub-pass numbers are zero-based: sub_pass=0 is the first; sub_pass=6
+    is the seventh. A phase with budget B is active for sub_pass < B."""
+    return {p for p, budget in PHASE_BUDGETS.items() if budget > sub_pass}
 
 
 def run_scenario(
@@ -135,9 +145,10 @@ def _run_sub_pass(
       M5'.6 — Tail-at-Scale culling formal; per-channel borders; petal
               stress + velocity integrate from momentum/stress flux
     """
+    active = active_phases_for_sub_pass(sub_pass)
     run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
     flux.clear()
-    run_region_kernels(scenario.cells, derived, scenario.world, flux)
+    run_region_kernels(scenario.cells, derived, scenario.world, flux, active_phases=active)
     apply_veto(scenario.cells, flux)
     integrate(scenario.cells, flux, scenario.world)
 
