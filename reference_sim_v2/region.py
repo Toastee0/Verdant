@@ -134,3 +134,92 @@ def run_region_kernels(
 
     # flux.mass[i, d, slot, phase] = phi[i, d, phase] × slot_frac[i, slot]
     np.copyto(flux.mass, phi[:, :, None, :] * slot_frac[:, None, :, None])
+
+
+def run_energy_kernels(
+    cells: CellArrays,
+    derived: "DerivedFields",
+    world: "WorldConfig",
+    flux: FluxBuffer,
+    element_scale: float,
+) -> None:
+    """Compute per-cell outgoing energy flux from conduction + convection,
+    accumulating into flux.energy. Called AFTER run_region_kernels so the
+    convective coupling can read flux.mass.
+
+    Conduction (Fick on T gradient, INSULATED-gated):
+        flux.energy[A, d] += κ_bond × max(0, T_A - T_B) × area × dt / energy_scale
+    Only the warm side contributes positive outgoing flux; cool side
+    writes zero. Symmetric net transport falls out of the integration
+    step (A loses, B gains) just like mass flow.
+
+    Convection (energy rides moving mass):
+        For each (A, d, slot, phase) where flux.mass > 0:
+          ΔU_J = mass_flux × kg_per_phase_unit × c_p × T_A
+        with kg_per_phase_unit derived from per-phase equilibrium centres
+        and the source cell's density.
+
+    Tier 0 resolution caveat: at default cell_size + Si energy_scale=1.0,
+    per-tick conduction signal can floor below 1 raw unit (~0.5 J).
+    Mathematically correct; visible at Tier 1+ scales.
+    """
+    n = cells.n
+    if n == 0:
+        return
+
+    grid = cells.grid
+    neighbors = np.array(grid.neighbors, dtype=np.int32)        # (N, 6)
+    valid = neighbors >= 0
+
+    # ---- conduction ------------------------------------------------------
+    T = derived.temperature
+    kappa = derived.kappa
+    T_padded = np.concatenate([T, np.zeros(1, dtype=np.float32)])
+    nbr_T = T_padded[neighbors]                                  # (N, 6)
+    dT = T[:, None] - nbr_T                                      # (N, 6)
+
+    kappa_padded = np.concatenate([kappa, np.zeros(1, dtype=np.float32)])
+    nbr_kappa = kappa_padded[neighbors]
+    kappa_bond = np.minimum(kappa[:, None], nbr_kappa)           # (N, 6)
+
+    # INSULATED gate at the kernel level (apply_veto will gate again)
+    flags_padded = np.concatenate([cells.flags, np.array([0xFF], dtype=np.uint8)])
+    nbr_flags = flags_padded[neighbors]
+    insulated = ((cells.flags[:, None] | nbr_flags) & (1 << 2)) != 0
+    bond_open = valid & ~insulated
+
+    area = float(world.cell_size_m) ** 2
+    dt = float(world.dt)
+
+    cond_flux_J = np.where(bond_open, kappa_bond * np.maximum(dT, 0.0) * area * dt, 0.0)
+    flux.energy += (cond_flux_J / float(element_scale)).astype(np.float32)
+
+    # ---- convection ------------------------------------------------------
+    # Energy carried by mass that's leaving cell A in direction d:
+    #   ΔU_J = mass_flux × kg_per_unit(phase, A) × c_p_for(slot, phase) × T_A
+    # We approximate kg_per_unit using the per-cell composition × phase-
+    # fraction blended density (derived.density), and c_p with derived.cp.
+    # This is sound for Tier 0 single-element cells; multi-element mixing
+    # uses the cell-level blend, which is correct only at uniform
+    # composition (good for Tier 0/1).
+    volume = float(world.cell_size_m) ** 3
+    # Total per-direction mass flux (sum over slots and phases); this
+    # represents physical mass leaving in phase-mass units. Convert via
+    # the cell's density blend × volume × (1/EQ_CENTER) — we approximate
+    # by taking the SOLID equilibrium center because Tier 0/1 source
+    # cells are typically solid-or-liquid; gen5's per-element density
+    # scaling lands at M6'+ when this matters.
+    from .cell import EQUILIBRIUM_CENTER, PHASE_SOLID
+    eq_center = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
+    kg_per_unit = (derived.density * volume / max(eq_center, 1e-12)).astype(np.float32)
+    # Per-direction mass leaving the cell: sum over (slot, phase) of POSITIVE
+    # contributions only (negative entries indicate this cell received,
+    # not sent — those are recipients of others' bids).
+    mass_outgoing_per_direction = np.maximum(flux.mass, 0.0).sum(axis=(2, 3))  # (N, 6)
+    convect_J = (
+        mass_outgoing_per_direction
+        * kg_per_unit[:, None]
+        * derived.cp[:, None]
+        * T[:, None]
+    )
+    flux.energy += (convect_J / float(element_scale)).astype(np.float32)

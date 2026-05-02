@@ -58,22 +58,22 @@ class DerivedFields:
     each sub-pass when fluxes are flowing). Allocated once at scenario
     bring-up and reused; all fields are float32 except identity arrays."""
 
-    # Identity (computed-not-stored, per gen5 §"Cell identity is computed,
-    # not stored")
-    majority_phase: np.ndarray   # uint8[N]; 255 = void
-    majority_element: np.ndarray # uint8[N]; 0 = void
-
-    # Cohesion: per-cell-per-direction blind damping coefficient ∈ [0, 1]
+    majority_phase: np.ndarray
+    majority_element: np.ndarray
     cohesion: np.ndarray         # float32[N, 6]
-
-    # Temperature: per-cell f32 K
     temperature: np.ndarray      # float32[N]
-
-    # Decoded pressure (deviation from phase-density equilibrium center)
-    pressure: np.ndarray         # float32[N]; signed, in arbitrary units for M5'.1 (true log-scale lands M5'.5)
-
-    # Gravity vector field — populated at M5'.2; zero for M5'.1
+    pressure: np.ndarray         # float32[N] deviation
     gravity_vec: np.ndarray      # float32[N, 2]
+    # Per-cell thermal conductivity (composition × phase-fraction weighted)
+    # in W/(m·K). Used by the energy region kernel for conduction.
+    kappa: np.ndarray            # float32[N]
+    # Per-cell specific heat (composition × phase-fraction weighted) in
+    # J/(kg·K). Used for convective energy transport.
+    cp: np.ndarray               # float32[N]
+    # Per-cell physical mass density (composition × phase-fraction weighted)
+    # in kg/m³. Used to translate phase_mass-units to physical kg for
+    # energy convection.
+    density: np.ndarray          # float32[N]
 
     @classmethod
     def allocate(cls, n: int) -> "DerivedFields":
@@ -84,6 +84,9 @@ class DerivedFields:
             temperature=np.zeros(n, dtype=np.float32),
             pressure=np.zeros(n, dtype=np.float32),
             gravity_vec=np.zeros((n, 2), dtype=np.float32),
+            kappa=np.zeros(n, dtype=np.float32),
+            cp=np.zeros(n, dtype=np.float32),
+            density=np.zeros(n, dtype=np.float32),
         )
 
 
@@ -109,6 +112,59 @@ def decode_pressure_to_f32(cells: CellArrays) -> np.ndarray:
 # Temperature
 # --------------------------------------------------------------------------
 
+def compute_thermal_blends(
+    cells: CellArrays,
+    element_table,
+    world: "WorldConfig",
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Compute per-cell composition-and-phase-fraction-weighted (κ, c_p, ρ).
+
+    Returns (kappa, cp, density) all f32[N]. Each is a blend over the
+    cell's composition slots and the cell's phase distribution. For void
+    cells (no composition) returns 0 in all three arrays.
+
+    Used by both compute_temperature (T = energy / (mass × c_p)) and the
+    energy region kernel (conduction κ + convective c_p × T_source).
+    """
+    n = cells.n
+    kappa = np.zeros(n, dtype=np.float32)
+    cp = np.zeros(n, dtype=np.float32)
+    density = np.zeros(n, dtype=np.float32)
+    for slot in range(COMPOSITION_SLOTS):
+        eid = cells.composition[:, slot, 0]
+        frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+        if not (frac > 0).any():
+            continue
+        for element in element_table:
+            mask = (eid == element.element_id) & (frac > 0)
+            if not mask.any():
+                continue
+            d_per_phase = np.array(
+                [element.density_solid, element.density_liquid,
+                 element.density_gas_stp, element.density_gas_stp],
+                dtype=np.float32,
+            )
+            cp_per_phase = np.array(
+                [element.specific_heat_solid, element.specific_heat_liquid,
+                 element.specific_heat_gas, element.specific_heat_gas],
+                dtype=np.float32,
+            )
+            k_per_phase = np.array(
+                [element.thermal_conductivity_solid,
+                 element.thermal_conductivity_liquid,
+                 element.thermal_conductivity_gas,
+                 element.thermal_conductivity_gas],
+                dtype=np.float32,
+            )
+            d_blend = (cells.phase_fraction[mask] * d_per_phase).sum(axis=1)
+            cp_blend = (cells.phase_fraction[mask] * cp_per_phase).sum(axis=1)
+            k_blend = (cells.phase_fraction[mask] * k_per_phase).sum(axis=1)
+            density[mask] += d_blend * frac[mask]
+            cp[mask]      += cp_blend * frac[mask]
+            kappa[mask]   += k_blend * frac[mask]
+    return kappa, cp, density
+
+
 def compute_temperature(
     cells: CellArrays,
     element_table,
@@ -130,33 +186,8 @@ def compute_temperature(
     n = cells.n
     volume = float(world.cell_size_m ** 3)
 
-    # Build per-cell density (kg/m³) and c_p (J/(kg·K))
-    density = np.zeros(n, dtype=np.float32)
-    cp = np.zeros(n, dtype=np.float32)
-    for slot in range(COMPOSITION_SLOTS):
-        eid = cells.composition[:, slot, 0]
-        frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
-        if not (frac > 0).any():
-            continue
-        for element in element_table:
-            mask = (eid == element.element_id) & (frac > 0)
-            if not mask.any():
-                continue
-            # Phase-fraction-weighted density and c_p for THIS element
-            d_per_phase = np.array(
-                [element.density_solid, element.density_liquid,
-                 element.density_gas_stp, element.density_gas_stp],
-                dtype=np.float32,
-            )
-            cp_per_phase = np.array(
-                [element.specific_heat_solid, element.specific_heat_liquid,
-                 element.specific_heat_gas, element.specific_heat_gas],
-                dtype=np.float32,
-            )
-            d_blend = (cells.phase_fraction[mask] * d_per_phase).sum(axis=1)
-            cp_blend = (cells.phase_fraction[mask] * cp_per_phase).sum(axis=1)
-            density[mask] += d_blend * frac[mask]
-            cp[mask]      += cp_blend * frac[mask]
+    # Reuse thermal-blends helper (also computes kappa for the energy region kernel)
+    _, cp, density = compute_thermal_blends(cells, element_table, world)
 
     mass_kg = density * volume
     # Energy in joules. Per D6, working state is f32 throughout the cycle;
@@ -265,3 +296,10 @@ def run_derive(
     derived.gravity_vec[:] = compute_gravity_field(
         cells.grid, world.gravity_sources, world,
     )
+
+    # Thermal blends (M5'.7b): per-cell composition × phase-fraction
+    # weighted (κ, c_p, ρ). Reused by the energy region kernel.
+    kappa, cp, density = compute_thermal_blends(cells, element_table, world)
+    derived.kappa[:] = kappa
+    derived.cp[:] = cp
+    derived.density[:] = density

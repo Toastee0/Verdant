@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_temp_gradient_20260502T212714",
+  "run_id": "g5_temp_gradient_20260502T220149",
   "scenario": "g5_temp_gradient",
   "tick": 5,
   "cycle": 5,
@@ -56,7 +56,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -194,7 +194,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -332,7 +332,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -470,7 +470,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -608,7 +608,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -746,7 +746,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -884,7 +884,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1022,7 +1022,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1160,7 +1160,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1298,7 +1298,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1436,7 +1436,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1574,7 +1574,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1712,7 +1712,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1850,7 +1850,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -1988,7 +1988,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2126,7 +2126,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2264,7 +2264,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2402,7 +2402,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2540,7 +2540,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2678,7 +2678,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2816,7 +2816,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -2954,7 +2954,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3092,7 +3092,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3230,7 +3230,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3368,7 +3368,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3506,7 +3506,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3644,7 +3644,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3782,7 +3782,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -3920,7 +3920,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4058,7 +4058,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4196,7 +4196,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4334,7 +4334,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4472,7 +4472,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4610,7 +4610,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4748,7 +4748,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -4886,7 +4886,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5024,7 +5024,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5162,7 +5162,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5300,7 +5300,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5438,7 +5438,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5576,7 +5576,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5714,7 +5714,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5852,7 +5852,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -5990,7 +5990,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6128,7 +6128,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6266,7 +6266,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6404,7 +6404,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6542,7 +6542,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6680,7 +6680,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6818,7 +6818,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -6956,7 +6956,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7094,7 +7094,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7232,7 +7232,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7370,7 +7370,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7508,7 +7508,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7646,7 +7646,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7784,7 +7784,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -7922,7 +7922,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -8060,7 +8060,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -8198,7 +8198,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -8336,7 +8336,7 @@
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": true,
+        "culled": false,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
@@ -12599,7 +12599,7 @@
       "plasma": 0,
       "void": 0
     },
-    "cells_culled": 91,
+    "cells_culled": 30,
     "cells_fractured": 0,
     "cells_ratcheted_this_tick": 0,
     "cells_excluded": 0
@@ -12629,13 +12629,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 0.6848999764770269,
-    "sub_pass_1_ms": 0.520800007507205,
-    "sub_pass_2_ms": 0.5115000531077385,
-    "sub_pass_3_ms": 0.5429999437183142,
-    "sub_pass_4_ms": 0.49590005073696375,
-    "sub_pass_5_ms": 0.5310999695211649,
-    "sub_pass_6_ms": 0.49080001190304756,
-    "cycle_total_ms": 3.7824000464752316
+    "sub_pass_0_ms": 0.8126000175252557,
+    "sub_pass_1_ms": 0.6210000719875097,
+    "sub_pass_2_ms": 0.6041000597178936,
+    "sub_pass_3_ms": 0.6002000300213695,
+    "sub_pass_4_ms": 0.6063999608159065,
+    "sub_pass_5_ms": 0.6038999417796731,
+    "sub_pass_6_ms": 0.5886000581085682,
+    "cycle_total_ms": 4.440900054760277
   }
 }

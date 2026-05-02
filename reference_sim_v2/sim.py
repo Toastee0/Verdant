@@ -36,7 +36,7 @@ from .derive import DerivedFields, run_derive
 from .emit import emit_cycle, new_run_id, write_emission
 from .flux import FluxBuffer, apply_veto, integrate
 from .radiation import apply_radiation
-from .region import run_region_kernels
+from .region import run_energy_kernels, run_region_kernels
 from .scenario import Scenario
 from .transitions import apply_phase_transitions, apply_ratchet, clear_ratcheted_flag
 
@@ -168,6 +168,13 @@ def _run_sub_pass(
 
     flux.clear()
     run_region_kernels(scenario.cells, derived, scenario.world, flux, active_phases=active)
+    # Energy region kernel (M5'.7b): conduction + convection. Reads
+    # flux.mass for the convective term, so must run after run_region_kernels.
+    first_element = next(iter(scenario.element_table))
+    run_energy_kernels(
+        scenario.cells, derived, scenario.world, flux,
+        element_scale=float(first_element.energy_scale),
+    )
     # Tail-at-Scale culling: zero out flux from cells already culled this
     # cycle, then update the culled set based on this sub-pass's residual.
     mask_culled_in_flux(scenario.cells, flux)
