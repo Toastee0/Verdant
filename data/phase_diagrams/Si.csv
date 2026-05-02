@@ -1,0 +1,21 @@
+# Si phase diagram — M5'.5 stub (1D T-only).
+#
+# Phase boundaries from NIST silicon properties:
+#   melt_K = 1687
+#   boil_K = 3538
+#   critical_T = 5159
+# Initial mohs_level for solid Si is 6 (Mohs scale value).
+#
+# Format: T_K, phase, initial_mohs
+# Phase ID values match cell.PHASE_SOLID/LIQUID/GAS/PLASMA.
+# Lookup is "highest threshold where T_K >= threshold". M5'.5 stub ignores
+# the P axis; full 2D phase diagram lookup lands at M6'+.
+#
+T_K,phase,initial_mohs
+0,solid,6
+1687,solid,6
+1687.001,liquid,0
+3538,liquid,0
+3538.001,gas,0
+5159,gas,0
+5159.001,plasma,0

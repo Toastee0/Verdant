@@ -201,42 +201,64 @@ def check_cohesion_in_unit_interval(cells: list[dict]) -> tuple[str, dict]:
     )
 
 
-def check_mass_per_element_per_phase(
+def check_mass_per_element_total(
     cells: list[dict],
-    expected: dict[str, dict[str, float]] | None,
+    expected: dict[str, float] | None,
 ) -> tuple[str, dict]:
-    """Mass of (element, phase) pair must equal the baseline value, exact.
+    """Mass per element (summed across all four phase channels) must equal
+    the baseline value within tolerance.
 
-    Computed independently from cells: per cell, per slot, fraction × phase_mass[p]
-    contributes (element_at_slot, phase) to that bucket.
+    Per gen5 §"Invariants" the load-bearing conservation invariant is per-
+    element. The per-phase breakdown is informational (in totals
+    self-report) but NOT invariant-checked, because phase transitions
+    legitimately move mass between phase channels within a cell while
+    keeping per-element totals unchanged.
     """
     if expected is None:
         return ("skipped", {"reason": "no baseline provided"})
 
-    actual: dict[str, dict[str, float]] = {}
+    actual: dict[str, float] = {}
     for cell in cells:
         comp = cell.get("composition", [])
         pm = cell.get("phase_mass", [0.0, 0.0, 0.0, 0.0])
+        total_pm = sum(float(x) for x in pm)
         for elem, frac in comp:
             f = int(frac) / 255.0
-            entry = actual.setdefault(elem, {"solid": 0.0, "liquid": 0.0, "gas": 0.0, "plasma": 0.0})
-            for p_name, p_val in zip(("solid", "liquid", "gas", "plasma"), pm):
-                entry[p_name] += f * float(p_val)
+            actual[elem] = actual.get(elem, 0.0) + f * total_pm
 
     mismatches = []
-    for elem, expected_per_phase in expected.items():
-        for p_name, exp_val in expected_per_phase.items():
-            act_val = actual.get(elem, {}).get(p_name, 0.0)
-            # Tolerance: f32 round-trip plus accumulation. 1e-4 absolute is
-            # generous for the small grids we run.
-            if abs(act_val - exp_val) > max(1e-4, abs(exp_val) * 1e-6):
-                mismatches.append({"element": elem, "phase": p_name,
-                                   "expected": exp_val, "actual": act_val,
-                                   "delta": act_val - exp_val})
+    for elem, exp_val in expected.items():
+        act_val = actual.get(elem, 0.0)
+        if abs(act_val - exp_val) > max(1e-4, abs(exp_val) * 1e-6):
+            mismatches.append({"element": elem,
+                               "expected": exp_val, "actual": act_val,
+                               "delta": act_val - exp_val})
     return (
         "pass" if not mismatches else "fail",
         {"expected": expected, "actual": actual, "mismatches": mismatches},
     )
+
+
+def check_mohs_in_valid_range(cells: list[dict]) -> tuple[str, dict]:
+    """Solid-dominant cells must have mohs_level in 1..10; non-solid
+    (liquid/gas/plasma/void) cells must have mohs_level = 0."""
+    violations = []
+    for cell in cells:
+        identity = cell.get("identity", {})
+        phase = identity.get("phase", "void")
+        mohs = int(cell.get("mohs_level", 0))
+        if phase == "solid":
+            if not (1 <= mohs <= 10):
+                violations.append({"cell_id": cell["id"], "phase": phase,
+                                   "mohs": mohs,
+                                   "issue": "solid mohs must be 1..10"})
+        elif phase in ("liquid", "gas", "plasma"):
+            if mohs != 0:
+                violations.append({"cell_id": cell["id"], "phase": phase,
+                                   "mohs": mohs,
+                                   "issue": "non-solid mohs must be 0"})
+    return ("pass" if not violations else "fail",
+            {"violations": violations})
 
 
 # ----------------------------------------------------------------------------
@@ -244,10 +266,21 @@ def check_mass_per_element_per_phase(
 # ----------------------------------------------------------------------------
 
 def load_baseline_expected_mass(baseline_path: Path) -> tuple[dict, dict]:
+    """Load per-element TOTAL mass (sum across phases) from a baseline.
+
+    The baseline emission carries `totals.mass_by_element_by_phase`; we
+    sum across phase channels to get the per-element total — the gen5
+    conservation invariant operates per-element, allowing phase
+    transitions to legitimately shift mass between phase channels
+    within a cell while keeping the per-element total constant."""
     with baseline_path.open("r", encoding="utf-8") as f:
         baseline = json.load(f)
     totals = baseline.get("totals", {})
-    expected = totals.get("mass_by_element_by_phase", {})
+    per_phase = totals.get("mass_by_element_by_phase", {})
+    expected: dict[str, float] = {
+        elem: float(sum(per_phase[elem].values()))
+        for elem in per_phase
+    }
     return expected, baseline
 
 
@@ -290,7 +323,8 @@ def verify(payload: dict, expected_mass: dict | None = None) -> dict:
         "temperature_positive":        check_temperature_positive(cells),
         "cohesion_in_unit_interval":   check_cohesion_in_unit_interval(cells),
         "gravity_field_finite_bounded": check_gravity_field_finite_bounded(cells),
-        "mass_per_element_per_phase":  check_mass_per_element_per_phase(cells, expected_mass),
+        "mohs_in_valid_range":         check_mohs_in_valid_range(cells),
+        "mass_per_element_total":      check_mass_per_element_total(cells, expected_mass),
     }
 
     sim_self = {inv["name"]: inv["status"] for inv in payload.get("invariants", [])}

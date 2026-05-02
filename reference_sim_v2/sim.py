@@ -36,6 +36,7 @@ from .emit import emit_cycle, new_run_id, write_emission
 from .flux import FluxBuffer, apply_veto, integrate
 from .region import run_region_kernels
 from .scenario import Scenario
+from .transitions import apply_phase_transitions, apply_ratchet, clear_ratcheted_flag
 
 
 # Gen5 universals (verdant_sim_design.md §"Concurrent phase sub-passes").
@@ -147,6 +148,22 @@ def _run_sub_pass(
     """
     active = active_phases_for_sub_pass(sub_pass)
     run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
+
+    # M5'.5: phase transitions + ratchet at the start of the cycle
+    # (sub_pass==0). Both events are state-change events, not flux —
+    # they mutate cells directly and the flux pipeline sees the
+    # post-transition state.
+    if sub_pass == 0:
+        clear_ratcheted_flag(scenario.cells)
+        if scenario.phase_diagrams:
+            apply_phase_transitions(
+                scenario.cells, derived, scenario.world, scenario.phase_diagrams,
+            )
+            # Re-derive after transitions so identity / cohesion / T see
+            # the new phase state for this cycle's flux.
+            run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
+        apply_ratchet(scenario.cells, derived, scenario.world)
+
     flux.clear()
     run_region_kernels(scenario.cells, derived, scenario.world, flux, active_phases=active)
     apply_veto(scenario.cells, flux)

@@ -85,6 +85,9 @@ class Scenario:
                                         # an import cycle with element_table.py)
     allowed_elements: tuple[str, ...]
     description: str = ""
+    # Phase diagrams keyed by element_id, populated at scenario.build()
+    # for elements that need transition logic. Empty dict = no transitions.
+    phase_diagrams: dict = field(default_factory=dict)
 
     @property
     def cell_count(self) -> int:
