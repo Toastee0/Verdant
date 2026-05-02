@@ -1,0 +1,3701 @@
+{
+  "schema_version": 1,
+  "run_id": "t0_static_20260502T194203",
+  "scenario": "t0_static",
+  "tick": 5,
+  "stage": "post_stage_5",
+  "cycle": 1,
+  "grid": {
+    "shape": "hex_disc",
+    "rings": 5,
+    "cell_count": 91,
+    "coordinate_system": "axial_qr"
+  },
+  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "allowed_elements": [
+    "Si"
+  ],
+  "cells": [
+    {
+      "id": 0,
+      "coord": [
+        0,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 1,
+      "coord": [
+        -1,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 2,
+      "coord": [
+        -1,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 3,
+      "coord": [
+        0,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 4,
+      "coord": [
+        0,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 5,
+      "coord": [
+        1,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 6,
+      "coord": [
+        1,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 7,
+      "coord": [
+        -2,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 8,
+      "coord": [
+        -2,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 9,
+      "coord": [
+        -2,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 10,
+      "coord": [
+        -1,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 11,
+      "coord": [
+        -1,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 12,
+      "coord": [
+        0,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 13,
+      "coord": [
+        0,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 14,
+      "coord": [
+        1,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 15,
+      "coord": [
+        1,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 16,
+      "coord": [
+        2,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 17,
+      "coord": [
+        2,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 18,
+      "coord": [
+        2,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 19,
+      "coord": [
+        -3,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 20,
+      "coord": [
+        -3,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 21,
+      "coord": [
+        -3,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 22,
+      "coord": [
+        -3,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 23,
+      "coord": [
+        -2,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 24,
+      "coord": [
+        -2,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 25,
+      "coord": [
+        -1,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 26,
+      "coord": [
+        -1,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 27,
+      "coord": [
+        0,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 28,
+      "coord": [
+        0,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 29,
+      "coord": [
+        1,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 30,
+      "coord": [
+        1,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 31,
+      "coord": [
+        2,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 32,
+      "coord": [
+        2,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 33,
+      "coord": [
+        3,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 34,
+      "coord": [
+        3,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 35,
+      "coord": [
+        3,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 36,
+      "coord": [
+        3,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 37,
+      "coord": [
+        -4,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 38,
+      "coord": [
+        -4,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 39,
+      "coord": [
+        -4,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 40,
+      "coord": [
+        -4,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 41,
+      "coord": [
+        -4,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 42,
+      "coord": [
+        -3,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 43,
+      "coord": [
+        -3,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 44,
+      "coord": [
+        -2,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 45,
+      "coord": [
+        -2,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 46,
+      "coord": [
+        -1,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 47,
+      "coord": [
+        -1,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 48,
+      "coord": [
+        0,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 49,
+      "coord": [
+        0,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 50,
+      "coord": [
+        1,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 51,
+      "coord": [
+        1,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 52,
+      "coord": [
+        2,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 53,
+      "coord": [
+        2,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 54,
+      "coord": [
+        3,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 55,
+      "coord": [
+        3,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 56,
+      "coord": [
+        4,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 57,
+      "coord": [
+        4,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 58,
+      "coord": [
+        4,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 59,
+      "coord": [
+        4,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 60,
+      "coord": [
+        4,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 61,
+      "coord": [
+        -5,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 62,
+      "coord": [
+        -5,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 63,
+      "coord": [
+        -5,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 64,
+      "coord": [
+        -5,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 65,
+      "coord": [
+        -5,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 66,
+      "coord": [
+        -5,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 67,
+      "coord": [
+        -4,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 68,
+      "coord": [
+        -4,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 69,
+      "coord": [
+        -3,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 70,
+      "coord": [
+        -3,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 71,
+      "coord": [
+        -2,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 72,
+      "coord": [
+        -2,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 73,
+      "coord": [
+        -1,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 74,
+      "coord": [
+        -1,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 75,
+      "coord": [
+        0,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 76,
+      "coord": [
+        0,
+        5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 77,
+      "coord": [
+        1,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 78,
+      "coord": [
+        1,
+        4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 79,
+      "coord": [
+        2,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 80,
+      "coord": [
+        2,
+        3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 81,
+      "coord": [
+        3,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 82,
+      "coord": [
+        3,
+        2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 83,
+      "coord": [
+        4,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 84,
+      "coord": [
+        4,
+        1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 85,
+      "coord": [
+        5,
+        -5
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 86,
+      "coord": [
+        5,
+        -4
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 87,
+      "coord": [
+        5,
+        -3
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 88,
+      "coord": [
+        5,
+        -2
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 89,
+      "coord": [
+        5,
+        -1
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    },
+    {
+      "id": 90,
+      "coord": [
+        5,
+        0
+      ],
+      "phase": "solid",
+      "mohs_level": 5,
+      "pressure_raw": 0,
+      "pressure_decoded": 0.0,
+      "energy": 300,
+      "composition": [
+        [
+          "Si",
+          255
+        ]
+      ],
+      "flags": {
+        "no_flow": false,
+        "radiates": false,
+        "insulated": false,
+        "fixed_state": false,
+        "culled": false,
+        "fractured": false,
+        "ratcheted_this_tick": false,
+        "excluded": false
+      },
+      "elastic_strain": 0,
+      "magnetization": 0,
+      "gradient": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bids_sent": [],
+      "bids_received": []
+    }
+  ],
+  "totals": {
+    "mass_by_element": {
+      "Si": 23205
+    },
+    "energy_total": 27300.0,
+    "cells_by_phase": {
+      "solid": 91,
+      "liquid": 0,
+      "gas": 0,
+      "plasma": 0
+    },
+    "cells_culled": 0,
+    "cells_ratcheted_this_tick": 0,
+    "cells_fractured": 0,
+    "cells_excluded": 0
+  },
+  "invariants": [
+    {
+      "name": "composition_sum_255",
+      "status": "pass",
+      "violations": []
+    },
+    {
+      "name": "dead_band_compliance",
+      "status": "pass",
+      "violations": []
+    },
+    {
+      "name": "Si_mass_conservation",
+      "expected": 23205,
+      "actual": 23205,
+      "tolerance": 0.0,
+      "status": "pass"
+    }
+  ],
+  "stage_timing_ms": {
+    "stage_0_derive_ms": 0.16250007320195436,
+    "stage_1_resolve_ms": 0.05609996151179075,
+    "stage_2_4_propagate_ms": 0.10249996557831764,
+    "stage_5_reconcile_ms": 0.07370009552687407
+  }
+}
