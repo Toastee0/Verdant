@@ -52,23 +52,25 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     si = element_table["Si"]
 
     cell_size_m = 0.01
-    # Pick energy that doesn't trigger phase-resolve flips at M5'.3
-    # (M5'.5 will manage transitions properly). For mixed solid/liquid
-    # we use a temperature within the liquid coexistence range; T derive
-    # is OK with mixed fractions.
-    initial_energy_raw = 4000
+    # Energy chosen below Si melt point so phase resolve doesn't flip the
+    # mixed cells to fully-liquid. The 50/50 phase fraction tie-breaks to
+    # solid as majority (argmax tie → first index), so identity = solid
+    # and mohs_level=6 is consistent. The scheduler M5'.4 demonstrates
+    # liquid runs at 5 sub-passes/cycle even when its phase mass is much
+    # lower than solid's — the rate shows up in mass redistribution
+    # speed, not identity.
+    initial_energy_raw = 2000   # T ≈ 975 K (below Si melt 1687)
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         set_single_element(cells, cell_id, element_id=si.element_id, fraction=255)
-        # 50/50 mix of solid and liquid phase fractions. Each phase gets
-        # half its equilibrium mass.
         cells.phase_fraction[cell_id, PHASE_SOLID]  = 0.5
         cells.phase_fraction[cell_id, PHASE_LIQUID] = 0.5
         cells.phase_mass[cell_id, PHASE_SOLID]      = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_SOLID])
         cells.phase_mass[cell_id, PHASE_LIQUID]     = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
         cells.energy_raw[cell_id]                   = initial_energy_raw
-        cells.mohs_level[cell_id]                   = 0
+        # Solid is the tie-break majority → mohs_level = 6 (Si solid)
+        cells.mohs_level[cell_id]                   = 6
         cells.flags[cell_id]                        = 0
         for d in range(6):
             if grid.neighbors[cell_id][d] == -1:

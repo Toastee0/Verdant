@@ -239,24 +239,65 @@ def check_mass_per_element_total(
     )
 
 
+def check_fixed_state_cells_unchanged(
+    cells: list[dict],
+    baseline_cells: list[dict] | None,
+) -> tuple[str, dict]:
+    """FIXED_STATE cells must have unchanged composition, phase_mass,
+    pressure_raw, energy_raw, mohs_level vs baseline. Skipped when no
+    baseline is provided."""
+    if baseline_cells is None:
+        return ("skipped", {"reason": "no baseline provided"})
+
+    bl_by_id = {c["id"]: c for c in baseline_cells}
+    violations = []
+    fixed_count = 0
+    for cell in cells:
+        flags = cell.get("flags", {})
+        if not flags.get("fixed_state"):
+            continue
+        fixed_count += 1
+        bl = bl_by_id.get(cell["id"])
+        if bl is None:
+            continue
+        for field in ("composition", "phase_mass", "pressure_raw",
+                      "energy_raw", "mohs_level"):
+            if cell.get(field) != bl.get(field):
+                violations.append({"cell_id": cell["id"], "field": field,
+                                   "baseline": bl.get(field),
+                                   "current":  cell.get(field)})
+    if fixed_count == 0:
+        return ("skipped", {"reason": "no FIXED_STATE cells in scenario"})
+    return ("pass" if not violations else "fail",
+            {"fixed_state_cells": fixed_count, "violations": violations})
+
+
 def check_mohs_in_valid_range(cells: list[dict]) -> tuple[str, dict]:
-    """Solid-dominant cells must have mohs_level in 1..10; non-solid
-    (liquid/gas/plasma/void) cells must have mohs_level = 0."""
+    """Mohs is a per-cell scalar that tracks the solid component (if any):
+      - cells WITH solid_mass > 0: mohs ∈ [1, 10]
+      - cells WITHOUT solid_mass: mohs == 0
+
+    This works for mixed-phase cells too: a 50/50 solid+liquid mix has
+    mohs > 0 (the solid fraction's level), even if liquid wins by
+    saturation tie-break and the cell's identity-by-fraction registers
+    as 'liquid'.
+    """
     violations = []
     for cell in cells:
-        identity = cell.get("identity", {})
-        phase = identity.get("phase", "void")
         mohs = int(cell.get("mohs_level", 0))
-        if phase == "solid":
+        pm = cell.get("phase_mass", [0, 0, 0, 0])
+        # Phase order: solid, liquid, gas, plasma per cell.PHASE_*
+        solid_mass = float(pm[0]) if len(pm) >= 1 else 0.0
+        if solid_mass > 0:
             if not (1 <= mohs <= 10):
-                violations.append({"cell_id": cell["id"], "phase": phase,
-                                   "mohs": mohs,
-                                   "issue": "solid mohs must be 1..10"})
-        elif phase in ("liquid", "gas", "plasma"):
+                violations.append({"cell_id": cell["id"], "mohs": mohs,
+                                   "solid_mass": solid_mass,
+                                   "issue": "cell with solid_mass must have mohs ∈ [1, 10]"})
+        else:
             if mohs != 0:
-                violations.append({"cell_id": cell["id"], "phase": phase,
-                                   "mohs": mohs,
-                                   "issue": "non-solid mohs must be 0"})
+                violations.append({"cell_id": cell["id"], "mohs": mohs,
+                                   "solid_mass": solid_mass,
+                                   "issue": "cell with no solid_mass must have mohs = 0"})
     return ("pass" if not violations else "fail",
             {"violations": violations})
 
@@ -311,7 +352,11 @@ def check_baseline_compatible(baseline: dict, target: dict) -> list[str]:
 # Verifier driver
 # ----------------------------------------------------------------------------
 
-def verify(payload: dict, expected_mass: dict | None = None) -> dict:
+def verify(
+    payload: dict,
+    expected_mass: dict | None = None,
+    baseline_cells: list[dict] | None = None,
+) -> dict:
     cells = payload.get("cells", [])
 
     checks = {
@@ -324,6 +369,7 @@ def verify(payload: dict, expected_mass: dict | None = None) -> dict:
         "cohesion_in_unit_interval":   check_cohesion_in_unit_interval(cells),
         "gravity_field_finite_bounded": check_gravity_field_finite_bounded(cells),
         "mohs_in_valid_range":         check_mohs_in_valid_range(cells),
+        "fixed_state_cells_unchanged": check_fixed_state_cells_unchanged(cells, baseline_cells),
         "mass_per_element_total":      check_mass_per_element_total(cells, expected_mass),
     }
 
@@ -424,9 +470,11 @@ def main() -> int:
         return 3
 
     expected_mass = None
+    baseline_cells = None
     if args.baseline is not None:
         try:
             expected_mass, baseline_payload = load_baseline_expected_mass(args.baseline)
+            baseline_cells = baseline_payload.get("cells", [])
         except Exception as e:
             print(f"BASELINE ERROR: could not load {args.baseline}: {e}", file=sys.stderr)
             return 4
@@ -437,7 +485,7 @@ def main() -> int:
                 print(f"  - {issue}", file=sys.stderr)
             return 4
 
-    rep = verify(payload, expected_mass=expected_mass)
+    rep = verify(payload, expected_mass=expected_mass, baseline_cells=baseline_cells)
 
     if args.json_report:
         print(json.dumps(rep, indent=2))

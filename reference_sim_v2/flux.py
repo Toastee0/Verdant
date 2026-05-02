@@ -45,8 +45,10 @@ if TYPE_CHECKING:
 
 # Flag bits for veto (mirror cell.py's flags layout)
 FLAG_NO_FLOW = 1 << 0
+FLAG_RADIATES = 1 << 1
 FLAG_INSULATED = 1 << 2
 FLAG_FIXED_STATE = 1 << 3
+FLAG_CULLED = 1 << 4
 
 
 @dataclass

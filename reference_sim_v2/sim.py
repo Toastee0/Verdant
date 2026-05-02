@@ -31,9 +31,11 @@ import sys
 import time
 from pathlib import Path
 
+from .culling import clear_culled_flag, mask_culled_in_flux, update_culled_set
 from .derive import DerivedFields, run_derive
 from .emit import emit_cycle, new_run_id, write_emission
 from .flux import FluxBuffer, apply_veto, integrate
+from .radiation import apply_radiation
 from .region import run_region_kernels
 from .scenario import Scenario
 from .transitions import apply_phase_transitions, apply_ratchet, clear_ratcheted_flag
@@ -149,12 +151,10 @@ def _run_sub_pass(
     active = active_phases_for_sub_pass(sub_pass)
     run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
 
-    # M5'.5: phase transitions + ratchet at the start of the cycle
-    # (sub_pass==0). Both events are state-change events, not flux —
-    # they mutate cells directly and the flux pipeline sees the
-    # post-transition state.
+    # M5'.5–6: state-change events at sub_pass==0
     if sub_pass == 0:
         clear_ratcheted_flag(scenario.cells)
+        clear_culled_flag(scenario.cells)
         if scenario.phase_diagrams:
             apply_phase_transitions(
                 scenario.cells, derived, scenario.world, scenario.phase_diagrams,
@@ -163,11 +163,17 @@ def _run_sub_pass(
             # the new phase state for this cycle's flux.
             run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
         apply_ratchet(scenario.cells, derived, scenario.world)
+        # Radiation is a once-per-cycle slow boundary loss
+        apply_radiation(scenario.cells, derived, scenario.element_table, scenario.world)
 
     flux.clear()
     run_region_kernels(scenario.cells, derived, scenario.world, flux, active_phases=active)
+    # Tail-at-Scale culling: zero out flux from cells already culled this
+    # cycle, then update the culled set based on this sub-pass's residual.
+    mask_culled_in_flux(scenario.cells, flux)
     apply_veto(scenario.cells, flux)
     integrate(scenario.cells, flux, scenario.world)
+    update_culled_set(scenario.cells, flux, scenario.world)
 
 
 def main(argv: list[str] | None = None) -> int:
