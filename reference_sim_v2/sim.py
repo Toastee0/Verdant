@@ -33,6 +33,8 @@ from pathlib import Path
 
 from .derive import DerivedFields, run_derive
 from .emit import emit_cycle, new_run_id, write_emission
+from .flux import FluxBuffer, apply_veto, integrate
+from .region import run_region_kernels
 from .scenario import Scenario
 
 
@@ -60,6 +62,7 @@ def run_scenario(
 
     # Per-cycle scratch (allocated once, reused).
     derived = DerivedFields.allocate(scenario.cells.n)
+    flux = FluxBuffer.allocate(scenario.cells.n)
 
     emitted: list[Path] = []
 
@@ -86,7 +89,7 @@ def run_scenario(
         # ---- one cycle = LONGEST_BUDGET sub-passes -----------------------
         for sub_pass in range(LONGEST_BUDGET):
             t_sp = time.perf_counter()
-            _run_sub_pass(scenario, sub_pass, derived)
+            _run_sub_pass(scenario, sub_pass, derived, flux)
             cycle_timing[f"sub_pass_{sub_pass}_ms"] = (time.perf_counter() - t_sp) * 1000.0
 
         cycle_timing["cycle_total_ms"] = (time.perf_counter() - t_cycle_start) * 1000.0
@@ -109,24 +112,34 @@ def run_scenario(
     return emitted
 
 
-def _run_sub_pass(scenario: Scenario, sub_pass: int, derived: DerivedFields) -> None:
+def _run_sub_pass(
+    scenario: Scenario,
+    sub_pass: int,
+    derived: DerivedFields,
+    flux: FluxBuffer,
+) -> None:
     """Body of one sub-pass within a cycle.
 
-    M5'.1: derive at sub_pass==0 (cohesion, T, identity, pressure decode).
-    Gravity is in derived but stays zero until M5'.2 wires the Jacobi
-    diffusion. Subsequent sub-passes are no-ops until M5'.3 introduces
-    flux compute.
+    M5'.3 wiring:
+      1. derive (every sub-pass — identity, cohesion, T, pressure, gravity)
+      2. flux.clear()
+      3. region kernels — compute per-cell outgoing mass flux
+      4. veto — zero out fluxes across out-of-grid / NO_FLOW / etc edges
+      5. integrate — apply incoming - outgoing per cell to canonical state
 
     Future milestones:
-      M5'.2 — gravity vector field at sub_pass==0
-      M5'.3 — region kernel + flux summation + integration each sub-pass
-      M5'.4 — phase-aware active-set per sub-pass
-      M5'.5 — phase transitions + sustained-overpressure ratchet
-      M5'.6 — Tail-at-Scale culling + per-channel borders + petal stress
+      M5'.4 — phase-aware active-set (run only cells whose dominant phase's
+              budget hasn't expired this cycle); cull noise-floor regions
+      M5'.5 — phase transitions in transitions.py; sustained-overpressure
+              ratchet; energy-flux convection coupling
+      M5'.6 — Tail-at-Scale culling formal; per-channel borders; petal
+              stress + velocity integrate from momentum/stress flux
     """
-    if sub_pass == 0:
-        run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
-    # All other sub-passes: no-op until flow physics lands at M5'.3
+    run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
+    flux.clear()
+    run_region_kernels(scenario.cells, derived, scenario.world, flux)
+    apply_veto(scenario.cells, flux)
+    integrate(scenario.cells, flux, scenario.world)
 
 
 def main(argv: list[str] | None = None) -> int:
