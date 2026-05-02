@@ -70,11 +70,17 @@ def emit_cycle(
     sub_pass: int,
     stage: str,
     run_id: str,
-    gravity_vec: np.ndarray | None = None,
-    cohesion: np.ndarray | None = None,
+    derived=None,
     cycle_timing_ms: dict[str, float] | None = None,
 ) -> dict[str, Any]:
-    """Build the schema-v2 payload for one emission point."""
+    """Build the schema-v2 payload for one emission point.
+
+    `derived` is an optional DerivedFields snapshot. When provided, we use
+    its precomputed identity / cohesion / T / gravity_vec so the JSON
+    matches what the sim's own derive stage produced (no recomputation
+    drift between sim and emit). When None, identity is recomputed inline
+    and other derived fields are skipped.
+    """
 
     cells = scenario.cells
     grid = scenario.grid
@@ -82,7 +88,17 @@ def emit_cycle(
 
     id_to_symbol = {e.element_id: e.symbol for e in table}
 
-    majority_phase, majority_element = compute_identity(cells)
+    if derived is not None:
+        majority_phase = derived.majority_phase
+        majority_element = derived.majority_element
+        temperature = derived.temperature
+        gravity_vec = derived.gravity_vec
+        cohesion = derived.cohesion
+    else:
+        majority_phase, majority_element = compute_identity(cells)
+        temperature = None
+        gravity_vec = None
+        cohesion = None
 
     cell_objs = []
     for cid in range(grid.cell_count):
@@ -93,6 +109,7 @@ def emit_cycle(
             id_to_symbol=id_to_symbol,
             majority_phase=int(majority_phase[cid]),
             majority_element_id=int(majority_element[cid]),
+            temperature=temperature,
             gravity_vec=gravity_vec,
             cohesion=cohesion,
             include_petals=scenario.emission.include_petals,
@@ -136,6 +153,7 @@ def _build_cell_object(
     id_to_symbol: dict[int, str],
     majority_phase: int,
     majority_element_id: int,
+    temperature: np.ndarray | None,
     gravity_vec: np.ndarray | None,
     cohesion: np.ndarray | None,
     include_petals: bool,
@@ -160,6 +178,9 @@ def _build_cell_object(
         },
         "flags": _flags_to_dict(flags_u8),
     }
+
+    if temperature is not None:
+        obj["temperature_K"] = float(temperature[cid])
 
     if include_petals:
         petals = []

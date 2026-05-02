@@ -114,6 +114,60 @@ def check_phase_mass_non_negative(cells: list[dict]) -> tuple[str, dict]:
     )
 
 
+def check_temperature_positive(cells: list[dict]) -> tuple[str, dict]:
+    """Every cell with mass > 0 must have T > 0 (M5'.1 invariant). Cells
+    without `temperature_K` in their JSON are skipped (the field is only
+    emitted when derive ran)."""
+    violations = []
+    cells_checked = 0
+    for cell in cells:
+        if "temperature_K" not in cell:
+            continue
+        cells_checked += 1
+        T = float(cell["temperature_K"])
+        # Mass present? Use phase_mass total > 0 as proxy
+        pm = cell.get("phase_mass", [0, 0, 0, 0])
+        has_mass = sum(float(x) for x in pm) > 0
+        if has_mass and T <= 0:
+            violations.append({"cell_id": cell["id"], "T": T,
+                               "phase_mass_total": sum(float(x) for x in pm)})
+    return (
+        "pass" if not violations else "fail",
+        {"cells_checked": cells_checked, "violations": violations},
+    )
+
+
+def check_cohesion_in_unit_interval(cells: list[dict]) -> tuple[str, dict]:
+    """Cohesion must be in [0, 1] per cell per direction, and exactly 0
+    when the neighbor doesn't exist (grid edge). Skipped when cohesion
+    isn't emitted."""
+    violations = []
+    edge_violations = []
+    cells_checked = 0
+    for cell in cells:
+        if "cohesion" not in cell:
+            continue
+        cells_checked += 1
+        coh = cell["cohesion"]
+        petals = cell.get("petals", [])
+        for d, c in enumerate(coh):
+            cv = float(c)
+            if cv < 0.0 or cv > 1.0 + 1e-6:
+                violations.append({"cell_id": cell["id"], "direction": d, "value": cv})
+            # Grid-edge directions must have cohesion == 0
+            if petals and d < len(petals):
+                topo = petals[d].get("topology", {})
+                if topo.get("is_grid_edge") and cv != 0.0:
+                    edge_violations.append({"cell_id": cell["id"], "direction": d,
+                                            "value": cv,
+                                            "issue": "cohesion non-zero across grid edge"})
+    all_v = violations + edge_violations
+    return (
+        "pass" if not all_v else "fail",
+        {"cells_checked": cells_checked, "violations": all_v},
+    )
+
+
 def check_mass_per_element_per_phase(
     cells: list[dict],
     expected: dict[str, dict[str, float]] | None,
@@ -200,6 +254,8 @@ def verify(payload: dict, expected_mass: dict | None = None) -> dict:
         "phase_fraction_sum_le_1":     check_phase_fraction_sum_le_1(cells),
         "phase_mass_non_negative":     check_phase_mass_non_negative(cells),
         "petal_count_6":               check_petal_count(cells),
+        "temperature_positive":        check_temperature_positive(cells),
+        "cohesion_in_unit_interval":   check_cohesion_in_unit_interval(cells),
         "mass_per_element_per_phase":  check_mass_per_element_per_phase(cells, expected_mass),
     }
 

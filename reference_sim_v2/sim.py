@@ -31,6 +31,7 @@ import sys
 import time
 from pathlib import Path
 
+from .derive import DerivedFields, run_derive
 from .emit import emit_cycle, new_run_id, write_emission
 from .scenario import Scenario
 
@@ -57,15 +58,21 @@ def run_scenario(
     if run_id is None:
         run_id = new_run_id(scenario.name)
 
+    # Per-cycle scratch (allocated once, reused).
+    derived = DerivedFields.allocate(scenario.cells.n)
+
     emitted: list[Path] = []
 
-    # Tick 0 — initial state baseline
+    # Tick 0 — initial state baseline. Run derive so the emission carries
+    # identity / cohesion / T / gravity_vec for the initial state.
+    run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
     if scenario.emission.mode != "off" and scenario.emission.output_dir is not None:
         payload = emit_cycle(
             scenario,
             tick=0, cycle=0, sub_pass=0,
             stage="initial",
             run_id=run_id,
+            derived=derived,
         )
         path = write_emission(payload, scenario.emission.output_dir)
         emitted.append(path)
@@ -79,7 +86,7 @@ def run_scenario(
         # ---- one cycle = LONGEST_BUDGET sub-passes -----------------------
         for sub_pass in range(LONGEST_BUDGET):
             t_sp = time.perf_counter()
-            _run_sub_pass(scenario, sub_pass)
+            _run_sub_pass(scenario, sub_pass, derived)
             cycle_timing[f"sub_pass_{sub_pass}_ms"] = (time.perf_counter() - t_sp) * 1000.0
 
         cycle_timing["cycle_total_ms"] = (time.perf_counter() - t_cycle_start) * 1000.0
@@ -91,6 +98,7 @@ def run_scenario(
                 tick=tick, cycle=tick, sub_pass=LONGEST_BUDGET - 1,
                 stage="post_integration",
                 run_id=run_id,
+                derived=derived,
                 cycle_timing_ms=cycle_timing,
             )
             path = write_emission(payload, scenario.emission.output_dir)
@@ -101,18 +109,24 @@ def run_scenario(
     return emitted
 
 
-def _run_sub_pass(scenario: Scenario, sub_pass: int) -> None:
+def _run_sub_pass(scenario: Scenario, sub_pass: int, derived: DerivedFields) -> None:
     """Body of one sub-pass within a cycle.
 
-    M5'.0 stub: no-op. Future milestones fill in:
-      M5'.1 — derive (identity, cohesion, T, gravity-if-due)
-      M5'.2 — gravity vector field (Jacobi diffusion at sub_pass==0)
-      M5'.3 — region kernel + flux summation + integration
-      M5'.4 — phase-aware scheduling (active-set per sub_pass)
+    M5'.1: derive at sub_pass==0 (cohesion, T, identity, pressure decode).
+    Gravity is in derived but stays zero until M5'.2 wires the Jacobi
+    diffusion. Subsequent sub-passes are no-ops until M5'.3 introduces
+    flux compute.
+
+    Future milestones:
+      M5'.2 — gravity vector field at sub_pass==0
+      M5'.3 — region kernel + flux summation + integration each sub-pass
+      M5'.4 — phase-aware active-set per sub-pass
       M5'.5 — phase transitions + sustained-overpressure ratchet
       M5'.6 — Tail-at-Scale culling + per-channel borders + petal stress
     """
-    return
+    if sub_pass == 0:
+        run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
+    # All other sub-passes: no-op until flow physics lands at M5'.3
 
 
 def main(argv: list[str] | None = None) -> int:
