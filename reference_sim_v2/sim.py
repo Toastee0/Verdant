@@ -31,10 +31,16 @@ import sys
 import time
 from pathlib import Path
 
-from .culling import clear_culled_flag, mask_culled_in_flux, update_culled_set
+from .culling import (
+    clear_culled_flag,
+    mask_culled_in_flux,
+    update_culled_set,
+    wake_up_culled_cells,
+)
 from .derive import DerivedFields, run_derive
 from .emit import emit_cycle, new_run_id, write_emission
 from .flux import FluxBuffer, apply_veto, integrate
+from .mechanics import update_petal_stress
 from .radiation import apply_radiation
 from .region import run_energy_kernels, run_region_kernels
 from .scenario import Scenario
@@ -158,11 +164,15 @@ def _run_sub_pass(
         if scenario.phase_diagrams:
             apply_phase_transitions(
                 scenario.cells, derived, scenario.world, scenario.phase_diagrams,
+                element_table=scenario.element_table,
             )
             # Re-derive after transitions so identity / cohesion / T see
             # the new phase state for this cycle's flux.
             run_derive(scenario.cells, scenario.element_table, scenario.world, derived)
         apply_ratchet(scenario.cells, derived, scenario.world)
+        # Petal stress integrator: gravity-on-mass projected onto bond
+        # directions × cohesion × dt, plus springback decay.
+        update_petal_stress(scenario.cells, derived, scenario.world)
         # Radiation is a once-per-cycle slow boundary loss
         apply_radiation(scenario.cells, derived, scenario.element_table, scenario.world)
 
@@ -176,9 +186,11 @@ def _run_sub_pass(
         element_scale=float(first_element.energy_scale),
     )
     # Tail-at-Scale culling: zero out flux from cells already culled this
-    # cycle, then update the culled set based on this sub-pass's residual.
+    # cycle, then wake up culled cells receiving incoming flux > ε
+    # before veto+integrate, then re-cull whatever's quiet after.
     mask_culled_in_flux(scenario.cells, flux)
     apply_veto(scenario.cells, flux)
+    wake_up_culled_cells(scenario.cells, flux, scenario.world)
     integrate(scenario.cells, flux, scenario.world)
     update_culled_set(scenario.cells, flux, scenario.world)
 

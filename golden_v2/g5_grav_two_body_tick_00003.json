@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_grav_two_body_20260502T212715",
+  "run_id": "g5_grav_two_body_20260502T220853",
   "scenario": "g5_grav_two_body",
   "tick": 3,
   "cycle": 3,
@@ -65,7 +65,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.0440984803714825e-14,
           "velocity": [
             0.0,
             0.0
@@ -79,7 +79,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.978154950096992e-14,
           "velocity": [
             0.0,
             0.0
@@ -93,7 +93,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.0659433608679013e-14,
           "velocity": [
             0.0,
             0.0
@@ -107,7 +107,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.0440984803714825e-14,
           "velocity": [
             0.0,
             0.0
@@ -121,7 +121,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.978154950096992e-14,
           "velocity": [
             0.0,
             0.0
@@ -135,7 +135,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.0659433608679013e-14,
           "velocity": [
             0.0,
             0.0
@@ -199,7 +199,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -2.1077341898489976e-06,
           "velocity": [
             0.0,
             0.0
@@ -213,7 +213,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -227,7 +227,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -241,7 +241,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 2.1077341898489976e-06,
           "velocity": [
             0.0,
             0.0
@@ -255,7 +255,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -269,7 +269,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -333,7 +333,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0538514061408932e-06,
           "velocity": [
             0.0,
             0.0
@@ -347,7 +347,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.63446651160848e-07,
           "velocity": [
             0.0,
             0.0
@@ -361,7 +361,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -375,7 +375,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0538514061408932e-06,
           "velocity": [
             0.0,
             0.0
@@ -389,7 +389,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.63446651160848e-07,
           "velocity": [
             0.0,
             0.0
@@ -403,7 +403,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -467,7 +467,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0538512924540555e-06,
           "velocity": [
             0.0,
             0.0
@@ -481,7 +481,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -495,7 +495,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.6344673642597627e-07,
           "velocity": [
             0.0,
             0.0
@@ -509,7 +509,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0538512924540555e-06,
           "velocity": [
             0.0,
             0.0
@@ -523,7 +523,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -537,7 +537,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.6344673642597627e-07,
           "velocity": [
             0.0,
             0.0
@@ -601,7 +601,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.0538514061408932e-06,
           "velocity": [
             0.0,
             0.0
@@ -615,7 +615,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -629,7 +629,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.6344679326939513e-07,
           "velocity": [
             0.0,
             0.0
@@ -643,7 +643,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0538514061408932e-06,
           "velocity": [
             0.0,
             0.0
@@ -657,7 +657,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -671,7 +671,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.6344679326939513e-07,
           "velocity": [
             0.0,
             0.0
@@ -735,7 +735,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.053851519827731e-06,
           "velocity": [
             0.0,
             0.0
@@ -749,7 +749,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.634465943174291e-07,
           "velocity": [
             0.0,
             0.0
@@ -763,7 +763,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -777,7 +777,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.053851519827731e-06,
           "velocity": [
             0.0,
             0.0
@@ -791,7 +791,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.634465943174291e-07,
           "velocity": [
             0.0,
             0.0
@@ -805,7 +805,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.3172980288800318e-06,
           "velocity": [
             0.0,
             0.0
@@ -869,7 +869,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 2.1077341898489976e-06,
           "velocity": [
             0.0,
             0.0
@@ -883,7 +883,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -897,7 +897,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -911,7 +911,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -2.1077341898489976e-06,
           "velocity": [
             0.0,
             0.0
@@ -925,7 +925,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -939,7 +939,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.0538670949244988e-06,
           "velocity": [
             0.0,
             0.0
@@ -1003,7 +1003,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -4.22340690420242e-06,
           "velocity": [
             0.0,
             0.0
@@ -1017,7 +1017,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -1031,7 +1031,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -1045,7 +1045,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 4.22340690420242e-06,
           "velocity": [
             0.0,
             0.0
@@ -1059,7 +1059,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -1073,7 +1073,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -1137,7 +1137,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -1151,7 +1151,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -7.914123330010625e-07,
           "velocity": [
             0.0,
             0.0
@@ -1165,7 +1165,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -1179,7 +1179,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -1193,7 +1193,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 7.914123330010625e-07,
           "velocity": [
             0.0,
             0.0
@@ -1207,7 +1207,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -1271,7 +1271,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -1285,7 +1285,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.279092647469952e-07,
           "velocity": [
             0.0,
             0.0
@@ -1299,7 +1299,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.6394852739031194e-06,
           "velocity": [
             0.0,
             0.0
@@ -1313,7 +1313,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -1327,7 +1327,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.279092647469952e-07,
           "velocity": [
             0.0,
             0.0
@@ -1341,7 +1341,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.6394852739031194e-06,
           "velocity": [
             0.0,
             0.0
@@ -1405,7 +1405,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -1419,7 +1419,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -1433,7 +1433,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 7.914123330010625e-07,
           "velocity": [
             0.0,
             0.0
@@ -1447,7 +1447,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -1461,7 +1461,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -1475,7 +1475,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -7.914123330010625e-07,
           "velocity": [
             0.0,
             0.0
@@ -1539,7 +1539,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.362732320247655e-14,
           "velocity": [
             0.0,
             0.0
@@ -1553,7 +1553,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.582763843543944e-06,
           "velocity": [
             0.0,
             0.0
@@ -1567,7 +1567,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.582763843543944e-06,
           "velocity": [
             0.0,
             0.0
@@ -1581,7 +1581,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.362732320247655e-14,
           "velocity": [
             0.0,
             0.0
@@ -1595,7 +1595,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.582763843543944e-06,
           "velocity": [
             0.0,
             0.0
@@ -1609,7 +1609,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.582763843543944e-06,
           "velocity": [
             0.0,
             0.0
@@ -1673,7 +1673,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -1687,7 +1687,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.6394852739031194e-06,
           "velocity": [
             0.0,
             0.0
@@ -1701,7 +1701,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.279092647469952e-07,
           "velocity": [
             0.0,
             0.0
@@ -1715,7 +1715,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -1729,7 +1729,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.6394852739031194e-06,
           "velocity": [
             0.0,
             0.0
@@ -1743,7 +1743,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.279092647469952e-07,
           "velocity": [
             0.0,
             0.0
@@ -1807,7 +1807,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 2.111575668095611e-06,
           "velocity": [
             0.0,
             0.0
@@ -1821,7 +1821,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.639485046529444e-06,
           "velocity": [
             0.0,
             0.0
@@ -1835,7 +1835,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.279094352772518e-07,
           "velocity": [
             0.0,
             0.0
@@ -1849,7 +1849,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -2.111575668095611e-06,
           "velocity": [
             0.0,
             0.0
@@ -1863,7 +1863,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.639485046529444e-06,
           "velocity": [
             0.0,
             0.0
@@ -1877,7 +1877,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.279094352772518e-07,
           "velocity": [
             0.0,
             0.0
@@ -1941,7 +1941,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.0440984803714825e-14,
           "velocity": [
             0.0,
             0.0
@@ -1955,7 +1955,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.5827637298571062e-06,
           "velocity": [
             0.0,
             0.0
@@ -1969,7 +1969,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.5827637298571062e-06,
           "velocity": [
             0.0,
             0.0
@@ -1983,7 +1983,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.0440984803714825e-14,
           "velocity": [
             0.0,
             0.0
@@ -1997,7 +1997,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.5827637298571062e-06,
           "velocity": [
             0.0,
             0.0
@@ -2011,7 +2011,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.5827637298571062e-06,
           "velocity": [
             0.0,
             0.0
@@ -2075,7 +2075,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -2089,7 +2089,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.3742836674500722e-06,
           "velocity": [
             0.0,
             0.0
@@ -2103,7 +2103,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -7.914122193142248e-07,
           "velocity": [
             0.0,
             0.0
@@ -2117,7 +2117,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -2131,7 +2131,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.3742836674500722e-06,
           "velocity": [
             0.0,
             0.0
@@ -2145,7 +2145,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 7.914122193142248e-07,
           "velocity": [
             0.0,
             0.0
@@ -2209,7 +2209,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -2223,7 +2223,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.279090942167386e-07,
           "velocity": [
             0.0,
             0.0
@@ -2237,7 +2237,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.639485046529444e-06,
           "velocity": [
             0.0,
             0.0
@@ -2251,7 +2251,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -2.111576122842962e-06,
           "velocity": [
             0.0,
             0.0
@@ -2265,7 +2265,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.279090942167386e-07,
           "velocity": [
             0.0,
             0.0
@@ -2279,7 +2279,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.639485046529444e-06,
           "velocity": [
             0.0,
             0.0
@@ -2343,7 +2343,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -2357,7 +2357,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 7.914123898444814e-07,
           "velocity": [
             0.0,
             0.0
@@ -2371,7 +2371,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -2385,7 +2385,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.165695943607716e-06,
           "velocity": [
             0.0,
             0.0
@@ -2399,7 +2399,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -7.914123898444814e-07,
           "velocity": [
             0.0,
             0.0
@@ -2413,7 +2413,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.374283440076397e-06,
           "velocity": [
             0.0,
             0.0
@@ -2477,7 +2477,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 4.22340690420242e-06,
           "velocity": [
             0.0,
             0.0
@@ -2491,7 +2491,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -2505,7 +2505,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -2519,7 +2519,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -4.22340690420242e-06,
           "velocity": [
             0.0,
             0.0
@@ -2533,7 +2533,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -2547,7 +2547,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.11170345210121e-06,
           "velocity": [
             0.0,
             0.0
@@ -2611,7 +2611,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -6.350242983899079e-06,
           "velocity": [
             0.0,
             0.0
@@ -2625,7 +2625,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -2639,7 +2639,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -2653,7 +2653,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 6.350242983899079e-06,
           "velocity": [
             0.0,
             0.0
@@ -2667,7 +2667,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -2681,7 +2681,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -2745,7 +2745,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -2759,7 +2759,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -2773,7 +2773,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -2787,7 +2787,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -2801,7 +2801,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -2815,7 +2815,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -2879,7 +2879,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -2893,7 +2893,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -2907,7 +2907,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -2921,7 +2921,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -2935,7 +2935,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -2949,7 +2949,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -3013,7 +3013,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3027,7 +3027,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 7.938139106045128e-07,
           "velocity": [
             0.0,
             0.0
@@ -3041,7 +3041,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3055,7 +3055,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3069,7 +3069,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -7.938139106045128e-07,
           "velocity": [
             0.0,
             0.0
@@ -3083,7 +3083,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3147,7 +3147,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -3161,7 +3161,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -3175,7 +3175,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -3189,7 +3189,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -3203,7 +3203,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -3217,7 +3217,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -3281,7 +3281,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -3295,7 +3295,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.850546823334298e-06,
           "velocity": [
             0.0,
             0.0
@@ -3309,7 +3309,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.90783327727695e-06,
           "velocity": [
             0.0,
             0.0
@@ -3323,7 +3323,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -3337,7 +3337,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.850546823334298e-06,
           "velocity": [
             0.0,
             0.0
@@ -3351,7 +3351,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.90783327727695e-06,
           "velocity": [
             0.0,
             0.0
@@ -3415,7 +3415,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -3429,7 +3429,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -3443,7 +3443,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -3457,7 +3457,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -3471,7 +3471,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -3485,7 +3485,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -3549,7 +3549,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.0572862265689764e-06,
           "velocity": [
             0.0,
             0.0
@@ -3563,7 +3563,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.907832822529599e-06,
           "velocity": [
             0.0,
             0.0
@@ -3577,7 +3577,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.850546823334298e-06,
           "velocity": [
             0.0,
             0.0
@@ -3591,7 +3591,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0572862265689764e-06,
           "velocity": [
             0.0,
             0.0
@@ -3605,7 +3605,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.907832822529599e-06,
           "velocity": [
             0.0,
             0.0
@@ -3619,7 +3619,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.850546823334298e-06,
           "velocity": [
             0.0,
             0.0
@@ -3683,7 +3683,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3697,7 +3697,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3711,7 +3711,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -7.93814251665026e-07,
           "velocity": [
             0.0,
             0.0
@@ -3725,7 +3725,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3739,7 +3739,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3753,7 +3753,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 7.93814251665026e-07,
           "velocity": [
             0.0,
             0.0
@@ -3817,7 +3817,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3831,7 +3831,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3845,7 +3845,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 7.938139106045128e-07,
           "velocity": [
             0.0,
             0.0
@@ -3859,7 +3859,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -3873,7 +3873,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.968506007367978e-06,
           "velocity": [
             0.0,
             0.0
@@ -3887,7 +3887,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -7.938139106045128e-07,
           "velocity": [
             0.0,
             0.0
@@ -3951,7 +3951,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -3965,7 +3965,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.90783327727695e-06,
           "velocity": [
             0.0,
             0.0
@@ -3979,7 +3979,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.8505470507079735e-06,
           "velocity": [
             0.0,
             0.0
@@ -3993,7 +3993,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -4007,7 +4007,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.90783327727695e-06,
           "velocity": [
             0.0,
             0.0
@@ -4021,7 +4021,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.8505470507079735e-06,
           "velocity": [
             0.0,
             0.0
@@ -4085,7 +4085,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -4099,7 +4099,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -4113,7 +4113,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -4127,7 +4127,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -4141,7 +4141,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -4155,7 +4155,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.287022304401034e-07,
           "velocity": [
             0.0,
             0.0
@@ -4219,7 +4219,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -4233,7 +4233,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.8505470507079735e-06,
           "velocity": [
             0.0,
             0.0
@@ -4247,7 +4247,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.907833732024301e-06,
           "velocity": [
             0.0,
             0.0
@@ -4261,7 +4261,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0572863402558141e-06,
           "velocity": [
             0.0,
             0.0
@@ -4275,7 +4275,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.8505470507079735e-06,
           "velocity": [
             0.0,
             0.0
@@ -4289,7 +4289,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.907833732024301e-06,
           "velocity": [
             0.0,
             0.0
@@ -4353,7 +4353,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -4367,7 +4367,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -4381,7 +4381,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -4395,7 +4395,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -4409,7 +4409,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -4423,7 +4423,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -4487,7 +4487,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -4501,7 +4501,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -7.938141379781882e-07,
           "velocity": [
             0.0,
             0.0
@@ -4515,7 +4515,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.968505097873276e-06,
           "velocity": [
             0.0,
             0.0
@@ -4529,7 +4529,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.1746915283292765e-06,
           "velocity": [
             0.0,
             0.0
@@ -4543,7 +4543,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 7.938141379781882e-07,
           "velocity": [
             0.0,
             0.0
@@ -4557,7 +4557,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.968505097873276e-06,
           "velocity": [
             0.0,
             0.0
@@ -4621,7 +4621,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -4635,7 +4635,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.2870240097036e-07,
           "velocity": [
             0.0,
             0.0
@@ -4649,7 +4649,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -4663,7 +4663,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -4.229936621413799e-06,
           "velocity": [
             0.0,
             0.0
@@ -4677,7 +4677,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.2870240097036e-07,
           "velocity": [
             0.0,
             0.0
@@ -4691,7 +4691,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.7012343909736956e-06,
           "velocity": [
             0.0,
             0.0
@@ -4755,7 +4755,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -4769,7 +4769,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -4783,7 +4783,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -4797,7 +4797,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.287542080623098e-06,
           "velocity": [
             0.0,
             0.0
@@ -4811,7 +4811,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.8505246544009424e-06,
           "velocity": [
             0.0,
             0.0
@@ -4825,7 +4825,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.437017085161642e-06,
           "velocity": [
             0.0,
             0.0
@@ -4889,7 +4889,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 6.350242983899079e-06,
           "velocity": [
             0.0,
             0.0
@@ -4903,7 +4903,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -4917,7 +4917,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -4931,7 +4931,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -6.350242983899079e-06,
           "velocity": [
             0.0,
             0.0
@@ -4945,7 +4945,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -4959,7 +4959,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.1751214919495396e-06,
           "velocity": [
             0.0,
             0.0
@@ -5023,7 +5023,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -8.484686077281367e-06,
           "velocity": [
             0.0,
             0.0
@@ -5037,7 +5037,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -5051,7 +5051,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -5065,7 +5065,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 8.484686077281367e-06,
           "velocity": [
             0.0,
             0.0
@@ -5079,7 +5079,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -5093,7 +5093,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -5157,7 +5157,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -7.419379471684806e-06,
           "velocity": [
             0.0,
             0.0
@@ -5171,7 +5171,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -5185,7 +5185,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 4.504888238443527e-06,
           "velocity": [
             0.0,
             0.0
@@ -5199,7 +5199,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 7.419379471684806e-06,
           "velocity": [
             0.0,
             0.0
@@ -5213,7 +5213,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -5227,7 +5227,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -4.504888238443527e-06,
           "velocity": [
             0.0,
             0.0
@@ -5291,7 +5291,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -5305,7 +5305,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -5319,7 +5319,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -5333,7 +5333,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -5347,7 +5347,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -5361,7 +5361,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -5425,7 +5425,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -5439,7 +5439,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -5453,7 +5453,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -5467,7 +5467,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -5481,7 +5481,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -5495,7 +5495,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -5559,7 +5559,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -5573,7 +5573,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.0607370768411784e-06,
           "velocity": [
             0.0,
             0.0
@@ -5587,7 +5587,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.30206079929485e-06,
           "velocity": [
             0.0,
             0.0
@@ -5601,7 +5601,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -5615,7 +5615,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.0607370768411784e-06,
           "velocity": [
             0.0,
             0.0
@@ -5629,7 +5629,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.30206079929485e-06,
           "velocity": [
             0.0,
             0.0
@@ -5693,7 +5693,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -7.419378562190104e-06,
           "velocity": [
             0.0,
             0.0
@@ -5707,7 +5707,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -4.5048877836961765e-06,
           "velocity": [
             0.0,
             0.0
@@ -5721,7 +5721,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -5735,7 +5735,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 7.419378562190104e-06,
           "velocity": [
             0.0,
             0.0
@@ -5749,7 +5749,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 4.5048877836961765e-06,
           "velocity": [
             0.0,
             0.0
@@ -5763,7 +5763,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -5827,7 +5827,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -5841,7 +5841,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.1197595287958393e-06,
           "velocity": [
             0.0,
             0.0
@@ -5855,7 +5855,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -5869,7 +5869,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -5883,7 +5883,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.1197595287958393e-06,
           "velocity": [
             0.0,
             0.0
@@ -5897,7 +5897,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -5961,7 +5961,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -5975,7 +5975,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -5989,7 +5989,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -6003,7 +6003,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -6017,7 +6017,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -6031,7 +6031,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -6095,7 +6095,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.362732320247655e-14,
           "velocity": [
             0.0,
             0.0
@@ -6109,7 +6109,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -6123,7 +6123,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -6137,7 +6137,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.362732320247655e-14,
           "velocity": [
             0.0,
             0.0
@@ -6151,7 +6151,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -6165,7 +6165,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -6229,7 +6229,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -6243,7 +6243,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -6257,7 +6257,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -6271,7 +6271,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -6285,7 +6285,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -6299,7 +6299,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -6363,7 +6363,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -6377,7 +6377,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -6391,7 +6391,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.1197602109168656e-06,
           "velocity": [
             0.0,
             0.0
@@ -6405,7 +6405,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -6419,7 +6419,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -6433,7 +6433,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.1197602109168656e-06,
           "velocity": [
             0.0,
             0.0
@@ -6497,7 +6497,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -6511,7 +6511,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.302061254042201e-06,
           "velocity": [
             0.0,
             0.0
@@ -6525,7 +6525,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.0607374179016915e-06,
           "velocity": [
             0.0,
             0.0
@@ -6539,7 +6539,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -6553,7 +6553,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.302061254042201e-06,
           "velocity": [
             0.0,
             0.0
@@ -6567,7 +6567,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.0607374179016915e-06,
           "velocity": [
             0.0,
             0.0
@@ -6631,7 +6631,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -6645,7 +6645,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.302061708789552e-06,
           "velocity": [
             0.0,
             0.0
@@ -6659,7 +6659,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.060737645275367e-06,
           "velocity": [
             0.0,
             0.0
@@ -6673,7 +6673,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -6687,7 +6687,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.302061708789552e-06,
           "velocity": [
             0.0,
             0.0
@@ -6701,7 +6701,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.060737645275367e-06,
           "velocity": [
             0.0,
             0.0
@@ -6765,7 +6765,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -6779,7 +6779,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -6793,7 +6793,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.1197595287958393e-06,
           "velocity": [
             0.0,
             0.0
@@ -6807,7 +6807,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -6821,7 +6821,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -6835,7 +6835,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.1197595287958393e-06,
           "velocity": [
             0.0,
             0.0
@@ -6899,7 +6899,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.299145414028317e-06,
           "velocity": [
             0.0,
             0.0
@@ -6913,7 +6913,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -6927,7 +6927,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.6480640258341737e-07,
           "velocity": [
             0.0,
             0.0
@@ -6941,7 +6941,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.299145414028317e-06,
           "velocity": [
             0.0,
             0.0
@@ -6955,7 +6955,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -6969,7 +6969,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.6480640258341737e-07,
           "velocity": [
             0.0,
             0.0
@@ -7047,7 +7047,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -7061,7 +7061,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -7089,7 +7089,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -7103,7 +7103,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.178621227561962e-06,
           "velocity": [
             0.0,
             0.0
@@ -7167,7 +7167,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -7181,7 +7181,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -7195,7 +7195,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -7209,7 +7209,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -7223,7 +7223,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -7237,7 +7237,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -7301,7 +7301,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -7315,7 +7315,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.1197597561695147e-06,
           "velocity": [
             0.0,
             0.0
@@ -7329,7 +7329,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -7343,7 +7343,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -2.119119244525791e-06,
           "velocity": [
             0.0,
             0.0
@@ -7357,7 +7357,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.1197597561695147e-06,
           "velocity": [
             0.0,
             0.0
@@ -7371,7 +7371,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 4.238879228068981e-06,
           "velocity": [
             0.0,
             0.0
@@ -7435,7 +7435,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 7.419379471684806e-06,
           "velocity": [
             0.0,
             0.0
@@ -7449,7 +7449,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 4.504888238443527e-06,
           "velocity": [
             0.0,
             0.0
@@ -7463,7 +7463,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -7477,7 +7477,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -7.419379471684806e-06,
           "velocity": [
             0.0,
             0.0
@@ -7491,7 +7491,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -4.504888238443527e-06,
           "velocity": [
             0.0,
             0.0
@@ -7505,7 +7505,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -7569,7 +7569,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -7583,7 +7583,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.0607374179016915e-06,
           "velocity": [
             0.0,
             0.0
@@ -7597,7 +7597,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.302061254042201e-06,
           "velocity": [
             0.0,
             0.0
@@ -7611,7 +7611,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -4.241323495079996e-06,
           "velocity": [
             0.0,
             0.0
@@ -7625,7 +7625,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.0607374179016915e-06,
           "velocity": [
             0.0,
             0.0
@@ -7639,7 +7639,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.302061254042201e-06,
           "velocity": [
             0.0,
             0.0
@@ -7703,7 +7703,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -7717,7 +7717,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -7731,7 +7731,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -7745,7 +7745,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.299145868775668e-06,
           "velocity": [
             0.0,
             0.0
@@ -7759,7 +7759,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.6480657311367395e-07,
           "velocity": [
             0.0,
             0.0
@@ -7773,7 +7773,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.034339210396865e-06,
           "velocity": [
             0.0,
             0.0
@@ -7837,7 +7837,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -7851,7 +7851,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -7865,7 +7865,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -7879,7 +7879,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -6.358003247441957e-06,
           "velocity": [
             0.0,
             0.0
@@ -7893,7 +7893,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.589261160006572e-06,
           "velocity": [
             0.0,
             0.0
@@ -7907,7 +7907,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 4.768741746374872e-06,
           "velocity": [
             0.0,
             0.0
@@ -7971,7 +7971,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 7.419378562190104e-06,
           "velocity": [
             0.0,
             0.0
@@ -7985,7 +7985,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -7999,7 +7999,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -4.5048877836961765e-06,
           "velocity": [
             0.0,
             0.0
@@ -8013,7 +8013,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -7.419378562190104e-06,
           "velocity": [
             0.0,
             0.0
@@ -8027,7 +8027,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.914491460614954e-06,
           "velocity": [
             0.0,
             0.0
@@ -8041,7 +8041,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 4.5048877836961765e-06,
           "velocity": [
             0.0,
             0.0
@@ -8105,7 +8105,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 8.484686077281367e-06,
           "velocity": [
             0.0,
             0.0
@@ -8119,7 +8119,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -8133,7 +8133,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -8147,7 +8147,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -8.484686077281367e-06,
           "velocity": [
             0.0,
             0.0
@@ -8161,7 +8161,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -8175,7 +8175,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 4.2423430386406835e-06,
           "velocity": [
             0.0,
             0.0
@@ -8239,7 +8239,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0617600310069975e-05,
           "velocity": [
             0.0,
             0.0
@@ -8253,7 +8253,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.308800155034987e-06,
           "velocity": [
             0.0,
             0.0
@@ -8309,7 +8309,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.308800155034987e-06,
           "velocity": [
             0.0,
             0.0
@@ -8373,7 +8373,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -9.55539053393295e-06,
           "velocity": [
             0.0,
             0.0
@@ -8387,7 +8387,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -3.981151166954078e-06,
           "velocity": [
             0.0,
             0.0
@@ -8401,7 +8401,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -8443,7 +8443,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -8507,7 +8507,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -8.49316256790189e-06,
           "velocity": [
             0.0,
             0.0
@@ -8521,7 +8521,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -2.6536768018559087e-06,
           "velocity": [
             0.0,
             0.0
@@ -8535,7 +8535,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -8577,7 +8577,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -8641,7 +8641,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -7.430960067722481e-06,
           "velocity": [
             0.0,
             0.0
@@ -8655,7 +8655,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -1.3263925211504102e-06,
           "velocity": [
             0.0,
             0.0
@@ -8669,7 +8669,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -8711,7 +8711,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -8775,7 +8775,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -6.368827598635107e-06,
           "velocity": [
             0.0,
             0.0
@@ -8789,7 +8789,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 6.879423697370157e-10,
           "velocity": [
             0.0,
             0.0
@@ -8803,7 +8803,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -8845,7 +8845,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -8909,7 +8909,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.306809725880157e-06,
           "velocity": [
             0.0,
             0.0
@@ -8923,7 +8923,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 1.327547920482175e-06,
           "velocity": [
             0.0,
             0.0
@@ -8937,7 +8937,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 6.634357305301819e-06,
           "velocity": [
             0.0,
             0.0
@@ -9043,7 +9043,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -9.55539053393295e-06,
           "velocity": [
             0.0,
             0.0
@@ -9057,7 +9057,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -9099,7 +9099,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -9113,7 +9113,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -3.981151166954078e-06,
           "velocity": [
             0.0,
             0.0
@@ -9177,7 +9177,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -9191,7 +9191,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 2.3885788777988637e-06,
           "velocity": [
             0.0,
             0.0
@@ -9205,7 +9205,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 5.572562258748803e-06,
           "velocity": [
             0.0,
             0.0
@@ -9219,7 +9219,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -9311,7 +9311,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -8.49316256790189e-06,
           "velocity": [
             0.0,
             0.0
@@ -9325,7 +9325,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -9367,7 +9367,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -9381,7 +9381,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -2.6536768018559087e-06,
           "velocity": [
             0.0,
             0.0
@@ -9445,7 +9445,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -9459,7 +9459,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 3.449724317761138e-06,
           "velocity": [
             0.0,
             0.0
@@ -9473,7 +9473,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 4.511035513132811e-06,
           "velocity": [
             0.0,
             0.0
@@ -9487,7 +9487,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -9579,7 +9579,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -7.430960067722481e-06,
           "velocity": [
             0.0,
             0.0
@@ -9593,7 +9593,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -9635,7 +9635,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -9649,7 +9649,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": -1.3263925211504102e-06,
           "velocity": [
             0.0,
             0.0
@@ -9713,7 +9713,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -9727,7 +9727,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 4.511035513132811e-06,
           "velocity": [
             0.0,
             0.0
@@ -9741,7 +9741,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 3.449724317761138e-06,
           "velocity": [
             0.0,
             0.0
@@ -9755,7 +9755,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -9847,7 +9847,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -6.368827598635107e-06,
           "velocity": [
             0.0,
             0.0
@@ -9861,7 +9861,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": -6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -9903,7 +9903,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -9917,7 +9917,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 6.879423697370157e-10,
           "velocity": [
             0.0,
             0.0
@@ -9981,7 +9981,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -9995,7 +9995,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.572562258748803e-06,
           "velocity": [
             0.0,
             0.0
@@ -10009,7 +10009,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 2.3885788777988637e-06,
           "velocity": [
             0.0,
             0.0
@@ -10023,7 +10023,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -10115,7 +10115,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -5.306809725880157e-06,
           "velocity": [
             0.0,
             0.0
@@ -10171,7 +10171,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 6.634357305301819e-06,
           "velocity": [
             0.0,
             0.0
@@ -10185,7 +10185,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 1.327547920482175e-06,
           "velocity": [
             0.0,
             0.0
@@ -10263,7 +10263,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 6.634357305301819e-06,
           "velocity": [
             0.0,
             0.0
@@ -10277,7 +10277,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 1.327547920482175e-06,
           "velocity": [
             0.0,
             0.0
@@ -10291,7 +10291,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.306809725880157e-06,
           "velocity": [
             0.0,
             0.0
@@ -10383,7 +10383,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -10425,7 +10425,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -10439,7 +10439,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 5.572562258748803e-06,
           "velocity": [
             0.0,
             0.0
@@ -10453,7 +10453,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 2.3885788777988637e-06,
           "velocity": [
             0.0,
             0.0
@@ -10531,7 +10531,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -10545,7 +10545,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": 6.879423697370157e-10,
           "velocity": [
             0.0,
             0.0
@@ -10559,7 +10559,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -6.368827598635107e-06,
           "velocity": [
             0.0,
             0.0
@@ -10573,7 +10573,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -10651,7 +10651,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": -1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -10693,7 +10693,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": 1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -10707,7 +10707,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 4.511035513132811e-06,
           "velocity": [
             0.0,
             0.0
@@ -10721,7 +10721,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 3.449724317761138e-06,
           "velocity": [
             0.0,
             0.0
@@ -10799,7 +10799,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -10813,7 +10813,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -1.3263925211504102e-06,
           "velocity": [
             0.0,
             0.0
@@ -10827,7 +10827,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -7.430960067722481e-06,
           "velocity": [
             0.0,
             0.0
@@ -10841,7 +10841,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -10919,7 +10919,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -10961,7 +10961,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0613110816848348e-06,
           "velocity": [
             0.0,
             0.0
@@ -10975,7 +10975,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 3.449724317761138e-06,
           "velocity": [
             0.0,
             0.0
@@ -10989,7 +10989,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 4.511035513132811e-06,
           "velocity": [
             0.0,
             0.0
@@ -11067,7 +11067,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -11081,7 +11081,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -2.6536768018559087e-06,
           "velocity": [
             0.0,
             0.0
@@ -11095,7 +11095,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -8.49316256790189e-06,
           "velocity": [
             0.0,
             0.0
@@ -11109,7 +11109,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -11187,7 +11187,7 @@
       "petals": [
         {
           "direction": 0,
-          "stress": 0.0,
+          "stress": 3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -11229,7 +11229,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -3.1839838356972905e-06,
           "velocity": [
             0.0,
             0.0
@@ -11243,7 +11243,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 2.3885788777988637e-06,
           "velocity": [
             0.0,
             0.0
@@ -11257,7 +11257,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.572562258748803e-06,
           "velocity": [
             0.0,
             0.0
@@ -11335,7 +11335,7 @@
         },
         {
           "direction": 1,
-          "stress": 0.0,
+          "stress": 5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -11349,7 +11349,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -3.981151166954078e-06,
           "velocity": [
             0.0,
             0.0
@@ -11363,7 +11363,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -9.55539053393295e-06,
           "velocity": [
             0.0,
             0.0
@@ -11377,7 +11377,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -11497,7 +11497,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -5.306809725880157e-06,
           "velocity": [
             0.0,
             0.0
@@ -11511,7 +11511,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 1.327547920482175e-06,
           "velocity": [
             0.0,
             0.0
@@ -11525,7 +11525,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 6.634357305301819e-06,
           "velocity": [
             0.0,
             0.0
@@ -11617,7 +11617,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -11631,7 +11631,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -6.368827598635107e-06,
           "velocity": [
             0.0,
             0.0
@@ -11645,7 +11645,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": 6.879423697370157e-10,
           "velocity": [
             0.0,
             0.0
@@ -11659,7 +11659,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 6.369515176629648e-06,
           "velocity": [
             0.0,
             0.0
@@ -11751,7 +11751,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -11765,7 +11765,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -7.430960067722481e-06,
           "velocity": [
             0.0,
             0.0
@@ -11779,7 +11779,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -1.3263925211504102e-06,
           "velocity": [
             0.0,
             0.0
@@ -11793,7 +11793,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 6.104568456066772e-06,
           "velocity": [
             0.0,
             0.0
@@ -11885,7 +11885,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -11899,7 +11899,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -8.49316256790189e-06,
           "velocity": [
             0.0,
             0.0
@@ -11913,7 +11913,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -2.6536768018559087e-06,
           "velocity": [
             0.0,
             0.0
@@ -11927,7 +11927,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.839485311298631e-06,
           "velocity": [
             0.0,
             0.0
@@ -12019,7 +12019,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -12033,7 +12033,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -9.55539053393295e-06,
           "velocity": [
             0.0,
             0.0
@@ -12047,7 +12047,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -3.981151166954078e-06,
           "velocity": [
             0.0,
             0.0
@@ -12061,7 +12061,7 @@
         },
         {
           "direction": 5,
-          "stress": 0.0,
+          "stress": 5.5742398217262235e-06,
           "velocity": [
             0.0,
             0.0
@@ -12153,7 +12153,7 @@
         },
         {
           "direction": 2,
-          "stress": 0.0,
+          "stress": -5.308800155034987e-06,
           "velocity": [
             0.0,
             0.0
@@ -12167,7 +12167,7 @@
         },
         {
           "direction": 3,
-          "stress": 0.0,
+          "stress": -1.0617600310069975e-05,
           "velocity": [
             0.0,
             0.0
@@ -12181,7 +12181,7 @@
         },
         {
           "direction": 4,
-          "stress": 0.0,
+          "stress": -5.308800155034987e-06,
           "velocity": [
             0.0,
             0.0
@@ -12265,13 +12265,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.2217999901622534,
-    "sub_pass_1_ms": 1.0508999694138765,
-    "sub_pass_2_ms": 1.0337000712752342,
-    "sub_pass_3_ms": 1.0349999647587538,
-    "sub_pass_4_ms": 1.003399956971407,
-    "sub_pass_5_ms": 0.9977000299841166,
-    "sub_pass_6_ms": 1.0044999653473496,
-    "cycle_total_ms": 7.351499982178211
+    "sub_pass_0_ms": 1.3421999756246805,
+    "sub_pass_1_ms": 1.2052999809384346,
+    "sub_pass_2_ms": 1.2330000754445791,
+    "sub_pass_3_ms": 1.6540999058634043,
+    "sub_pass_4_ms": 1.231500064022839,
+    "sub_pass_5_ms": 1.1813999153673649,
+    "sub_pass_6_ms": 1.1757001047953963,
+    "cycle_total_ms": 9.028299944475293
   }
 }

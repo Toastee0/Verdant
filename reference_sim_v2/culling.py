@@ -66,6 +66,59 @@ def update_culled_set(
     return int(new_culls.sum())
 
 
+def wake_up_culled_cells(
+    cells: CellArrays,
+    flux: FluxBuffer,
+    world: "WorldConfig",
+) -> int:
+    """M5'.6c mid-cycle wake-up. A culled cell that's about to receive
+    INCOMING flux > ε from any neighbour gets its CULLED flag cleared so
+    it participates in the next sub-pass. Per gen5 §"Tail at Scale":
+    "regions drop out of the active set as they reach equilibrium and
+    rejoin when a flux event wakes them."
+
+    Called between region kernels and integrate, after apply_veto. Looks
+    at the per-direction outgoing flux of NEIGHBOURS to determine which
+    culled cells are about to receive non-trivial incoming.
+    """
+    eps = float(world.noise_floor_epsilon)
+    if eps <= 0:
+        return 0
+    n = cells.n
+    if n == 0:
+        return 0
+
+    culled = (cells.flags & FLAG_CULLED) != 0
+    if not culled.any():
+        return 0
+
+    grid = cells.grid
+    neighbors = np.array(grid.neighbors, dtype=np.int32)        # (N, 6)
+    from .grid import OPPOSITE_DIRECTION
+
+    # Per-cell incoming magnitude, computed by reading neighbour outgoing
+    # in OPPOSITE direction.
+    flux_mass_padded = np.concatenate([
+        np.abs(flux.mass).sum(axis=(2, 3)),                      # (N, 6)
+        np.zeros((1, 6), dtype=np.float32),
+    ])
+    flux_energy_padded = np.concatenate([
+        np.abs(flux.energy),
+        np.zeros((1, 6), dtype=np.float32),
+    ])
+
+    incoming = np.zeros(n, dtype=np.float32)
+    for d in range(6):
+        opp = OPPOSITE_DIRECTION[d]
+        incoming += flux_mass_padded[neighbors[:, d], opp]
+        incoming += flux_energy_padded[neighbors[:, d], opp]
+
+    waking = culled & (incoming > eps)
+    if waking.any():
+        cells.flags[waking] &= np.uint8((~FLAG_CULLED) & 0xFF)
+    return int(waking.sum())
+
+
 def clear_culled_flag(cells: CellArrays) -> None:
     """At the top of each cycle, clear all CULLED flags so the next cycle
     re-establishes quiescence from scratch. Wake-up due to incoming
