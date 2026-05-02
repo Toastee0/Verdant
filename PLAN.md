@@ -1,8 +1,8 @@
 # VerdantSim — Plan of Action
 
-**As of:** 2026-05-02 — M1–M4 complete. Reference sim runs all five Tier 0 scenarios with full conservation and a regression runner.
+**As of:** 2026-05-02 — M1–M4 complete on `sim-core` (Tier 0 / schema-v1, frozen reference). M5'.0–.7 complete on `gen5` branch (greenfield gen5-architecture rewrite, schema-v2). The framework pivoted: see `gen5_implementation_spec.md`, `tier0_reusability_audit.md`, and `gen5_roadmap.md` for the full reconciliation.
 
-This document is the forward-looking roadmap. For the *design* (what the sim is), see `wiki/README.md`. For the code layout, see `reference_sim/README.md`.
+This document is the forward-looking roadmap. For the *gen5 design* (what the sim is now), see `verdant_sim_design.md`. For the schema-v2 code layout, see `reference_sim_v2/`. The legacy framework lives in `wiki/` and `reference_sim/` (sim-core); most of it is superseded by gen5.
 
 ---
 
@@ -106,6 +106,37 @@ Test scenarios (each is a reproducible physics fixture — see `wiki/scenarios.m
 Deliverable: `reference_sim/sim.py` (the real one; `sim_stub.py` retires to `reference_sim/archive/`). Each scenario runs to completion and passes `verify.py` with a proper baseline.
 
 **Blocks:** Tier 1+ work, CUDA port, anything that needs "the sim actually runs."
+
+### M5'.0–.7. Gen5 framework rewrite — **DONE** (gen5 branch)
+
+The old M5–M9 spec below describes the wiki framework that was superseded
+by `verdant_sim_design.md` (gen5). The Python reference simulator was
+greenfielded on the `gen5` branch with schema-v2:
+
+- **M5'.0** scaffolding (commit `2e80edd`): `reference_sim_v2/` tree, 16-slot composition + 4-channel phase fractions + petals SoA, schema-v2 emitter, sim driver, g5_static.
+- **M5'.1** derive (commit `dfacaa4`): identity (by-fraction-of-equilibrium), cohesion (blind per-direction f32), temperature, pressure decode. g5_temp_gradient validates.
+- **M5'.2** gravity (commit `79b83da`): Newton-seeded borders + Jacobi-diffused vector field. g5_grav_uniform / g5_grav_two_body.
+- **M5'.3** region kernel + flux (commit `7718b2b`): vectorised per-cell stencil, FluxBuffer SoA `mass[N,6,16,4]`, blind summation, veto, integration. g5_pressure_drop validates conservative redistribution.
+- **M5'.4** sub-pass scheduler (commit `f8dd6d0`): concurrent per-phase budgets (gas:3, liquid:5, solid:7); g5_mixed_phase.
+- **M5'.5** phase diagram + transitions + ratchet (commit `3acb0f5`): T-threshold phase resolve, full-cell transitions (latent heat is M5'.5b), f32 sustained-overpressure integrator. g5_melt and g5_ratchet.
+- **M5'.6** culling + radiation + verifier hardening (commit `3e5331a`): Tail-at-Scale ε culling, Stefan-Boltzmann emission, refined mohs invariant. g5_radiative_boundary.
+- **M5'.7** finalize: `checker/diff_ticks_v2.py` (per-field tolerances for schema-v2), `checker/test_diff_ticks_v2.py` (11 self-tests), `checker/regression_v2.py` (drives 9 scenarios + verify + golden diff), `golden_v2/` (9 recorded emissions). 9/9 regression green; 11/11 self-tests passed.
+
+Tier 0 retirement (`reference_sim/`, `golden/`, `checker/regression.py` etc.) is pending user confirmation. The schema-v1 reference is preserved on the `sim-core` branch as historical / cross-validation oracle until explicitly retired.
+
+Open follow-ups (M5'.x increments, before M6'):
+- **M5'.5b** latent heat on phase transitions (partial transitions to avoid c_p-discontinuity oscillation at small cell sizes).
+- **M5'.6b** petal-stress integration (region kernel populates flux.stress for solid loading; integrate accumulates onto petal_stress symmetrically).
+- **M5'.6c** mid-cycle wake-up for culled cells (currently per-cycle granularity).
+- **M5'.7b** energy-channel-of-region-kernel (conduction down T-gradient; convection coupled to mass flux).
+
+Next milestone after Tier 0 retirement is M6' (Tier 1 — H + O + water phase transitions).
+
+---
+
+*(Legacy M5–M9 spec preserved below for historical reference; the framework moved to gen5.)*
+
+---
 
 ### M4. diff_ticks.py — **DONE**
 
