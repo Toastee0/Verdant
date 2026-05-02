@@ -63,7 +63,7 @@ def run_scenario(
         t0 = time.perf_counter()
         run_derive_stage(scenario.cells, scenario.element_table, scenario.world, derived)
         t1 = time.perf_counter()
-        run_resolve_stage(scenario.cells, scenario.element_table, derived, scenario.world)
+        run_resolve_stage(scenario.cells, scenario.element_table, derived, scenario.world, buffers)
         t2 = time.perf_counter()
         run_propagate_stages(scenario.cells, scenario.element_table, derived, buffers, scenario.world)
         t3 = time.perf_counter()
