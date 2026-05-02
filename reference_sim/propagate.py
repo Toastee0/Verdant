@@ -124,6 +124,12 @@ def stage_2_elastic(
     # Float work copy for averaging accuracy
     strain = cells.elastic_strain.astype(np.float32).copy()
 
+    # Tensile-failure check on the LOADED state (before Jacobi smoothing).
+    # Per wiki/elastic-flow.md, fracture is determined by per-bond stress
+    # |Δε|·E exceeding the tensile limit; checking after smoothing would
+    # always find the gradient flattened below threshold.
+    _detect_bond_fracture(cells, element_table, neighbors, cohesion, strain, movable)
+
     # Decay factor for cells with no cohesive support (springback toward 0).
     # Half-life of one sub-iteration is a coarse approximation; refine later.
     decay = 0.5
@@ -162,11 +168,6 @@ def stage_2_elastic(
     saturated = movable & (strain >= STRAIN_SATURATION)
     if saturated.any():
         strain[saturated] = float(STRAIN_SATURATION)
-
-    # Tensile-failure detection: per-bond stress. If any bond's |Δε| × E
-    # exceeds the cell's tensile_limit, the bond is broken — both endpoints
-    # FRACTURED. Fractured cells release stored strain (snapped spring).
-    _detect_bond_fracture(cells, element_table, neighbors, cohesion, strain, movable)
 
     # Final clamp into i8 range
     strain = np.clip(strain, -STRAIN_SATURATION, STRAIN_SATURATION)
