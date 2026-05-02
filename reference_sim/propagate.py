@@ -18,10 +18,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .cell import CellArrays, COMPOSITION_SLOTS, PHASE_GAS, PHASE_LIQUID, PHASE_SOLID
+from .cell import CellArrays, COMPOSITION_SLOTS, PHASE_GAS, PHASE_LIQUID, PHASE_PLASMA, PHASE_SOLID
 from .derive import DerivedFields
 from .element_table import Element, ElementTable
-from .flags import CULLED, EXCLUDED, FIXED_STATE, FRACTURED, NO_FLOW
+from .flags import CULLED, EXCLUDED, FIXED_STATE, FRACTURED, INSULATED, NO_FLOW
 from .grid import NEIGHBOR_DELTAS, OPPOSITE_DIRECTION
 from .scenario import WorldConfig
 
@@ -517,17 +517,282 @@ def stage_4_energy(
 ) -> int:
     """Thermal transport: conduction + convection + radiation.
 
-    For Tier 0 static scenario: uniform T means no conduction gradient, no
-    mass movement means no convection, no RADIATES flags means no radiation.
-    Zero iterations.
-    """
-    # Radiation pass — once per tick, not per sub-iteration
-    _apply_radiation(cells, element_table, derived, buffers, world)
+    Per wiki/energy-flow.md three mechanisms in one pass:
+      - Conduction: per-bond ΔU = κ_bond × ΔT × area × dt over T gradient.
+      - Convection: from Stage 3's mass deltas — energy rides moved mass.
+      - Radiation: blackbody P_net to T_space (once per tick).
 
-    # TODO: conduction Jacobi loop.
-    # TODO: convection coupling — read buffers.mass_deltas produced by Stage 3,
-    #       add per-mass-move thermal-energy carried term to buffers.energy_deltas.
-    return 0
+    For Tier 0 t0_static: uniform T → no conduction gradient; no mass moves →
+    no convection; no RADIATES → no radiation. Zero iterations, zero deltas.
+    """
+    _apply_radiation(cells, element_table, derived, buffers, world)
+    _apply_convection(cells, element_table, derived, buffers, world)
+    iters = _stage_4_conduction(cells, element_table, derived, buffers, world)
+    return iters
+
+
+def _stage_4_conduction(
+    cells: CellArrays,
+    element_table: ElementTable,
+    derived: DerivedFields,
+    buffers: PropagateBuffers,
+    world: WorldConfig,
+) -> int:
+    """Jacobi conduction sweep. Per-bond ΔU = κ_bond × (T_self - T_nbr) × area × dt
+    where κ_bond = min(κ_self, κ_nbr) — series-resistance approximation per
+    wiki/energy-flow.md §"Conduction".
+
+    Working-energy snapshot pattern (mirrors Stage 3): cells.energy untouched
+    mid-loop; buffer accumulates; Stage 5 commits.
+
+    Convergence on max|ΔU|/max|U| with phase-dependent cap. INSULATED on
+    either endpoint zeros the bond.
+    """
+    n = cells.n
+    if n == 0:
+        return 0
+
+    insulated = (cells.flags & INSULATED) != 0
+    fixed = (cells.flags & FIXED_STATE) != 0
+
+    # Per-cell thermal conductivity (composition-weighted, phase-dependent)
+    kappa = _composition_weighted_kappa(cells, element_table)
+    # Early-out: zero conductivity everywhere (gas-only scenarios with κ=0)
+    # OR uniform temperature (no gradient possible)
+    if not (kappa > 0).any():
+        return 0
+    T_initial = derived.temperature
+    if (T_initial.max() - T_initial.min()) < 1e-9:
+        return 0
+
+    grid = cells.grid
+    neighbors_arr = np.array(grid.neighbors, dtype=np.int32)
+    face_area = world.cell_size_m ** 2
+    dt = world.dt
+    energy_scale = _global_energy_scale(element_table)
+
+    # Pick cap based on most permissive present phase
+    has_gas = (cells.phase == PHASE_GAS).any()
+    has_liquid = (cells.phase == PHASE_LIQUID).any()
+    if has_gas:
+        cap = world.conv_cap_gas
+    elif has_liquid:
+        cap = world.conv_cap_liquid
+    else:
+        cap = world.conv_cap_solid
+
+    threshold = float(world.convergence_threshold)
+
+    working_energy = cells.energy.astype(np.int32).copy()
+
+    # Pre-compute per-cell c_p × mass for T recomputation between iters
+    volume = world.cell_size_m ** 3
+    density = _composition_weighted_scalar(cells, element_table, "density_solid")
+    # Tier 0 (all solid) approximation; revisit when gas/liquid scenarios exist
+    cp = _phase_specific_heat_per_cell(cells, element_table)
+    mass = density * volume
+    cp_mass = np.maximum(mass * cp, 1e-12)
+
+    iters = 0
+    for it in range(cap):
+        # Refresh T from working_energy (sub-iter visibility)
+        if it == 0:
+            T = T_initial.copy()
+        else:
+            T = (working_energy.astype(np.float32) * energy_scale) / cp_mass
+
+        # Per-direction temperature gradient
+        T_padded = np.concatenate([T, np.zeros(1, dtype=np.float32)])
+        nbr_T = T_padded[neighbors_arr]                 # (N, 6)
+        delta_T = T[:, None] - nbr_T                    # (N, 6) — positive = self hotter
+
+        # Bond gates: neighbor exists, neither endpoint INSULATED
+        nbr_valid = neighbors_arr != -1
+        insul_padded = np.concatenate([insulated, np.array([True])])
+        nbr_insul = insul_padded[neighbors_arr]
+        bond_open = nbr_valid & ~nbr_insul & ~insulated[:, None]   # (N, 6)
+
+        # Per-bond conductivity (min)
+        kappa_padded = np.concatenate([kappa, np.zeros(1, dtype=np.float32)])
+        nbr_kappa = kappa_padded[neighbors_arr]
+        kappa_bond = np.minimum(kappa[:, None], nbr_kappa) * bond_open  # (N, 6)
+
+        # ΔU in joules per direction (positive = self → neighbor)
+        dU_J = kappa_bond * delta_T * face_area * dt
+        dU_int = np.round(dU_J / energy_scale).astype(np.int32)
+
+        # FIXED_STATE cells don't lose or gain energy; zero their rows
+        if fixed.any():
+            dU_int[fixed, :] = 0
+
+        # Build symmetric per-direction iter_deltas
+        iter_deltas = np.zeros_like(buffers.energy_deltas)
+        iter_deltas -= dU_int                            # source debit
+
+        # Scatter credits to recipients (drop credits to FIXED_STATE)
+        for d in range(6):
+            send = dU_int[:, d]
+            send_mask = send != 0
+            if not send_mask.any():
+                continue
+            dst_ids = neighbors_arr[send_mask, d]
+            valid = dst_ids != -1
+            if not valid.any():
+                continue
+            dst_ids_v = dst_ids[valid]
+            send_vals = send[send_mask][valid]
+            # Drop credits to FIXED_STATE recipients (held energy)
+            non_fixed = ~fixed[dst_ids_v]
+            if non_fixed.any():
+                opp = OPPOSITE_DIRECTION[d]
+                np.add.at(iter_deltas, (dst_ids_v[non_fixed], opp), send_vals[non_fixed])
+
+        # Apply to working_energy
+        working_energy = working_energy + iter_deltas.sum(axis=1)
+        working_energy = np.clip(working_energy, 0, 0xFFFF)
+        # FIXED_STATE: hold their original energy
+        if fixed.any():
+            working_energy[fixed] = cells.energy[fixed].astype(np.int32)
+
+        # Accumulate to buffer for Stage 5
+        buffers.energy_deltas += iter_deltas
+
+        # Convergence
+        max_dU = float(np.abs(iter_deltas).max())
+        max_U = float(np.abs(working_energy).max()) or 1.0
+        iters = it + 1
+        if max_dU / max_U < threshold:
+            break
+
+    return iters
+
+
+def _apply_convection(
+    cells: CellArrays,
+    element_table: ElementTable,
+    derived: DerivedFields,
+    buffers: PropagateBuffers,
+    world: WorldConfig,
+) -> None:
+    """Energy carried by Stage 3's mass moves: ΔU = mass × c_p × T_source.
+
+    Per wiki/energy-flow.md §"Convection (coupled to Stage 3)": Stage 3's
+    delta buffer is the source of truth for mass movements; Stage 4 reads
+    those entries and queues per-direction energy deltas in the same
+    direction layout.
+
+    Tier 0 stub: no Tier 0 scenario exercises mass-driven heat transport
+    (t0_radiate is uniform-composition with conduction only). The mechanism
+    is wired so it activates as soon as Stage 3 produces non-zero mass
+    deltas; correctness validated when t1_* scenarios land.
+    """
+    if not buffers.mass_deltas.any():
+        return
+
+    grid = cells.grid
+    n = cells.n
+    energy_scale = _global_energy_scale(element_table)
+    volume = world.cell_size_m ** 3
+    T = derived.temperature                             # source-cell T snapshot
+    composition = cells.composition
+
+    # For each (cell, direction, slot) where mass left this cell
+    # (mass_deltas[cell, direction, slot] < 0 ⇒ A → B sent share to neighbor),
+    # energy_carried = |share_units| × density × volume / 255 × c_p × T_source.
+    # Convert to u16 raw and add to energy_deltas (same direction).
+    mass_deltas = buffers.mass_deltas
+
+    for slot in range(COMPOSITION_SLOTS):
+        # Find outgoing per direction
+        out = -np.minimum(mass_deltas[:, :, slot], 0)   # (N, 6) positive = sent
+        if not out.any():
+            continue
+        # Need element-specific c_p × density for this slot
+        eid = composition[:, slot, 0]
+        for element in element_table:
+            elem_mask = (eid == element.element_id)
+            if not elem_mask.any():
+                continue
+            phase_arr = cells.phase[elem_mask]
+            cp_phase = np.empty(phase_arr.shape, dtype=np.float32)
+            cp_phase[phase_arr == PHASE_SOLID]  = element.specific_heat_solid
+            cp_phase[phase_arr == PHASE_LIQUID] = element.specific_heat_liquid
+            cp_phase[phase_arr == PHASE_GAS]    = element.specific_heat_gas
+            cp_phase[phase_arr == PHASE_PLASMA] = element.specific_heat_gas
+            d_phase = np.empty(phase_arr.shape, dtype=np.float32)
+            d_phase[phase_arr == PHASE_SOLID]  = element.density_solid
+            d_phase[phase_arr == PHASE_LIQUID] = element.density_liquid
+            d_phase[phase_arr == PHASE_GAS]    = element.density_gas_stp
+            d_phase[phase_arr == PHASE_PLASMA] = element.density_gas_stp
+            mass_per_unit = d_phase * volume / 255.0    # kg per fraction-unit
+            cell_mask_idx = np.where(elem_mask)[0]
+            for d in range(6):
+                send_units = out[cell_mask_idx, d]
+                if not send_units.any():
+                    continue
+                # Energy carried per cell (J)
+                E_J = send_units.astype(np.float32) * mass_per_unit * cp_phase * T[cell_mask_idx]
+                E_raw = np.round(E_J / energy_scale).astype(np.int32)
+                # Source loses; symmetric scatter handled by Stage 3's mass scatter
+                # (energy follows mass across the same bond).
+                buffers.energy_deltas[cell_mask_idx, d] -= E_raw
+                # Credit recipient (opposite direction)
+                neighbors_arr = np.array(grid.neighbors, dtype=np.int32)
+                dst_ids = neighbors_arr[cell_mask_idx, d]
+                valid = dst_ids != -1
+                if not valid.any():
+                    continue
+                opp = OPPOSITE_DIRECTION[d]
+                np.add.at(buffers.energy_deltas, (dst_ids[valid], opp), E_raw[valid])
+
+
+def _composition_weighted_kappa(
+    cells: CellArrays,
+    element_table: ElementTable,
+) -> np.ndarray:
+    """Per-cell thermal conductivity in W/(m·K), composition-weighted and
+    phase-dependent (per element table)."""
+    n = cells.n
+    out = np.zeros(n, dtype=np.float32)
+    for slot in range(COMPOSITION_SLOTS):
+        eid = cells.composition[:, slot, 0]
+        frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+        for element in element_table:
+            mask = (eid == element.element_id) & (frac > 0)
+            if not mask.any():
+                continue
+            phases = cells.phase[mask]
+            kappa_phase = np.empty(phases.shape, dtype=np.float32)
+            kappa_phase[phases == PHASE_SOLID]  = element.thermal_conductivity_solid
+            kappa_phase[phases == PHASE_LIQUID] = element.thermal_conductivity_liquid
+            kappa_phase[phases == PHASE_GAS]    = element.thermal_conductivity_gas
+            kappa_phase[phases == PHASE_PLASMA] = element.thermal_conductivity_gas
+            out[mask] += kappa_phase * frac[mask]
+    return out
+
+
+def _phase_specific_heat_per_cell(
+    cells: CellArrays,
+    element_table: ElementTable,
+) -> np.ndarray:
+    """Per-cell c_p in J/(kg·K), composition-weighted and phase-dependent."""
+    n = cells.n
+    out = np.zeros(n, dtype=np.float32)
+    for slot in range(COMPOSITION_SLOTS):
+        eid = cells.composition[:, slot, 0]
+        frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+        for element in element_table:
+            mask = (eid == element.element_id) & (frac > 0)
+            if not mask.any():
+                continue
+            phases = cells.phase[mask]
+            cp_phase = np.empty(phases.shape, dtype=np.float32)
+            cp_phase[phases == PHASE_SOLID]  = element.specific_heat_solid
+            cp_phase[phases == PHASE_LIQUID] = element.specific_heat_liquid
+            cp_phase[phases == PHASE_GAS]    = element.specific_heat_gas
+            cp_phase[phases == PHASE_PLASMA] = element.specific_heat_gas
+            out[mask] += cp_phase * frac[mask]
+    return out
 
 
 def _apply_radiation(
