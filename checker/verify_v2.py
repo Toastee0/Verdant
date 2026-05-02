@@ -137,6 +137,39 @@ def check_temperature_positive(cells: list[dict]) -> tuple[str, dict]:
     )
 
 
+def check_gravity_field_finite_bounded(
+    cells: list[dict],
+    g_max_bound: float = 1e6,
+) -> tuple[str, dict]:
+    """Gravity vector at every cell must be finite (no NaN/Inf) and bounded
+    by `g_max_bound` (default 1e6 m/s² — well above any realistic scenario).
+    Skipped when scenarios don't emit gravity_vec."""
+    import math
+    violations = []
+    cells_checked = 0
+    for cell in cells:
+        gv = cell.get("gravity_vec")
+        if gv is None:
+            continue
+        cells_checked += 1
+        gx, gy = float(gv[0]), float(gv[1])
+        if not math.isfinite(gx) or not math.isfinite(gy):
+            violations.append({"cell_id": cell["id"], "gx": gx, "gy": gy,
+                               "issue": "non-finite"})
+            continue
+        mag = (gx * gx + gy * gy) ** 0.5
+        if mag > g_max_bound:
+            violations.append({"cell_id": cell["id"], "magnitude": mag,
+                               "issue": f"exceeds bound {g_max_bound}"})
+    if cells_checked == 0:
+        return ("skipped", {"reason": "no gravity_vec emitted in this scenario"})
+    return (
+        "pass" if not violations else "fail",
+        {"cells_checked": cells_checked, "violations": violations,
+         "g_max_bound": g_max_bound},
+    )
+
+
 def check_cohesion_in_unit_interval(cells: list[dict]) -> tuple[str, dict]:
     """Cohesion must be in [0, 1] per cell per direction, and exactly 0
     when the neighbor doesn't exist (grid edge). Skipped when cohesion
@@ -256,6 +289,7 @@ def verify(payload: dict, expected_mass: dict | None = None) -> dict:
         "petal_count_6":               check_petal_count(cells),
         "temperature_positive":        check_temperature_positive(cells),
         "cohesion_in_unit_interval":   check_cohesion_in_unit_interval(cells),
+        "gravity_field_finite_bounded": check_gravity_field_finite_bounded(cells),
         "mass_per_element_per_phase":  check_mass_per_element_per_phase(cells, expected_mass),
     }
 

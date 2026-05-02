@@ -46,6 +46,7 @@ from .cell import (
     PHASE_SOLID,
     compute_identity,
 )
+from .gravity import compute_gravity_field
 
 if TYPE_CHECKING:
     from .scenario import WorldConfig
@@ -259,5 +260,8 @@ def run_derive(
     # Pressure decode
     derived.pressure[:] = decode_pressure_to_f32(cells)
 
-    # Gravity vector field — populated at M5'.2 (Jacobi diffusion). For
-    # M5'.1 we leave it at the zero from allocate().
+    # Gravity vector field (M5'.2): Newton-seed borders, Jacobi diffuse
+    # interior. For zero-gravity scenarios this returns the zero field.
+    derived.gravity_vec[:] = compute_gravity_field(
+        cells.grid, world.gravity_sources, world,
+    )
