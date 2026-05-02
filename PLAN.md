@@ -1,6 +1,6 @@
 # VerdantSim — Plan of Action
 
-**As of:** 2026-04-18 — M1, M2, and the static-scenario slice of M3 complete.
+**As of:** 2026-05-02 — M1–M4 complete. Reference sim runs all five Tier 0 scenarios with full conservation and a regression runner.
 
 This document is the forward-looking roadmap. For the *design* (what the sim is), see `wiki/README.md`. For the code layout, see `reference_sim/README.md`.
 
@@ -14,15 +14,8 @@ Completed:
 - All major physics decisions resolved: cell struct, flags, flow primitives, overflow cascade, walls, gravity method, magnetism, precipitation, cohesion, elasticity, dt, convergence budgets.
 - **M1 done** — Tier 0 element table (Si only), NIST-sourced, SI units, power-of-2 encoding scales, validated loader (`reference_sim/element_table.py`).
 - **M2 done** — `checker/verify.py` mass-conservation tautology fixed. New `--baseline` flag loads expected mass from an external tick-0 JSON. Incompatibility checks (run_id, element_table_hash, scenario, tick ordering) return exit code 4.
-- **M3 partially done** — reference sim scaffolding, Stage 0 derives complete, Stages 1/2/3/4 skeletons in place (with correct stage boundaries and buffer handling), t0_static scenario running end-to-end with perfect conservation across 5 ticks. See `reference_sim/README.md`.
-
-Remaining for M3:
-- Stage 1 phase resolve + ratchet + Curie + precipitation (skeleton has TODOs).
-- Stage 2 elastic strain propagation (needs cohesion-network Jacobi).
-- Stage 3 mass flow (the real auction — bidders, μ gradient, proportional distribution).
-- Stage 4 energy conduction / convection (radiation is in place).
-- Tier 0 scenarios beyond static: `t0_compression`, `t0_ratchet`, `t0_fracture`, `t0_radiate`.
-- P↔U coupling (Tier 2 overflow) and Tier 3 refund + EXCLUDED routing.
+- **M3 done** — full reference sim runs all five Tier 0 scenarios end-to-end with perfect conservation. Stage 1 (ratchet sentinel + phase resolve + Curie + latent heat + precipitation), Stage 2 (cohesion-network Jacobi for elastic strain + per-bond fracture detection on the loaded state), Stage 3 (μ-gradient mass auction with bidder-ignorant capacity check + cohesion barrier on the dominant element of intact solids), Stage 4 (Jacobi conduction + convection coupling + Stefan-Boltzmann radiation), Stage 5 (Tier 2 P↔U coupling + Tier 3 refund/EXCLUDED). Five Tier 0 scenarios: `t0_static`, `t0_compression` (strain dispersion), `t0_ratchet` (Stage 1 sentinel handshake → mohs++ + compression-work heat), `t0_fracture` (opposing-strain bond stress > tensile_limit), `t0_radiate` (Si-liquid disc, ring-5 RADIATES boundary, monotonic cooling).
+- **M4 done** — `checker/diff_ticks.py` cell-by-cell comparator with per-field tolerances (pressure_raw/phase/mohs/strain/flags exact; pressure_decoded/energy float-relative 1e-6; composition exact pairs). 8 self-tests in `checker/test_diff_ticks.py`. Regression runner `checker/regression.py` runs every t0 scenario, verifies invariants against tick-0 baseline, and diffs the chosen golden tick. Five `golden/<scenario>_tick_<N>.json` files recorded. Current status: 5/5 scenarios green.
 
 ---
 
@@ -75,23 +68,20 @@ Deliverable: updated `checker/verify.py`, re-run existing samples, confirm the t
 
 **Blocks:** conservation validation for the real sim. Without this, the real sim can silently lose mass and we wouldn't know.
 
-### M3. Reference sim v1 — Si-only, 91-cell — **IN PROGRESS**
+### M3. Reference sim v1 — Si-only, 91-cell — **DONE**
 
-Scaffolding and static-scenario slice delivered (commits `5e89252`, `ed72950`, `2e8ddb6`, `4841fa4` on `sim-core`).
+Delivered (commits `7b9a1e9` Step 1, `8223bdc` Step 2, `14c8a3f` Step 3, `2e8fdaf` Step 4, `1a04c76` Step 5, `01be4d4` Step 6 on `sim-core`):
 
-**Done:**
-- `reference_sim/{grid, cell, flags, scenario, sim}.py` — module skeleton in place.
-- `reference_sim/derive.py` — Stages 0a–0e all implemented.
-- `reference_sim/resolve.py`, `propagate.py`, `reconcile.py`, `emit.py` — stage boundaries wired, buffers allocated, radiation in place.
-- `reference_sim/scenarios/t0_static.py` — passes all independent invariant checks across 5+ ticks. Mass conserved exactly. Zero deltas every tick.
+- **Stage 1** (`resolve.py`): ratchet check consumes `elastic_strain == +127` cross-tick sentinel from Stage 2 → mohs_level++, RATCHETED flag, compression work ½σy²/E·V queued via SELF_CHANNEL energy delta. Phase resolve T-thresholded against composition-weighted melt/boil. Curie demag for ferromagnetic dominant element above curie_K. Latent-heat shedding queues ±L_phase·mass on transition. Precipitation gated on multi-element compositions (Tier 0 no-op).
+- **Stage 2** (`propagate.py`): Jacobi sweep over the cohesion network averages strain across cohesive neighbors with springback decay (50%/iter) for cells with no cohesive support. Per-bond tensile-failure detection on the LOADED state (before smoothing) — bond stress = elastic_limit × |Δε_i8|/127; >tensile_limit ⇒ FRACTURED on both endpoints + strain release.
+- **Stage 3** (`propagate.py`): μ-gradient mass auction with working-fraction snapshot (cells.composition untouched mid-loop). Bidder-ignorant capacity check caps each individual bid at recipient's slot headroom; multi-bidder overshoot allowed (cavitation). Cohesion barrier blocks dominant element across cohesive bonds for intact solids. NO_FLOW gates bonds.
+- **Stage 4** (`propagate.py`): Jacobi conduction on T gradient with min(κ_self, κ_nbr) bond conductivity, INSULATED-gated, FIXED_STATE recipients drop credits. Convection coupling reads Stage 3's mass deltas and queues mass × c_p × T_source energy moves. Radiation already in place.
+- **Stage 5** (`reconcile.py`): Tier 2 P↔U coupling converts fraction-overshoot (>255) to energy via composition-weighted phase-dependent thermodynamic_coupling. Tier 3 refund scatters unplaceable mass back to bidders proportional to incoming contribution; sets EXCLUDED on the saturated cell. FIXED_STATE cells exempt from updates.
+- **Scenarios**: `t0_compression` (Stage 2 strain dispersion), `t0_ratchet` (Stage 1 sentinel → mohs++ + heat), `t0_fracture` (opposing -127/+120 strains exceed tensile via Stage 2), `t0_radiate` (Si-liquid disc with ring-5 RADIATES, monotonic Stefan-Boltzmann cooling). Each passes all six independent checks against a tick-0 baseline.
 
-**Remaining for M3:**
-- **Stage 1 body**: phase resolve (P, U, composition → phase), ratchet check from Stage 2's deferred plastic overflow, Curie demag, latent-heat shedding, precipitation/dissolution. Each with TODOs marked in `resolve.py`.
-- **Stage 2 body**: cohesion-network Jacobi for elastic strain. Outputs strain updates, flags for plastic overflow (→ next tick's Stage 1 ratchet) and tensile failure (`FRACTURED`).
-- **Stage 3 body**: the mass auction. Per cell, compute excess, find downhill μ neighbors, distribute proportionally, write per-direction per-element deltas.
-- **Stage 4 body**: thermal conduction Jacobi. Convection coupling reads Stage 3's mass deltas to pick up thermal energy riding with moved mass.
-- **Stage 5**: Tier 2 P↔U coupling on pressure/energy overflow; Tier 3 refund routing + EXCLUDED flag.
-- **Scenarios**: `t0_compression`, `t0_ratchet`, `t0_fracture`, `t0_radiate` — each exercising one of the above flow mechanics.
+Tier 0 caveats documented in code: per-tick conduction/radiation deltas at default cell_size + Si energy_scale=1.0 floor below u16 resolution at low T (t0_radiate uses liquid Si at 2500 K to clear the floor); strain Jacobi averaging on a finite hex disc has small boundary leak; compression-work raw value floored at 1 unit for observability.
+
+*(Original spec preserved below for reference.)*
 
 *(Original spec preserved below for reference.)*
 
@@ -117,13 +107,16 @@ Deliverable: `reference_sim/sim.py` (the real one; `sim_stub.py` retires to `ref
 
 **Blocks:** Tier 1+ work, CUDA port, anything that needs "the sim actually runs."
 
-### M4. diff_ticks.py
+### M4. diff_ticks.py — **DONE**
 
-Small utility: load two JSON emissions, cell-by-cell diff, report any field differences above tolerance. Used for (eventually) Python vs CUDA cross-validation, and right now for regression testing (run scenario → diff against golden emission → fail if anything changed).
+Delivered (commit `135a4e2` on `sim-core`):
 
-Deliverable: `checker/diff_ticks.py`. ~50 lines.
+- `checker/diff_ticks.py` — cell-by-cell schema-v1 emission comparator. Per-field tolerances per the brief: pressure_raw / phase / mohs_level / elastic_strain / magnetization / flags exact match; pressure_decoded and energy float-relative 1e-6; composition exact (element, fraction) pairs. Compatibility checks (schema_version, element_table_hash, scenario, cell_count) return exit code 2. Diff exit code 1, identical 0.
+- `checker/test_diff_ticks.py` — 8 self-tests covering identical, single-field diffs, float-tolerance gating, composition/flags exactness, and incompatibility guards. No pytest dependency; assertion-based.
+- `checker/regression.py` — runs every t0_* scenario, verifies tick-N invariants against tick-0 baseline, then diffs the chosen golden tick. Failing diff or verify ⇒ non-zero exit. Currently 5/5 scenarios green.
+- `golden/<scenario>_tick_<N>.json` — recorded emissions for regression diffing (t0_static@5, t0_compression@5, t0_ratchet@1, t0_fracture@1, t0_radiate@5).
 
-**Blocks:** CUDA port (for cross-validation). Low priority until then, but cheap enough to write early.
+*(Original spec preserved below for reference.)*
 
 ### M5. Tier 1 — + H₂O (H, O) compound
 

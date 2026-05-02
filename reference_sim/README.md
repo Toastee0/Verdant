@@ -48,51 +48,38 @@ python checker/verify.py runs/smoke/tick_00005_post_stage_5.json \
 
 ## Current implementation state
 
+All Tier 0 stages implemented; five scenarios green against `checker/verify.py` and `checker/regression.py`.
+
 ### Working
 
 - **Scaffolding** — grid, cells, flags, scenario framework all complete.
-- **Stage 0a** (gravity Φ) — full Poisson Jacobi solve. Skipped when
-  `world.g_sim == 0`.
-- **Stage 0b** (cohesion) — full implementation: same-dominant-element,
-  both-solid, neither-fractured-nor-excluded.
-- **Stage 0c** (temperature) — composition-weighted specific heat; correct
-  for Tier 0 single-element scenarios.
-- **Stage 0d** (magnetism) — scenario-gated no-op. Real Jacobi solve
-  deferred until a scenario needs it.
-- **Stage 0e** (μ) — pressure + gravity terms. Solubility and magnetic
-  contributions are stubs (zero). Cohesion barrier is applied inline at
-  Stage 3 bond-evaluation, not baked into μ itself.
-- **Stage 5** (reconcile) — sums per-direction deltas, clamps into u8/u16/i8
-  bounds. Tier 1 P↔U coupling and Tier 3 refund are TODO.
-- **Stage 6** (emit) — full schema-v1 JSON output. Cross-checked against
-  `checker/verify.py`.
-- **t0_static scenario** — passes all invariant checks across 5+ ticks.
-  Mass conserved exactly (Si=23205). Energy conserved exactly (27300 J).
-  Zero deltas every tick as expected for uniform equilibrium.
+- **Stage 0a** (gravity Φ) — full Poisson Jacobi solve. Skipped when `world.g_sim == 0`.
+- **Stage 0b** (cohesion) — same-dominant-element, both-solid, neither-fractured-nor-excluded.
+- **Stage 0c** (temperature) — composition-weighted specific heat; correct for Tier 0 single-element scenarios.
+- **Stage 0d** (magnetism) — scenario-gated no-op. Real Jacobi solve deferred until a scenario needs it.
+- **Stage 0e** (μ) — pressure + gravity terms. Solubility and magnetic contributions are stubs (zero). Cohesion barrier applied inline at Stage 3 bond-evaluation.
+- **Stage 1** (resolve) — ratchet check consumes the `elastic_strain == +127` cross-tick sentinel (mohs_level++, RATCHETED, compression work to energy, strain reset); phase resolve from composition-weighted melt/boil; Curie demag; latent-heat shedding queue; precipitation gate.
+- **Stage 2** (propagate, elastic) — Jacobi sweep over cohesion graph; springback decay for cells with no cohesive support; per-bond tensile-failure detection on the loaded (pre-iteration) strain.
+- **Stage 3** (propagate, mass auction) — μ-gradient bidding with bidder-ignorant capacity check on recipient slot headroom; cohesion barrier blocks the dominant element across cohesive bonds for intact solids; CULLED on no-eligible-path.
+- **Stage 4** (propagate, energy) — Jacobi conduction over T gradient with min(κ) bond conductivity; INSULATED gating; convection coupling from Stage 3's mass deltas; radiation as before.
+- **Stage 5** (reconcile) — Tier 2 P↔U coupling on fraction overshoot; Tier 3 refund routing + EXCLUDED on energy saturation.
+- **Stage 6** (emit) — full schema-v1 JSON output. Cross-checked against `checker/verify.py`.
 
-### Not yet implemented
+### Tier 0 scenarios (in `scenarios/`)
 
-Each of these is marked with TODO comments where the skeleton lives:
+All pass `verify.py` invariants against tick-0 baseline AND `diff_ticks.py` against recorded golden:
 
-- **Stage 1** phase resolve / ratchet / Curie / precipitation — clears
-  per-tick transient flags but does no resolution work. Needed for any
-  non-static scenario.
-- **Stage 2** elastic strain propagation — returns 0 iterations always.
-  Needed for `t0_ratchet`, `t0_fracture`.
-- **Stage 3** mass flow — returns 0 iterations always. Needed for
-  `t0_compression` and any flow-dependent scenario.
-- **Stage 4** energy conduction / convection — radiation is in place but
-  conduction is a placeholder. Needed for `t0_radiate` (interior needs
-  to conduct toward the radiative boundary).
+- `t0_static` — uniform Mohs-5 Si solid disc; zero deltas every tick.
+- `t0_compression` — center cell `elastic_strain=+60` disperses through cohesion graph (Stage 2).
+- `t0_ratchet` — center cell `elastic_strain=+127` saturation sentinel; tick 1 ratchet (mohs 5→6, RATCHETED, compression work to energy).
+- `t0_fracture` — opposing strains -127 and +120 produce bond stress > tensile_limit; both cells FRACTURED at tick 1.
+- `t0_radiate` — Si-liquid disc at 2500 K, ring-5 cells RADIATES; total energy decreases monotonically by Stefan-Boltzmann.
 
-### Additional scenarios to add after the flow passes land
+### Tier 0 caveats (documented inline)
 
-Per `../PLAN.md` M3:
-
-- `t0_compression` — elevated-pressure cell redistributes (needs Stage 3)
-- `t0_ratchet` — compression triggers Mohs ratchet (needs Stage 2 + 1)
-- `t0_fracture` — tensile failure breaks a chain (needs Stage 2)
-- `t0_radiate` — hot disc cools to boundary (needs Stage 4 conduction)
+- Per-tick conduction/radiation deltas at default cell_size_m=0.01 and Si energy_scale=1.0 floor below u16 resolution for cool/moderate temperatures. `t0_radiate` works in Si liquid at 2500 K to clear the floor.
+- Strain Jacobi averaging on a finite hex disc has a small boundary leak (i8 rounding + missing exterior neighbors). Mass / energy conservation holds; strain conservation is approximate.
+- Compression-work raw value floored at 1 unit so the ratchet event is observable in u16. Tier 1+ scenarios will use realistic energy_scale.
 
 ## Design notes
 
