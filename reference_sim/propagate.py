@@ -271,20 +271,237 @@ def stage_3_mass(
     buffers: PropagateBuffers,
     world: WorldConfig,
 ) -> int:
-    """Auction-based mass flow down μ gradient. Returns sub-iterations used.
+    """Staged Jacobi auction for mass flow. Returns sub-iterations used.
 
-    For Tier 0 static: every cell at dead-band center, no bid generated,
-    converges instantly with zero deltas.
+    Per wiki/auction.md and wiki/mass-flow.md:
+      Stage 3a (per cell, parallel):
+        - if outside dead-band, compute excess
+        - find downhill-μ neighbors (μ_self > μ_nbr) past cohesion + flow gates
+        - distribute excess proportionally to Δμ (Fick's law)
+        - if zero eligible neighbors → CULLED for next sub-iteration
+        - write per-direction per-element deltas
+      Stage 3b (per cell, parallel):
+        - sum incoming + self residual
+        - no clearing (cavitation is a feature; overshoot is allowed)
+
+    Bidder-ignorant capacity: each bidder writes its bid without coordinating
+    with other bidders into the same recipient. Multiple bidders into one
+    recipient cause cavitation; Stage 5 overflow cascade catches numeric
+    extremes.
+
+    Tier 0 simplifications:
+      - Dead-band center = 0 in mantissa space (cells at pressure_raw=0 are
+        at rest, the explicit convention in t0_static).
+      - Excess "amount" is computed in fraction units as
+            bid_total = damping × frac_self × (excess_p_normalized)
+        where excess_p_normalized = clip(decoded_p / typical_p, 0, 1) and
+        damping = 1/cap so convergence completes within the per-phase budget.
+      - Cohesion barrier: bonded intact solids cannot bid for their dominant
+        element across cohesive bonds (Stage 0b's cohesion graph). Fractured
+        solids and fluids ignore the barrier.
+
+    For Tier 0 t0_static (all pressure_raw=0): zero bidders → 0 iterations,
+    no deltas, mass conserved exactly.
     """
-    # For a uniform scenario (every cell identical), ∇μ = 0 and no bids fire.
-    # The full auction implementation is in PLAN.md M3 scope; this skeleton
-    # pauses at the right hand-off point.
-    # TODO: iterate up to phase cap with:
-    #       - compute excess = decoded_P - dead_band_center per cell per element
-    #       - find eligible downhill neighbors (μ lower)
-    #       - distribute excess proportionally to Δμ
-    #       - write per-direction per-element deltas to buffers.mass_deltas
-    return 0
+    n = cells.n
+    if n == 0:
+        return 0
+
+    fixed = (cells.flags & FIXED_STATE) != 0
+    excluded = (cells.flags & EXCLUDED) != 0
+    no_flow = (cells.flags & NO_FLOW) != 0
+    solid = (cells.phase == PHASE_SOLID)
+    fractured = (cells.flags & FRACTURED) != 0
+
+    # Eligibility: not state-pinned, not in flow lockout. Solids must be
+    # fractured to bid for their dominant element (intact solids have ∞
+    # cohesion_barrier — handled per-bond below for non-dominant elements).
+    eligible = ~fixed & ~excluded & ~no_flow
+
+    if not eligible.any():
+        return 0
+
+    grid = cells.grid
+    neighbors_arr = np.array(grid.neighbors, dtype=np.int32)  # (N, 6)
+    cohesion = derived.cohesion                                # bool[N, 6]
+
+    # Cap: pick the most permissive (longest) budget over present phases.
+    has_gas = (cells.phase == PHASE_GAS).any()
+    has_liquid = (cells.phase == PHASE_LIQUID).any()
+    if has_gas:
+        cap = world.conv_cap_gas
+    elif has_liquid:
+        cap = world.conv_cap_liquid
+    else:
+        cap = world.conv_cap_solid
+
+    threshold = float(world.convergence_threshold)
+    damping = max(1.0 / max(cap, 1), 0.05)
+
+    # Per-cell typical pressure for excess normalization (avoids div-by-zero).
+    # Use the solid mantissa scale × mohs_factor as the natural pressure unit.
+    typical_p = _typical_pressure(cells, element_table)
+
+    # Working composition snapshot — sub-iterations apply against this, never
+    # against cells.composition. The accumulated buffer is the single source
+    # of truth committed by Stage 5.
+    working_frac = cells.composition[:, :, 1].astype(np.int32).copy()  # (N, SLOTS)
+    # Pre-existing Stage 1 mass deltas (latent-heat shedding etc.) are
+    # already queued in buffers.mass_deltas; fold them into the working
+    # state so the auction sees the post-Stage-1 composition.
+    if buffers.mass_deltas.any():
+        working_frac += buffers.mass_deltas.sum(axis=1)
+        working_frac = np.clip(working_frac, 0, 255)
+
+    # Decoded pressure is independent of composition (it's a function of
+    # pressure_raw + phase + mohs), so we can read it once. μ depends on
+    # composition only through ρ_element × Φ; for Tier 0 (g_sim = 0) Φ is
+    # zero and μ ≈ decoded_p, so refreshing μ between sub-iters changes
+    # nothing. Tier 1+ scenarios with non-zero Φ will need a per-sub-iter μ
+    # refresh on a cells-snapshot — TODO when t1_* lands.
+    from .derive import _decode_pressure_all
+    decoded_p = _decode_pressure_all(cells, element_table)
+    excess_p = np.maximum(decoded_p, 0.0)
+    bidding_base = eligible & (excess_p > 1.0)  # 1 Pa floor to ignore noise
+
+    if not bidding_base.any():
+        return 0
+
+    iters = 0
+    for it in range(cap):
+        # Per-direction per-slot Δμ from snapshot derived.mu
+        mu = derived.mu                                          # (N, SLOTS)
+        mu_padded = np.concatenate([mu, np.zeros((1, mu.shape[1]), dtype=mu.dtype)])
+        nbr_mu = mu_padded[neighbors_arr]                        # (N, 6, SLOTS)
+        delta_mu = mu[:, None, :] - nbr_mu                       # (N, 6, SLOTS)
+
+        # Bond gates: neighbor exists AND not NO_FLOW
+        nbr_valid = neighbors_arr != -1
+        no_flow_padded = np.concatenate([no_flow, np.array([True])])
+        nbr_no_flow = no_flow_padded[neighbors_arr]
+        bond_open = nbr_valid & ~nbr_no_flow                     # (N, 6)
+
+        # Per-slot per-direction eligibility: bond open AND downhill μ.
+        downhill = delta_mu > 0                                  # (N, 6, SLOTS)
+        eligible_bond = downhill & bond_open[:, :, None]          # (N, 6, SLOTS)
+
+        # Cohesion barrier: intact solids cannot transfer their dominant
+        # element across cohesive bonds. (For Tier 0 with all-cohesive Si
+        # discs, this gates every direction → no flow. t0_compression
+        # therefore needs FRACTURED or fluid composition to demonstrate.)
+        intact_solid = solid & ~fractured
+        if intact_solid.any():
+            block_slot0 = intact_solid[:, None] & cohesion        # (N, 6)
+            eligible_bond[:, :, 0] = eligible_bond[:, :, 0] & ~block_slot0
+
+        weighted_dmu = delta_mu * eligible_bond                   # (N, 6, SLOTS)
+        total_dmu = weighted_dmu.sum(axis=1)                      # (N, SLOTS)
+
+        # Bid totals per slot:
+        #   bid_total_slot = damping × working_frac_slot × clip(excess_p / typical_p, 0..1)
+        frac_self = working_frac.astype(np.float32)                # (N, SLOTS)
+        excess_norm = np.clip(excess_p / np.maximum(typical_p, 1.0), 0.0, 1.0)
+        bid_total_slot = damping * frac_self * excess_norm[:, None]
+        any_eligible_slot = (total_dmu > 0)                        # (N, SLOTS)
+        active_bid = bidding_base[:, None] & any_eligible_slot
+        bid_total_slot = bid_total_slot * active_bid
+
+        # Proportional split across eligible directions
+        denom = np.where(total_dmu > 0, total_dmu, 1.0)
+        share = weighted_dmu * (bid_total_slot / denom)[:, None, :]
+        share_int = np.floor(share).astype(np.int32)               # (N, 6, SLOTS)
+
+        # Bidder-ignorant capacity check (per wiki/auction.md §"deliberate
+        # race"): each bid is capped at the recipient's CURRENT remaining
+        # slot capacity. Multiple bidders into one recipient can still
+        # overshoot (cavitation, physically correct), but no single bid
+        # exceeds the recipient's headroom — which prevents the naive
+        # 255-clamp at Stage 5 from silently dropping mass.
+        working_padded = np.concatenate([working_frac, np.full((1, working_frac.shape[1]), 255, dtype=working_frac.dtype)])
+        nbr_frac = working_padded[neighbors_arr]                    # (N, 6, SLOTS)
+        nbr_capacity = np.maximum(255 - nbr_frac, 0).astype(np.int32)
+        share_int = np.minimum(share_int, nbr_capacity)
+
+        # Source capacity cap: don't bid more than the slot currently holds.
+        cell_total = share_int.sum(axis=1)                         # (N, SLOTS)
+        over_cap = cell_total > working_frac
+        if over_cap.any():
+            scale = np.where(over_cap, working_frac.astype(np.float32) / np.maximum(cell_total, 1).astype(np.float32), 1.0)
+            share_int = (share_int * scale[:, None, :]).astype(np.int32)
+
+        if not share_int.any():
+            # No-path culling: bidders with no eligible slot at all
+            no_path = bidding_base & ~any_eligible_slot.any(axis=1)
+            if no_path.any():
+                cells.flags[no_path] |= CULLED
+            break
+
+        # Build per-direction iter_deltas (debit source, credit target)
+        iter_deltas = np.zeros_like(buffers.mass_deltas)           # (N, 6, SLOTS) int32
+        iter_deltas -= share_int
+
+        for d in range(6):
+            send = share_int[:, d, :]                               # (N, SLOTS)
+            send_mask = (send.sum(axis=1) > 0)
+            if not send_mask.any():
+                continue
+            dst_ids = neighbors_arr[send_mask, d]
+            valid = dst_ids != -1
+            if not valid.any():
+                continue
+            dst_ids_v = dst_ids[valid]
+            send_vals = send[send_mask][valid]
+            opp = OPPOSITE_DIRECTION[d]
+            np.add.at(iter_deltas, (dst_ids_v, opp), send_vals)
+
+        # Apply to working_frac (sub-iter visibility for next iter's bid sizing)
+        working_frac = working_frac + iter_deltas.sum(axis=1)
+        working_frac = np.clip(working_frac, 0, 255)
+
+        # Accumulate to buffer for Stage 5 commit
+        buffers.mass_deltas += iter_deltas
+
+        max_delta = float(np.abs(iter_deltas).max())
+        max_frac = float(np.abs(working_frac).max()) or 1.0
+        iters = it + 1
+        if max_delta / max_frac < threshold:
+            break
+
+    return iters
+
+
+def _typical_pressure(
+    cells: CellArrays,
+    element_table: ElementTable,
+) -> np.ndarray:
+    """Per-cell 'natural' pressure scale used to normalize bid sizes.
+
+    For Tier 0 we use the cell's mantissa-scale × mohs_factor (i.e. the
+    pressure that mantissa=1 corresponds to). This is the smallest non-zero
+    decodable pressure for that cell — using it as the normalization floor
+    means a cell at decoded_p ≥ this value bids at full strength.
+    """
+    n = cells.n
+    out = np.ones(n, dtype=np.float32)
+    dominant = cells.composition[:, 0, 0]
+    for element in element_table:
+        for phase_id in (PHASE_SOLID, PHASE_LIQUID, PHASE_GAS):
+            mask = (dominant == element.element_id) & (cells.phase == phase_id)
+            if not mask.any():
+                continue
+            if phase_id == PHASE_GAS:
+                scale = element.pressure_mantissa_scale_gas * 4096
+            elif phase_id == PHASE_LIQUID:
+                scale = element.pressure_mantissa_scale_liquid * 4096
+            else:
+                # Solid: include mohs factor
+                mohs = cells.mohs_level[mask].astype(np.float32)
+                base = element.pressure_mantissa_scale_solid * 4096
+                scale_arr = base * (element.mohs_multiplier ** np.maximum(mohs - 1, 0))
+                out[mask] = scale_arr
+                continue
+            out[mask] = float(scale)
+    return out
 
 
 # --------------------------------------------------------------------------
