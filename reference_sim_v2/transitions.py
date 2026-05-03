@@ -4,14 +4,14 @@ Phase transitions + Mohs ratchet — gen5 §"Phase transitions" + §"Mohs ratche
 Two features in this module:
 
 1. apply_phase_transitions: for each cell, look up target phase from the
-   per-element phase diagram against current (T, P). When target ≠ current
-   majority phase, shift mass from current phase channel to target channel
-   in-place. Composition fractions stay (the same atoms; just a different
-   phase). M5'.5 stub: full-cell instantaneous transition. Latent heat is
-   M5'.5b — the cell SHOULD lose ε_phase × mass joules on melt/boil and
-   gain it back on freeze/condense, but for M5'.5 we leave energy_raw
-   untouched at transitions to avoid the c_p discontinuity oscillation
-   that bites at small cell sizes (see M5'.5 commit message).
+   per-element phase diagram against current (T, P). When the cell holds
+   mass in a non-target phase, convert just enough of it that the cell's
+   T lands exactly on the phase boundary. This is the energy-balanced
+   formulation (M5'.5c): in physical reality latent heat absorption
+   prevents the c_p-discontinuity oscillation our earlier rate-limited
+   stub allowed. The cell is self-stabilising — sits at the boundary
+   while transitioning, only crosses once all of one phase's mass has
+   converted (or once excess thermal energy is exhausted).
 
 2. apply_ratchet: integrate sustained_overpressure on solid-dominant cells.
    When the integrator crosses RATCHET_TRIGGER, fire mohs_level++, set
@@ -50,12 +50,16 @@ FLAG_FRACTURED   = 1 << 5
 FLAG_RATCHETED   = 1 << 6
 
 
-# Phase-transition rate (per simulated second). With dt=1/128 and 7 sub-
-# passes per cycle, this gives full transition over ~16 cycles. Hardware-
-# friendly: a small per-cycle scalar update, no fixed-point iteration.
-# M5'.5b stub — per-element calibration via element_table latent_heat
-# columns is M6'+ work.
-TRANSITION_RATE_PER_SEC = 8.0
+# Per-cycle safety cap on the energy-balance Δm. With properly-calibrated
+# materials (real cp ratios of ~2× across phase boundaries), the analytical
+# Δm derived from constant-cp_blend assumption lands close enough to the
+# boundary that a full transition is fine. Our Tier 1 (H,114)+(O,141) water
+# compound has cp_liquid/cp_solid ≈ 4.7× — far above real water's ~2×.
+# Under that mis-calibration the constant-cp assumption breaks down at full
+# conversion (cp jumps so much that T overshoots T_boundary by hundreds
+# of kelvin), so we cap Δm to a small fraction of avail per cycle. Once
+# M6'.x compound calibration lands, this cap can rise back to 1.0.
+MAX_TRANSITION_FRACTION_PER_CYCLE: float = 0.0625    # 1/16, matches old rate-limit cadence
 
 
 # Ratchet constants — first-order tunable. Real calibration awaits M5'.7+.
@@ -64,9 +68,9 @@ RATCHET_PRESSURE_THRESHOLD = 1000.0       # raw u16 deviation units
 RATCHET_DECAY_RATE         = 0.5
 # Integrator level that fires a ratchet
 RATCHET_TRIGGER            = 10000.0
-# Compression work per ratchet event, expressed as raw energy delta. M5'.5
-# stub — proper calibration via material elastic properties lands at M5'.7.
-RATCHET_COMPRESSION_WORK_RAW = 50.0
+# Compression work per ratchet event, in joules. Calibration via material
+# elastic properties lands at M5'.7.
+RATCHET_COMPRESSION_WORK_J = 50.0
 # Maximum mohs_level (Si is 7; diamond is 10)
 MOHS_MAX = 10
 
@@ -103,53 +107,55 @@ def apply_phase_transitions(
     phase_diagrams: dict[int, "PhaseDiagram1D"],
     element_table=None,
 ) -> int:
-    """Per-cell rate-limited partial phase transitions with energy-balanced
-    latent-heat absorption.
+    """Per-cell energy-balanced partial phase transitions (M5'.5c).
 
-    Each cycle, a fraction TRANSITION_RATE_PER_SEC × dt of the source
-    phase's mass shifts to the target phase. Latent heat ΔE_J = L_phase
-    × Δm_kg is absorbed (or released) into the cell's energy_raw, with
-    u16 floor at 0. Partial transitions avoid the c_p-discontinuity
-    oscillation that the full-cell M5'.5 stub triggered at small cell
-    sizes (g5_melt would have re-frozen immediately as latent absorption
-    drops T below the melt threshold).
+    For each non-target phase that holds mass, compute Δm such that the
+    cell's resulting T lands on the boundary between current_phase and
+    target_phase. The mechanics:
+
+        T_after = (E - L_J/kg × Δm_kg) / (m_total_kg × cp_blend)
+        set T_after = T_boundary
+        ⇒  Δm_kg = (T_now - T_boundary) × m_total_kg × cp_blend / L_J/kg
+
+    where L_J/kg < 0 for endothermic transitions (melting, vaporising,
+    sublimation, ionisation) and > 0 for exothermic ones (freezing,
+    condensing, deposition, recombination). The sign of (T_now - T_boundary)
+    matches the sign of L_J/kg, so Δm_kg comes out positive in the common
+    case. We clamp to [0, avail_mass] — exhausting one phase's mass takes
+    the cell across the boundary cleanly.
+
+    Latent heat is debited (or credited) at the cell's energy_raw via the
+    log-encoding helpers in encoding.py.
 
     Mohs follows the solid component: while phase_mass[solid] > 0, mohs
-    stays at the initial_mohs from the phase diagram (or whatever it was
-    before — solid component identity is preserved). When solid mass
-    reaches 0, mohs resets to 0. When freezing creates new solid, mohs
-    is set to the diagram's initial_mohs.
+    stays at the diagram-derived initial_mohs (or whatever it was before
+    — solid component identity is preserved). When solid mass reaches 0,
+    mohs resets to 0. When freezing creates new solid, mohs is set to the
+    diagram's initial_mohs.
 
-    FIXED_STATE cells are exempt.
-
-    `element_table` (optional) is used to look up L_fusion / L_vaporization
-    per element. When None, latent heat is skipped — the M5'.5 fall-back
-    behaviour for backward compatibility with scenarios that don't pass
-    a table.
+    FIXED_STATE cells are exempt. `element_table` is required to look up
+    L_fusion / L_vaporization and density_solid; if None, no transitions
+    fire (caller didn't ask for energy-balanced physics).
     """
     n = cells.n
-    if n == 0:
+    if n == 0 or element_table is None:
         return 0
+
+    from .encoding import decode_energy_J_scalar, encode_energy_J_scalar
 
     fixed = (cells.flags & FLAG_FIXED_STATE) != 0
     transitions_fired = 0
 
-    majority_phase = derived.majority_phase
     majority_element = derived.majority_element
-    T = derived.temperature
-    P = derived.pressure
-
-    rate_per_cycle = TRANSITION_RATE_PER_SEC * float(world.dt)
-    if rate_per_cycle > 1.0:
-        rate_per_cycle = 1.0   # never overflow a single cycle
+    T_arr = derived.temperature
+    P_arr = derived.pressure
+    cp_arr = derived.cp
+    density_arr = derived.density
 
     volume = float(world.cell_size_m) ** 3
     eq_solid = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
 
-    elements_by_id: dict[int, object] = {}
-    if element_table is not None:
-        for el in element_table:
-            elements_by_id[el.element_id] = el
+    elements_by_id = {el.element_id: el for el in element_table}
 
     for cid in range(n):
         if fixed[cid]:
@@ -160,17 +166,24 @@ def apply_phase_transitions(
         diagram = phase_diagrams.get(eid)
         if diagram is None:
             continue
-
-        target_phase, target_mohs = diagram.lookup(float(T[cid]), float(P[cid]))
-
         element = elements_by_id.get(eid)
-        any_transitioned = False
+        if element is None:
+            continue
 
-        # Iterate over each non-target phase channel that has mass; drain a
-        # rate-limited fraction toward target. This handles mixed cells
-        # (e.g., 50/50 solid+liquid in a cell that's already liquid-
-        # majority by saturation can still bleed its remaining solid mass
-        # to liquid each cycle).
+        T_now = float(T_arr[cid])
+        target_phase, target_mohs = diagram.lookup(T_now, float(P_arr[cid]))
+
+        cp_blend = float(cp_arr[cid])
+        m_total_kg = float(density_arr[cid]) * volume
+        if m_total_kg <= 0 or cp_blend <= 0:
+            continue
+        # kg_per_unit — same approximation as elsewhere; per-phase density
+        # refinement is M6'.x calibration work.
+        kg_per_unit = float(element.density_solid) * volume / max(eq_solid, 1e-12)
+        if kg_per_unit <= 0:
+            continue
+
+        any_transitioned = False
         for current_phase in (PHASE_SOLID, PHASE_LIQUID, PHASE_GAS, PHASE_PLASMA):
             if current_phase == target_phase:
                 continue
@@ -179,22 +192,52 @@ def apply_phase_transitions(
             if avail_mass <= 0 and avail_frac <= 0:
                 continue
 
-            delta_mass = avail_mass * rate_per_cycle
-            delta_frac = avail_frac * rate_per_cycle
-            cells.phase_mass[cid, current_phase]     -= np.float32(delta_mass)
-            cells.phase_mass[cid, target_phase]      += np.float32(delta_mass)
+            L_J_per_kg = _latent_heat_per_kg(current_phase, target_phase, element)
+            if L_J_per_kg == 0.0:
+                continue
+
+            T_boundary = diagram.transition_threshold_T(current_phase, target_phase)
+            if T_boundary is None:
+                continue
+
+            # Energy-balance Δm. Starting from
+            #   E_after = E + L_J_per_kg × Δm_kg     (L < 0 endothermic)
+            #   T_after = E_after / (m × cp)
+            # set T_after = T_boundary and solve:
+            #   Δm_kg = (T_boundary - T_now) × m × cp / L_J_per_kg
+            # For melting (T_now > T_boundary, L < 0): num>0, den<0… wait, no.
+            # T_now > T_boundary ⇒ (T_boundary - T_now) < 0; L < 0; ratio > 0. ✓
+            # For freezing (T_now < T_boundary, L > 0): num>0, den>0, ratio>0. ✓
+            delta_mass_kg = (T_boundary - T_now) * m_total_kg * cp_blend / L_J_per_kg
+            if delta_mass_kg <= 0:
+                # Cell already on the "stable" side of the boundary for this
+                # transition direction (e.g. solid mass present, target
+                # liquid, but cell T already at or below T_melt). No
+                # transition fires this sub-pass.
+                continue
+
+            delta_mass_units = delta_mass_kg / kg_per_unit
+            cap = MAX_TRANSITION_FRACTION_PER_CYCLE * avail_mass
+            delta_mass_units = min(delta_mass_units, avail_mass, cap)
+            if delta_mass_units <= 0:
+                continue
+
+            # Phase fraction tracks the same proportion as phase mass
+            # (caller maintains this invariant at scenario init).
+            frac_ratio = (delta_mass_units / avail_mass) if avail_mass > 0 else 0.0
+            delta_frac = avail_frac * frac_ratio
+
+            cells.phase_mass[cid, current_phase]     -= np.float32(delta_mass_units)
+            cells.phase_mass[cid, target_phase]      += np.float32(delta_mass_units)
             cells.phase_fraction[cid, current_phase] -= np.float32(delta_frac)
             cells.phase_fraction[cid, target_phase]  += np.float32(delta_frac)
 
-            if element is not None:
-                L_J_per_kg = _latent_heat_per_kg(current_phase, target_phase, element)
-                if L_J_per_kg != 0.0:
-                    kg_per_unit = element.density_solid * volume / max(eq_solid, 1e-12)
-                    delta_mass_kg = delta_mass * kg_per_unit
-                    delta_E_J = L_J_per_kg * delta_mass_kg
-                    delta_E_raw = float(delta_E_J / max(element.energy_scale, 1e-12))
-                    new_E = float(cells.energy_raw[cid]) + delta_E_raw
-                    cells.energy_raw[cid] = np.uint16(max(0.0, min(new_E, 65535.0)))
+            # Apply latent heat through log-encoding decode/re-encode
+            delta_mass_kg_actual = delta_mass_units * kg_per_unit
+            delta_E_J = L_J_per_kg * delta_mass_kg_actual
+            current_E_J = decode_energy_J_scalar(int(cells.energy_raw[cid]))
+            new_E_J = max(0.0, current_E_J + delta_E_J)
+            cells.energy_raw[cid] = np.uint16(encode_energy_J_scalar(new_E_J))
 
             any_transitioned = True
 
@@ -269,9 +312,10 @@ def apply_ratchet(
         new_mohs = np.minimum(cells.mohs_level[fire_mask].astype(np.int32) + 1, MOHS_MAX)
         cells.mohs_level[fire_mask] = new_mohs.astype(np.uint8)
         cells.flags[fire_mask] |= FLAG_RATCHETED
-        # Compression work added to energy (with u16 clamp)
-        new_energy = cells.energy_raw[fire_mask].astype(np.float32) + RATCHET_COMPRESSION_WORK_RAW
-        cells.energy_raw[fire_mask] = np.minimum(np.round(new_energy), 65535.0).astype(np.uint16)
+        # Compression work added to energy through log-encoded round-trip.
+        from .encoding import decode_energy_J, encode_energy_J
+        fired_E_J = decode_energy_J(cells.energy_raw[fire_mask]) + RATCHET_COMPRESSION_WORK_J
+        cells.energy_raw[fire_mask] = encode_energy_J(fired_E_J)
         # Reset integrator on fired cells
         new_integrator[fire_mask] = 0.0
 

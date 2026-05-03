@@ -28,6 +28,7 @@ from ..cell import (
     PETAL_TOPO_IS_GRID_EDGE,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc, ring_of
 from ..scenario import EmissionConfig, Scenario, WorldConfig
 
@@ -35,8 +36,8 @@ from ..scenario import EmissionConfig, Scenario, WorldConfig
 SCENARIO_NAME = "g5_temp_gradient"
 RINGS = 5
 DEFAULT_MOHS = 6
-ENERGY_COLD_RAW = 100      # outermost cells
-ENERGY_HOT_RAW  = 2000     # center cell
+ENERGY_COLD_J = 100.0      # outermost cells
+ENERGY_HOT_J  = 2000.0     # center cell
 
 
 def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> Scenario:
@@ -56,8 +57,8 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         # Linear gradient by ring: ring 0 (center) hot, ring 5 (edge) cold
         ring = ring_of(coord)
         ratio = ring / RINGS                # 0..1 from center to edge
-        e_raw = int(round(ENERGY_HOT_RAW * (1.0 - ratio) + ENERGY_COLD_RAW * ratio))
-        cells.energy_raw[cell_id]                  = e_raw
+        e_J = ENERGY_HOT_J * (1.0 - ratio) + ENERGY_COLD_J * ratio
+        cells.energy_raw[cell_id]                  = encode_energy_J_scalar(e_J)
         cells.mohs_level[cell_id]                  = DEFAULT_MOHS
         cells.sustained_overpressure[cell_id]      = 0.0
         cells.flags[cell_id]                       = 0
@@ -93,8 +94,8 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         allowed_elements=("Si",),
         description=(
             "91-cell hex disc, uniform Si solid composition + phase, "
-            f"linear energy gradient by ring (center={ENERGY_HOT_RAW}, "
-            f"edge={ENERGY_COLD_RAW} raw u16). Validates derive: identity, "
+            f"linear energy gradient by ring (center={ENERGY_HOT_J:g} J, "
+            f"edge={ENERGY_COLD_J:g} J). Validates derive: identity, "
             "cohesion, temperature, pressure decode."
         ),
     )

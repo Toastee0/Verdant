@@ -28,6 +28,7 @@ from ..cell import (
     PETAL_TOPO_IS_GRID_EDGE,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..scenario import EmissionConfig, Scenario, WorldConfig
 
@@ -35,7 +36,7 @@ from ..scenario import EmissionConfig, Scenario, WorldConfig
 SCENARIO_NAME = "g5_static"
 RINGS = 5
 DEFAULT_MOHS = 6                          # picked from a Si phase diagram lookup; M5'.5 will derive this
-DEFAULT_ENERGY_RAW = 300                  # u16 raw; produces a low T well below Si melt
+DEFAULT_ENERGY_J = 300.0                  # joules; produces a low T well below Si melt
 
 
 def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> Scenario:
@@ -57,7 +58,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         cells.phase_mass[cell_id, PHASE_SOLID]      = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
 
         cells.pressure_raw[cell_id]            = 0       # zero deviation from center
-        cells.energy_raw[cell_id]              = DEFAULT_ENERGY_RAW
+        cells.energy_raw[cell_id]              = encode_energy_J_scalar(DEFAULT_ENERGY_J)
         cells.mohs_level[cell_id]              = DEFAULT_MOHS
         cells.sustained_overpressure[cell_id]  = 0.0
         cells.flags[cell_id]                   = 0

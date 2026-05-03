@@ -1,8 +1,7 @@
 """
-diff_ticks_v2 — schema-v2 cell-by-cell emission comparator.
+diff_ticks_v2 — gen5 cell-by-cell emission comparator.
 
-Schema-v2-aware cousin of checker/diff_ticks.py. Same authorship pattern
-(per-field tolerances, exit codes, JSON-report mode), with the gen5 cell
+Per-field tolerances, exit codes, JSON-report mode, with the gen5 cell
 shape:
 
   exact:           pressure_raw, energy_raw, mohs_level, flags,
@@ -15,14 +14,12 @@ shape:
                    gravity_vec[2], cohesion[6]   (more permissive — these
                    are derived/working state subject to f32 accumulation)
 
-Compatibility checks: schema_version, scenario, element_table_hash, grid
-cell_count. Refuses to compare a v1 emission against a v2 emission
-(schema_version mismatch).
+Compatibility checks: scenario, element_table_hash, grid cell_count.
 
-Exit codes match the v1 conventions:
+Exit codes:
   0 — identical within tolerance
   1 — differs
-  2 — incompatible (schema/hash/scenario mismatch)
+  2 — incompatible (hash/scenario/cell-count mismatch)
 """
 
 from __future__ import annotations
@@ -45,11 +42,6 @@ def _load(path: Path) -> dict[str, Any]:
 
 def _compatible(a: dict, b: dict) -> list[str]:
     issues = []
-    if a.get("schema_version") != 2 or b.get("schema_version") != 2:
-        issues.append(
-            f"schema_version mismatch: {a.get('schema_version')} vs {b.get('schema_version')} "
-            "(diff_ticks_v2 only handles schema-v2)"
-        )
     if a.get("element_table_hash") != b.get("element_table_hash"):
         issues.append(
             f"element_table_hash differs: {a.get('element_table_hash')!r} vs {b.get('element_table_hash')!r}"

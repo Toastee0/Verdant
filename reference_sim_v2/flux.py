@@ -274,13 +274,14 @@ def integrate(
 
     # Self-energy adjustments (e.g., source-side latent-heat debits from
     # cross-phase mass transmutation). Per gen5 verdict: source pays.
-    delta_energy = incoming_energy - outgoing_energy + flux.energy_self
+    # delta_energy is in joules; cells.energy_raw is log-encoded u16, so
+    # re-encode at the integration boundary.
+    delta_energy_J = incoming_energy - outgoing_energy + flux.energy_self
     if fixed.any():
-        delta_energy[fixed] = 0.0
-    # Apply with u16 clamp (re-encode at canonical-state boundary)
-    new_energy = cells.energy_raw.astype(np.float32) + delta_energy
-    new_energy = np.clip(new_energy, 0.0, 65535.0)
-    cells.energy_raw[:] = np.round(new_energy).astype(np.uint16)
+        delta_energy_J[fixed] = 0.0
+    from .encoding import decode_energy_J, encode_energy_J
+    new_J = decode_energy_J(cells.energy_raw) + delta_energy_J
+    cells.energy_raw[:] = encode_energy_J(new_J)
 
     # ----- Momentum, stress -----
     # M5'.3 stubs — these channels integrate to petal data at M5'.6.

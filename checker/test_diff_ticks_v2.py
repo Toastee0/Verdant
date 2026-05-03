@@ -15,7 +15,6 @@ from .diff_ticks_v2 import diff_emissions
 
 def _emission(cells, **overrides):
     base = {
-        "schema_version": 2,
         "scenario": "test",
         "element_table_hash": "sha256:test",
         "grid": {"cell_count": len(cells)},
@@ -136,9 +135,9 @@ def test_petal_topology_exact() -> None:
     _expect(rep["status"], "differs")
 
 
-def test_incompatible_schema_v1_v2() -> None:
-    a = _emission([_cell(0)], schema_version=1)
-    b = _emission([_cell(0)], schema_version=2)
+def test_incompatible_element_table_hash() -> None:
+    a = _emission([_cell(0)], element_table_hash="sha256:aaaa")
+    b = _emission([_cell(0)], element_table_hash="sha256:bbbb")
     rep = diff_emissions(a, b)
     _expect(rep["status"], "incompatible")
 
@@ -160,7 +159,7 @@ TESTS = [
     test_identity_exact,
     test_petal_stress_loose_tolerance,
     test_petal_topology_exact,
-    test_incompatible_schema_v1_v2,
+    test_incompatible_element_table_hash,
     test_incompatible_cell_count,
 ]
 

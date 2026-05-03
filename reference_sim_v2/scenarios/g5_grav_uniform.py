@@ -26,6 +26,7 @@ from ..cell import (
     PHASE_SOLID,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..scenario import EmissionConfig, GravitySource, Scenario, WorldConfig
 
@@ -33,7 +34,7 @@ from ..scenario import EmissionConfig, GravitySource, Scenario, WorldConfig
 SCENARIO_NAME = "g5_grav_uniform"
 RINGS = 5
 DEFAULT_MOHS = 6
-DEFAULT_ENERGY_RAW = 300
+DEFAULT_ENERGY_J = 300.0
 
 # Source ~10 m below the disc; mass tuned for ~9.8 m/s² at the disc.
 # g = G·M/d² ⇒ M = g·d² / G
@@ -55,7 +56,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         cells.phase_fraction[cell_id, PHASE_SOLID] = 1.0
         cells.phase_mass[cell_id, PHASE_SOLID]     = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
         cells.pressure_raw[cell_id]                = 0
-        cells.energy_raw[cell_id]                  = DEFAULT_ENERGY_RAW
+        cells.energy_raw[cell_id]                  = encode_energy_J_scalar(DEFAULT_ENERGY_J)
         cells.mohs_level[cell_id]                  = DEFAULT_MOHS
         for d in range(6):
             if grid.neighbors[cell_id][d] == -1:

@@ -191,10 +191,11 @@ def compute_temperature(
 
     mass_kg = density * volume
     # Energy in joules. Per D6, working state is f32 throughout the cycle;
-    # u16 → f32 round-trip happens here (decode) and at integration
-    # boundary (encode). For M5'.1 the energy_scale is just element_table[0].energy_scale.
-    first = next(iter(element_table))
-    energy_j = cells.energy_raw.astype(np.float32) * float(first.energy_scale)
+    # u16 ↔ f32 round-trip happens here (decode) and at integration
+    # boundary (encode). gen5 uses log10(1+E) encoding so tiny gas-cell
+    # masses don't lose all per-cell T resolution to integer quantization.
+    from .encoding import decode_energy_J
+    energy_j = decode_energy_J(cells.energy_raw)
 
     denom = np.maximum(mass_kg * cp, 1e-12)
     T = energy_j / denom

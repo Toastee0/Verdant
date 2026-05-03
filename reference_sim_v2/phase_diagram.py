@@ -66,6 +66,33 @@ class PhaseDiagram1D:
                 break
         return (best[1], best[2])
 
+    def transition_threshold_T(self, current_phase: int, target_phase: int) -> float | None:
+        """Return the boundary temperature between `current_phase` and
+        `target_phase` per the diagram, or None if no boundary exists.
+
+        Used by energy-balanced phase transitions: the cell's T after a
+        partial transition should land exactly on this boundary, so the
+        transition is self-stabilising rather than oscillation-prone.
+
+        Convention: pick the *first* row whose phase equals `target_phase`
+        and whose preceding row's phase equals `current_phase` (or vice
+        versa, scanning either direction). For the typical Tier 0/1
+        diagrams this returns the lower-T side for solid↔liquid, the
+        liquid-side T for liquid↔gas, etc. — close enough to the true
+        boundary for the energy-balance computation, which is dominated
+        by L × Δm anyway.
+        """
+        if len(self.rows) < 2:
+            return None
+        for i in range(len(self.rows) - 1):
+            a_T, a_phase, _ = self.rows[i]
+            b_T, b_phase, _ = self.rows[i + 1]
+            if a_phase == current_phase and b_phase == target_phase:
+                return float(b_T)   # boundary is the first target-phase T
+            if a_phase == target_phase and b_phase == current_phase:
+                return float(a_T)   # boundary is the last target-phase T
+        return None
+
 
 def load_phase_diagram(path: str | Path) -> PhaseDiagram1D:
     """Load a phase diagram CSV into a PhaseDiagram1D."""

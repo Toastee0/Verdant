@@ -1,10 +1,14 @@
 """
-Emit v2 — schema-v2 JSON writer.
+Emit — gen5 JSON writer.
 
-Schema-v2 is the gen5 contract between the reference sim, the eventual CUDA
-port, the v2 viewer, and verify_v2.py. Major differences from schema-v1:
+This is the gen5 sim's emission contract. The reference simulator (this
+repo) is the only producer and the only consumer; the verifier and diff
+tools live in the same repo and evolve in the same commit, so there's no
+cross-repo schema-version handshake to track. If a future external
+consumer ever needs to bind to this format, version negotiation can be
+added at that point.
 
-  - schema_version: 2
+Format highlights vs the (frozen) Tier 0 schema-v1:
   - composition is up to 16 (element, fraction) pairs, not 4
   - phase_fraction (4-channel) and phase_mass (per-phase) replace the single
     phase enum
@@ -14,8 +18,6 @@ port, the v2 viewer, and verify_v2.py. Major differences from schema-v1:
   - cohesion (per-cell-per-direction f32) emits in debug mode only
   - totals.mass_by_element_by_phase replaces totals.mass_by_element
   - sub_pass field added alongside tick to track within-cycle granularity
-
-See gen5_roadmap.md §3.2 for the full schema reference.
 """
 
 from __future__ import annotations
@@ -43,9 +45,6 @@ from .cell import (
     compute_identity,
 )
 from .scenario import Scenario
-
-
-SCHEMA_VERSION = 2
 
 
 # Persistent flag bit positions (subset of Tier 0). These are the four flags
@@ -121,7 +120,6 @@ def emit_cycle(
     invariants = _self_report_invariants(scenario, totals)
 
     payload: dict[str, Any] = {
-        "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
         "scenario": scenario.name,
         "tick": tick,
@@ -223,10 +221,15 @@ def _compute_totals(
 
     # Mass by (element, phase) — gen5 conservation invariant is per-element-
     # per-phase, since composition is multi-slot and phase is fractional.
+    # Compute in f64 so the sim's self-report matches the verifier's f64
+    # cell-walk in checker/verify_v2.py (otherwise f32 accumulation drift
+    # ~ N_cells × ε_f32 trips the conservation tolerance for no physical
+    # reason).
     mass_by_element_by_phase: dict[str, dict[str, float]] = {}
+    pm_f64 = cells.phase_mass.astype(np.float64)
     for slot in range(COMPOSITION_SLOTS):
         eids = cells.composition[:, slot, 0]
-        fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+        fracs = cells.composition[:, slot, 1].astype(np.float64) / 255.0
         for eid in np.unique(eids):
             if eid == 0:
                 continue
@@ -235,13 +238,16 @@ def _compute_totals(
             if not mask.any():
                 continue
             # Element's contribution per phase = element fraction × phase_mass
-            contributions = fracs[mask][:, None] * cells.phase_mass[mask, :]   # (M, 4)
+            contributions = fracs[mask][:, None] * pm_f64[mask, :]   # (M, 4) f64
             per_phase_total = contributions.sum(axis=0)
             entry = mass_by_element_by_phase.setdefault(sym, {p: 0.0 for p in PHASE_NAMES.values()})
             for p_idx, p_name in PHASE_NAMES.items():
-                entry[p_name] = float(entry[p_name] + per_phase_total[p_idx])
+                entry[p_name] = float(entry[p_name] + float(per_phase_total[p_idx]))
 
-    energy_total = float(cells.energy_raw.sum())
+    # gen5 stores energy_raw via log10(1+E_J) encoding; decode for the totals
+    # roll-up so consumers (and the JSON record) see joules, not log-units.
+    from .encoding import decode_energy_J
+    energy_total = float(decode_energy_J(cells.energy_raw).sum())
 
     cells_by_dominant_phase = {p: 0 for p in PHASE_NAMES.values()}
     cells_by_dominant_phase["void"] = 0

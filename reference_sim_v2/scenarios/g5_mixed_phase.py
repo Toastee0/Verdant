@@ -34,6 +34,7 @@ from ..cell import (
     PHASE_SOLID,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..scenario import EmissionConfig, Scenario, WorldConfig
 
@@ -59,7 +60,9 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     # liquid runs at 5 sub-passes/cycle even when its phase mass is much
     # lower than solid's — the rate shows up in mass redistribution
     # speed, not identity.
-    initial_energy_raw = 2000   # T ≈ 975 K (below Si melt 1687)
+    # T ≈ 975 K (below Si melt 1687) for the 50/50 mixed-phase Si blend
+    initial_energy_J = 2000.0
+    initial_energy_raw = encode_energy_J_scalar(initial_energy_J)
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):

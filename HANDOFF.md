@@ -40,6 +40,24 @@ can resume without re-deriving the architecture decisions.
     consults neighbour-side phase-diagram lookup at flux-compute time;
     asymmetry: dst > src cross-phase routes; dst ≤ src defers to in-place
     transitions). First scenario `t1_evaporation` ships with it.
+  - **M5'.5c** Energy-balanced phase transitions: `apply_phase_transitions`
+    now solves Δm = (T_boundary - T_now) × m × cp_blend / L_J/kg per cycle
+    so the cell settles at the phase boundary instead of free-running past
+    it. Reality prevents oscillation through latent heat absorption; gen5
+    now models that. For our (H,114)+(O,141) water compound the cp ratio
+    across the solid/liquid boundary is ~4.7× (vs real water's ~2×), so a
+    1/16-per-cycle Δm cap keeps the constant-cp linearisation safe; full
+    energy-balance lifts when M6'.x compound calibration lands.
+  - **M5'.7c** Log-encoded `energy_raw`. Linear u16 gave ~175 K per quantum
+    for tiny gas-cell mass — fine for solids, useless for under-saturated
+    gas. New encoding `raw = round(log10(1+E_J)×10923)` covers 0..1e6 J in
+    u16 with sub-µJ resolution at the low end. Per-element `energy_scale`
+    column in element_table.tsv becomes vestigial. `cells.energy_raw`
+    semantics change but type stays uint16; verifier walks decoded J via
+    `encoding.decode_energy_J`.
+  - **Schema versioning dropped.** No external consumers; verifier and
+    producer ship in the same repo. The `schema_version` field is gone
+    from emissions, baseline-compat checks, diff_ticks, and self-tests.
 
 **Validation:** `python -m checker.regression_v2` → 13/13 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
@@ -78,20 +96,23 @@ realism of Tier 1 dynamics.
      weighted L blends with empirical correction factors, OR upgrade to
      molecular-level model.
 
-2. **Per-tick conduction signal floors at u16/scale=1.0.** ΔU per direction
-   (κ × ΔT × area × dt) is sub-1 J at default cell_size + Si scale=1.0
-   for typical Tier 0/1 gradients. Mathematically correct; visible only
-   when Tier 1+ scenarios use water (smaller mass × c_p). Future M5'.7c:
-   per-cell f32 fractional residual buffer to accumulate sub-unit changes.
+2. **Per-tick conduction signal floors at the log-encoded quantum.** ΔU
+   per direction (κ × ΔT × area × dt) can be sub-1 J at default cell_size
+   for typical Tier 0/1 gradients. Under M5'.7c log encoding the resolution
+   at E≈1 J is ~0.5 mJ/quantum (sub-mK on gas cells, sub-µK on solids),
+   so this caveat is largely retired — what's left is f32 accumulation
+   noise on the J side, which is benign for current scenarios.
 
 3. **Phase diagram is 1D (T-only).** P-axis ignored everywhere. Water's
    triple-point and pressure-melt-curve aren't represented. Scenarios at
    1 atm work fine; M6'.x bumps to 2D when needed.
 
-4. **Latent-heat partial transition is rate-limited (8/s)** rather than
-   energy-balanced. Means the cell can drift through phase boundaries
-   even when energy supply ≠ exact match. M5'.5c could implement true
-   energy-balance: convert just enough mass to bring T to threshold.
+4. **Latent-heat partial transition is energy-balanced** as of M5'.5c.
+   Δm per cycle solves T_after = T_boundary; cell self-stabilises at the
+   phase boundary. A 1/16 cap is in place because the (H,114)+(O,141)
+   water compound's cp_liquid/cp_solid ratio is ~4.7× (real water ~2×),
+   which means the constant-cp linearisation overshoots at full conversion.
+   Cap lifts when M6'.x compound calibration lands.
 
 5. **Compound macros register phase diagrams under both H and O element
    ids** so identity tie-break (by saturation) lands consistently. This is
@@ -186,11 +207,17 @@ data/
 
 ---
 
-## Schema v2 contract (the JSON each emission produces)
+## Emission contract (the JSON each emission produces)
+
+No `schema_version` field — gen5 dropped it. The producer (gen5 sim) and
+all current consumers (verifier_v2, diff_ticks_v2, golden snapshots,
+viewer-when-it-lands) live in this repo and evolve together; cross-repo
+versioning would be ceremony with no purpose. If a future external
+consumer ever binds to this format, version negotiation can be added
+at that point.
 
 ```json
 {
-  "schema_version": 2,
   "scenario": "<name>",
   "tick": N,
   "cycle": N,
@@ -209,7 +236,7 @@ data/
       "phase_fraction": [solid, liquid, gas, plasma],   // sum ≤ 1.0
       "phase_mass":     [solid, liquid, gas, plasma],   // gen5 hex-arithmetic
       "pressure_raw": uint16,         // deviation from equilibrium centre
-      "energy_raw":   uint16,
+      "energy_raw":   uint16,         // log10(1+E_J)×10923, decoded via encoding.decode_energy_J
       "mohs_level":   uint8,           // [1..10] when solid_mass > 0; 0 otherwise
       "sustained_overpressure": float, // ratchet integrator
       "identity": {"phase": "solid|liquid|gas|plasma|void", "element": "Si|H|O|..."},
@@ -240,19 +267,18 @@ data/
 
 ## Verifier v2 invariant suite
 
-11 checks (skipped silently when not applicable):
+10 checks (skipped silently when not applicable):
 
-1. `schema_version_2`
-2. `composition_sum_255` — non-void cells sum to 255
-3. `phase_fraction_sum_le_1` — vacuum is the complement
-4. `phase_mass_non_negative`
-5. `petal_count_6` — when petals emitted
-6. `temperature_positive` — when T emitted
-7. `cohesion_in_unit_interval` — when cohesion emitted; 0 at grid edges
-8. `gravity_field_finite_bounded` — when gravity_vec emitted
-9. `mohs_in_valid_range` — solid_mass > 0 ⇒ mohs ∈ [1, 10]; else mohs = 0
-10. `fixed_state_cells_unchanged` — when FIXED_STATE cells exist + baseline given
-11. `mass_per_element_total` — sum across phases per element vs baseline
+1. `composition_sum_255` — non-void cells sum to 255
+2. `phase_fraction_sum_le_1` — vacuum is the complement
+3. `phase_mass_non_negative`
+4. `petal_count_6` — when petals emitted
+5. `temperature_positive` — when T emitted
+6. `cohesion_in_unit_interval` — when cohesion emitted; 0 at grid edges
+7. `gravity_field_finite_bounded` — when gravity_vec emitted
+8. `mohs_in_valid_range` — solid_mass > 0 ⇒ mohs ∈ [1, 10]; else mohs = 0
+9. `fixed_state_cells_unchanged` — when FIXED_STATE cells exist + baseline given
+10. `mass_per_element_total` — sum across phases per element vs baseline
 
 ---
 
@@ -317,13 +343,8 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 - **M6'.x calibration:** compound-aware phase resolution (currently both
   H and O point to H2O.csv; cleaner approach is a per-compound table).
-- **M6'.x energy fractional accumulator** (M5'.7c) — sub-unit ΔE residual
-  buffer for fine-grained conduction.
 - **M6'.x petal stress flux integration** (M5'.6b') — region kernel
   populates flux.stress; integrate sums onto petals on both endpoints.
-- **M6'.x partial transition energy balance** (M5'.5c) — energy-balanced
-  rather than rate-limited, so cells settle exactly at phase boundary.
-  Also addresses the t1_ice_melt L_blend / c_p mismatch oscillation.
 - **M6'.x viewer port** — schema-v2-aware SVG/canvas viewer for
   fractional phases, identity, petals, gravity vec.
 - **M7' Tier 2** — C, Fe → cast iron with lower melt point than pure Fe

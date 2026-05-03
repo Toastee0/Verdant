@@ -32,6 +32,7 @@ from ..cell import (
     PHASE_LIQUID,
 )
 from ..compounds import set_compound
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagram, load_phase_diagrams_for_table
 from ..scenario import EmissionConfig, Scenario, WorldConfig
@@ -78,13 +79,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     cp_l      = f_h * h.specific_heat_liquid + f_o * o.specific_heat_liquid  # J/(kg·K)
     mass = density_l * volume
     energy_J = mass * cp_l * INITIAL_T_K
-    # Use Si's energy_scale (1.0) so u16 capacity is consistent. Energy in
-    # raw u16 units = energy_J directly. Verify it fits.
-    initial_energy_raw = int(round(energy_J))
-    assert 0 < initial_energy_raw <= 0xFFFF, (
-        f"initial_energy_raw {initial_energy_raw} out of u16 — "
-        "M6'.x will need per-element energy_scale calibration"
-    )
+    initial_energy_raw = encode_energy_J_scalar(energy_J)
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):

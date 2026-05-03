@@ -1,11 +1,11 @@
 """
-verify_v2 — schema-v2 invariant checker for the gen5 reference simulator.
+verify_v2 — gen5 invariant checker for the reference simulator.
 
 Independent re-verification of the sim's self-reported invariants. The full
 gen5 invariant suite lands incrementally:
 
   M5'.0  — composition_sum_255, phase_fraction_sum_le_1, mass_per_element_per_phase
-           conservation (vs baseline), schema_version, cell_count, petal_count
+           conservation (vs baseline), cell_count, petal_count
   M5'.1  — cohesion_in_unit_interval, identity-determinism
   M5'.2  — gravity_field_finite_bounded
   M5'.3  — flux_summation_symmetric_per_edge, vetoed_fluxes_zero, momentum_conservation
@@ -26,8 +26,8 @@ Exit codes:
     0 — all invariants pass (or skipped with warning)
     1 — at least one invariant fails independent verification
     2 — sim self-report disagrees with independent check (DIVERGENT bug signal)
-    3 — schema error or unparseable JSON
-    4 — baseline incompatible (run_id, element_table_hash, scenario, schema_version)
+    3 — JSON parse error
+    4 — baseline incompatible (run_id, element_table_hash, scenario)
 """
 
 from __future__ import annotations
@@ -42,13 +42,6 @@ from typing import Any
 # ----------------------------------------------------------------------------
 # Independent checks (M5'.0 subset)
 # ----------------------------------------------------------------------------
-
-def check_schema_version(payload: dict) -> tuple[str, dict]:
-    v = payload.get("schema_version")
-    if v == 2:
-        return ("pass", {"schema_version": v})
-    return ("fail", {"expected": 2, "actual": v})
-
 
 def check_composition_sums(cells: list[dict]) -> tuple[str, dict]:
     """Every non-void cell's composition fractions must sum to exactly 255."""
@@ -327,8 +320,6 @@ def load_baseline_expected_mass(baseline_path: Path) -> tuple[dict, dict]:
 
 def check_baseline_compatible(baseline: dict, target: dict) -> list[str]:
     issues = []
-    if baseline.get("schema_version") != target.get("schema_version"):
-        issues.append(f"schema_version mismatch: {baseline.get('schema_version')} vs {target.get('schema_version')}")
     if baseline.get("element_table_hash") != target.get("element_table_hash"):
         issues.append("element_table_hash mismatch")
     if baseline.get("scenario") != target.get("scenario"):
@@ -360,7 +351,6 @@ def verify(
     cells = payload.get("cells", [])
 
     checks = {
-        "schema_version_2":            check_schema_version(payload),
         "composition_sum_255":         check_composition_sums(cells),
         "phase_fraction_sum_le_1":     check_phase_fraction_sum_le_1(cells),
         "phase_mass_non_negative":     check_phase_mass_non_negative(cells),
@@ -462,11 +452,6 @@ def main() -> int:
             payload = json.load(f)
     except Exception as e:
         print(f"SCHEMA ERROR: {e}", file=sys.stderr)
-        return 3
-
-    if payload.get("schema_version") != 2:
-        print(f"SCHEMA VERSION MISMATCH: got {payload.get('schema_version')}, expected 2",
-              file=sys.stderr)
         return 3
 
     expected_mass = None

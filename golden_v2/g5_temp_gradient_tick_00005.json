@@ -1,6 +1,5 @@
 {
-  "schema_version": 2,
-  "run_id": "g5_temp_gradient_20260503T020147",
+  "run_id": "g5_temp_gradient_20260503T125036",
   "scenario": "g5_temp_gradient",
   "tick": 5,
   "cycle": 5,
@@ -44,7 +43,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 2000,
+      "energy_raw": 36060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -61,7 +60,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 1209.4896240234375,
+      "temperature_K": 1209.611572265625,
       "petals": [
         {
           "direction": 0,
@@ -182,7 +181,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -199,7 +198,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -320,7 +319,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -337,7 +336,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -458,7 +457,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -475,7 +474,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -596,7 +595,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -613,7 +612,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -734,7 +733,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -751,7 +750,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -872,7 +871,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1620,
+      "energy_raw": 35060,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -889,7 +888,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 979.6865844726562,
+      "temperature_K": 979.591552734375,
       "petals": [
         {
           "direction": 0,
@@ -1010,7 +1009,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1027,7 +1026,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1148,7 +1147,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1165,7 +1164,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1286,7 +1285,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1303,7 +1302,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1424,7 +1423,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1441,7 +1440,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1562,7 +1561,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1579,7 +1578,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1700,7 +1699,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1717,7 +1716,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1838,7 +1837,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1855,7 +1854,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -1976,7 +1975,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1993,7 +1992,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -2114,7 +2113,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2131,7 +2130,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -2252,7 +2251,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2269,7 +2268,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -2390,7 +2389,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2407,7 +2406,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -2528,7 +2527,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 1240,
+      "energy_raw": 33793,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2545,7 +2544,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 749.883544921875,
+      "temperature_K": 749.8409423828125,
       "petals": [
         {
           "direction": 0,
@@ -2666,7 +2665,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2683,7 +2682,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -2804,7 +2803,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2821,7 +2820,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -2942,7 +2941,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2959,7 +2958,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3080,7 +3079,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3097,7 +3096,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3218,7 +3217,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3235,7 +3234,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3356,7 +3355,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3373,7 +3372,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3494,7 +3493,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3511,7 +3510,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3632,7 +3631,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3649,7 +3648,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3770,7 +3769,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3787,7 +3786,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -3908,7 +3907,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3925,7 +3924,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4046,7 +4045,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4063,7 +4062,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4184,7 +4183,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4201,7 +4200,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4322,7 +4321,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4339,7 +4338,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4460,7 +4459,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4477,7 +4476,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4598,7 +4597,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4615,7 +4614,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4736,7 +4735,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4753,7 +4752,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -4874,7 +4873,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4891,7 +4890,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -5012,7 +5011,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 860,
+      "energy_raw": 32059,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5029,7 +5028,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 520.0805053710938,
+      "temperature_K": 520.0762329101562,
       "petals": [
         {
           "direction": 0,
@@ -5150,7 +5149,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5167,7 +5166,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -5288,7 +5287,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5305,7 +5304,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -5426,7 +5425,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5443,7 +5442,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -5564,7 +5563,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5581,7 +5580,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -5702,7 +5701,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5719,7 +5718,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -5840,7 +5839,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5857,7 +5856,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -5978,7 +5977,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5995,7 +5994,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -6116,7 +6115,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6133,7 +6132,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -6254,7 +6253,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6271,7 +6270,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -6392,7 +6391,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6409,7 +6408,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -6530,7 +6529,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6547,7 +6546,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -6668,7 +6667,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6685,7 +6684,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -6806,7 +6805,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6823,7 +6822,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -6944,7 +6943,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6961,7 +6960,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7082,7 +7081,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7099,7 +7098,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7220,7 +7219,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7237,7 +7236,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7358,7 +7357,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7375,7 +7374,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7496,7 +7495,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7513,7 +7512,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7634,7 +7633,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7651,7 +7650,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -7772,7 +7771,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7789,7 +7788,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -7910,7 +7909,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7927,7 +7926,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -8048,7 +8047,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8065,7 +8064,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -8186,7 +8185,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29297,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8203,7 +8202,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 290.2731628417969,
       "petals": [
         {
           "direction": 0,
@@ -8324,7 +8323,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 480,
+      "energy_raw": 29262,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8341,7 +8340,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 290.2774963378906,
+      "temperature_K": 288.1958312988281,
       "petals": [
         {
           "direction": 0,
@@ -8462,7 +8461,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8479,7 +8478,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -8600,7 +8599,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8617,7 +8616,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -8738,7 +8737,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8755,7 +8754,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -8876,7 +8875,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8893,7 +8892,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -9014,7 +9013,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9031,7 +9030,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -9152,7 +9151,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9169,7 +9168,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -9290,7 +9289,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9307,7 +9306,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -9428,7 +9427,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9445,7 +9444,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -9566,7 +9565,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9583,7 +9582,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -9704,7 +9703,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9721,7 +9720,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -9842,7 +9841,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9859,7 +9858,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -9980,7 +9979,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9997,7 +9996,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -10118,7 +10117,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10135,7 +10134,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -10256,7 +10255,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10273,7 +10272,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -10394,7 +10393,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10411,7 +10410,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -10532,7 +10531,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10549,7 +10548,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -10670,7 +10669,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10687,7 +10686,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -10808,7 +10807,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10825,7 +10824,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -10946,7 +10945,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10963,7 +10962,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -11084,7 +11083,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11101,7 +11100,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -11222,7 +11221,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11239,7 +11238,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -11360,7 +11359,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11377,7 +11376,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -11498,7 +11497,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11515,7 +11514,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -11636,7 +11635,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11653,7 +11652,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -11774,7 +11773,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11791,7 +11790,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -11912,7 +11911,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11929,7 +11928,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -12050,7 +12049,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -12067,7 +12066,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -12188,7 +12187,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21970,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -12205,7 +12204,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.44517517089844,
       "petals": [
         {
           "direction": 0,
@@ -12326,7 +12325,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21969,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -12343,7 +12342,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 61.43209457397461,
       "petals": [
         {
           "direction": 0,
@@ -12464,7 +12463,7 @@
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 100,
+      "energy_raw": 21928,
       "mohs_level": 6,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -12481,7 +12480,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 60.47447967529297,
+      "temperature_K": 60.911197662353516,
       "petals": [
         {
           "direction": 0,
@@ -12587,7 +12586,7 @@
         "plasma": 0.0
       }
     },
-    "energy_total": 56600.0,
+    "energy_total": 56620.65625,
     "momentum_total": [
       0.0,
       0.0
@@ -12629,13 +12628,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 0.8461999241262674,
-    "sub_pass_1_ms": 0.6939000450074673,
-    "sub_pass_2_ms": 0.6832999642938375,
-    "sub_pass_3_ms": 0.6830999627709389,
-    "sub_pass_4_ms": 0.674000009894371,
-    "sub_pass_5_ms": 0.671899993903935,
-    "sub_pass_6_ms": 0.7965000113472342,
-    "cycle_total_ms": 5.0533999456092715
+    "sub_pass_0_ms": 1.0927000548690557,
+    "sub_pass_1_ms": 0.8735000155866146,
+    "sub_pass_2_ms": 0.9946000063791871,
+    "sub_pass_3_ms": 0.8407999994233251,
+    "sub_pass_4_ms": 0.8156000403687358,
+    "sub_pass_5_ms": 0.7946999976411462,
+    "sub_pass_6_ms": 0.797900022007525,
+    "cycle_total_ms": 6.215000059455633
   }
 }

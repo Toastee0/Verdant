@@ -41,6 +41,7 @@ from ..cell import (
     PHASE_SOLID,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagrams_for_table
 from ..scenario import EmissionConfig, Scenario, WorldConfig
@@ -66,7 +67,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         set_single_element(cells, cell_id, element_id=si.element_id, fraction=255)
         cells.phase_fraction[cell_id, PHASE_SOLID] = 1.0
         cells.phase_mass[cell_id, PHASE_SOLID]     = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
-        cells.energy_raw[cell_id]                  = 300   # low T → solid stays solid
+        cells.energy_raw[cell_id]                  = encode_energy_J_scalar(300.0)   # low T → solid stays solid
         cells.mohs_level[cell_id]                  = 6
         cells.flags[cell_id]                       = 0
         for d in range(6):

@@ -39,6 +39,7 @@ from ..cell import (
     PHASE_SOLID,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagrams_for_table
 from ..scenario import EmissionConfig, Scenario, WorldConfig
@@ -64,8 +65,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     mass_solid = si.density_solid * volume
     cp_solid = si.specific_heat_solid
     initial_energy_J = mass_solid * cp_solid * INITIAL_T_K
-    initial_energy_raw = int(round(initial_energy_J / si.energy_scale))
-    assert 0 < initial_energy_raw <= 0xFFFF, f"initial_energy_raw {initial_energy_raw} OOR"
+    initial_energy_raw = encode_energy_J_scalar(initial_energy_J)
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):

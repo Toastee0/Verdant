@@ -55,6 +55,7 @@ from ..cell import (
     PHASE_LIQUID,
 )
 from ..compounds import set_compound
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagram
 from ..scenario import EmissionConfig, Scenario, WorldConfig
@@ -64,13 +65,7 @@ SCENARIO_NAME = "t1_evaporation"
 RINGS = 5
 
 CENTER_T_K        = 320.0     # liquid range, well below boil
-# Tier 1 energy resolution caveat: at cell_size_m=0.01 a 100%-gas cell
-# weighing ~0.83 µg has c_p × m ≈ 5.7 mJ/K, so each u16 energy quantum
-# (= 1 J at energy_scale=1.0) corresponds to ~175 K. Setting
-# neighbor_energy_raw=3 lands T_eff ≈ 523 K — comfortably above the
-# H2O boil threshold of 373.15 K so phase_diagram → GAS. Cleaner per-cell
-# energy resolution awaits the M5'.7c fractional-residual buffer.
-NEIGHBOR_ENERGY_RAW = 3
+NEIGHBOR_T_K      = 400.0     # gas range, above 373.15 K boil
 ELEVATED_PRESSURE = 5000      # source push toward neighbours
 NEIGHBOR_GAS_MASS_FRAC = 0.10  # gas cells start at 10% of EQ_GAS — under-saturated
 
@@ -102,15 +97,18 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     cp_l      = f_h * h.specific_heat_liquid + f_o * o.specific_heat_liquid
     mass_l_kg = density_l * volume
     energy_l_J = mass_l_kg * cp_l * CENTER_T_K
-    center_energy_raw = int(round(energy_l_J))
-    assert 0 < center_energy_raw <= 0xFFFF, f"center energy out of u16: {center_energy_raw}"
+    center_energy_raw = encode_energy_J_scalar(energy_l_J)
 
-    # Neighbours: 100% gas (phase_fraction-wise) at low gas mass; energy
-    # set explicitly per the resolution-quantum analysis above.
-    neighbor_energy_raw = NEIGHBOR_ENERGY_RAW
-    assert 0 < neighbor_energy_raw <= 0xFFFF, (
-        f"neighbour energy out of u16: {neighbor_energy_raw}"
-    )
+    # Neighbours: 100% gas (phase_fraction-wise) at low gas mass.
+    # Under log-encoded energy_raw the per-cell resolution is sub-K even
+    # for these tiny gas-cell masses, so we can target NEIGHBOR_T_K
+    # directly without the hand-tuned-quantum workaround the linear
+    # encoding required.
+    density_g = f_h * h.density_gas_stp + f_o * o.density_gas_stp
+    cp_g      = f_h * h.specific_heat_gas + f_o * o.specific_heat_gas
+    mass_g_kg = density_g * volume
+    energy_g_J = mass_g_kg * cp_g * NEIGHBOR_T_K
+    neighbor_energy_raw = encode_energy_J_scalar(energy_g_J)
 
     # ---- Build the cells -------------------------------------------------
     cells = CellArrays.empty(grid)
@@ -163,7 +161,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
             f"91-cell water disc. Center cell: liquid water at "
             f"T={CENTER_T_K:g} K, pressure_raw={ELEVATED_PRESSURE}. "
             f"Surrounding 90 cells: hot under-saturated gas water at "
-            f"T≈523 K (energy_raw={NEIGHBOR_ENERGY_RAW}, above 373 K boil), "
+            f"T={NEIGHBOR_T_K:g} K (above 373.15 K boil), "
             f"phase_mass[gas] = {NEIGHBOR_GAS_MASS_FRAC*100:g}% of "
             "equilibrium centre. Validates the gen5 sorting-ruleset "
             "extension (cross-phase mass transmutation): liquid water "

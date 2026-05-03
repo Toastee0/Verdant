@@ -238,8 +238,9 @@ def _apply_sorting_ruleset(
 
     # Latent heat debit on cross-phase events. Loop over the small
     # 4×4×16 (src_phase, dst_phase, slot) space; per-element scaling is a
-    # cell-level mask, kept compact.
-    energy_scale_default = float(next(iter(element_table)).energy_scale)
+    # cell-level mask, kept compact. Under gen5 log encoding flux.energy_self
+    # is in pure joules; the integration step decodes/encodes through the
+    # log-scale at the canonical-state boundary.
     for slot in range(COMPOSITION_SLOTS):
         eids_A = slot_eids_A[:, slot]                     # int16[N]
         for eid_int in phase_by_eid.keys():
@@ -251,7 +252,6 @@ def _apply_sorting_ruleset(
             # (gen5 §"Phases and density equilibrium centers"). Per-phase
             # density refinement is M6'.x calibration work.
             kg_per_unit = float(element.density_solid * volume / max(eq_solid, 1e-12))
-            energy_scale = float(getattr(element, "energy_scale", energy_scale_default))
 
             slot_mask_A = (eids_A == eid_int)              # bool[N]
             if not slot_mask_A.any():
@@ -274,11 +274,7 @@ def _apply_sorting_ruleset(
                     fire = edge_active & (dst_per_A > np.uint8(src_p)) & (mass_entry > 0.0)
                     if not fire.any():
                         continue
-                    # Per-cell dst_phase for the firing cells
                     dst_phase_fire = dst_per_A[fire].astype(np.int32)
-                    src_phase_fire = np.full(fire.sum(), src_p, dtype=np.int32)
-                    # Aggregate latent heat per firing cell. Different dst phases
-                    # per cell are possible, so loop dst_phase value by value.
                     fire_indices = np.where(fire)[0]
                     for dst_p_val in np.unique(dst_phase_fire):
                         inner = (dst_phase_fire == dst_p_val)
@@ -290,9 +286,7 @@ def _apply_sorting_ruleset(
                             continue
                         delta_m_kg = mass_entry[cells_idx] * kg_per_unit
                         delta_E_J = L * delta_m_kg
-                        flux.energy_self[cells_idx] += np.float32(
-                            delta_E_J / max(energy_scale, 1e-12)
-                        )
+                        flux.energy_self[cells_idx] += np.float32(delta_E_J)
 
 
 def run_energy_kernels(
@@ -300,7 +294,7 @@ def run_energy_kernels(
     derived: "DerivedFields",
     world: "WorldConfig",
     flux: FluxBuffer,
-    element_scale: float,
+    element_scale: float = 1.0,    # vestigial: gen5 log-encoding ignores per-element scale
 ) -> None:
     """Compute per-cell outgoing energy flux from conduction + convection,
     accumulating into flux.energy. Called AFTER run_region_kernels so the
@@ -351,7 +345,7 @@ def run_energy_kernels(
     dt = float(world.dt)
 
     cond_flux_J = np.where(bond_open, kappa_bond * np.maximum(dT, 0.0) * area * dt, 0.0)
-    flux.energy += (cond_flux_J / float(element_scale)).astype(np.float32)
+    flux.energy += cond_flux_J.astype(np.float32)
 
     # ---- convection ------------------------------------------------------
     # Energy carried by mass that's leaving cell A in direction d:
@@ -381,4 +375,4 @@ def run_energy_kernels(
         * derived.cp[:, None]
         * T[:, None]
     )
-    flux.energy += (convect_J / float(element_scale)).astype(np.float32)
+    flux.energy += convect_J.astype(np.float32)

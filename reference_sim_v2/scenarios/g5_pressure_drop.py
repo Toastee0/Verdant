@@ -38,6 +38,7 @@ from ..cell import (
     PHASE_LIQUID,
     set_single_element,
 )
+from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..scenario import EmissionConfig, Scenario, WorldConfig
 
@@ -62,8 +63,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     volume = cell_size_m ** 3
     mass = si.density_liquid * volume
     cp_mass = mass * si.specific_heat_liquid
-    initial_energy_raw = int(round(cp_mass * INITIAL_T_K / si.energy_scale))
-    assert 0 < initial_energy_raw <= 0xFFFF, f"initial_energy_raw {initial_energy_raw} out of u16"
+    initial_energy_raw = encode_energy_J_scalar(cp_mass * INITIAL_T_K)
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):

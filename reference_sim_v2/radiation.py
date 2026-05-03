@@ -105,9 +105,9 @@ def apply_radiation(
             ΔU_J = -(P_per_face_J_per_s * dt)
             delta_E_J[pmask] += ΔU_J.astype(np.float32)
 
-    # Apply with u16 floor (cell can't go below 0 energy_raw)
-    new_E = cells.energy_raw.astype(np.float32) + (delta_E_J / energy_scale)
-    new_E = np.maximum(new_E, 0.0)
-    cells.energy_raw[:] = np.round(new_E).astype(np.uint16)
+    # Apply through log encoding (gen5 stores energy_raw = log10(1+E_J)×M)
+    from .encoding import decode_energy_J, encode_energy_J
+    current_J = decode_energy_J(cells.energy_raw)
+    cells.energy_raw[:] = encode_energy_J(current_J + delta_E_J)
 
     return int(radiates.sum())
