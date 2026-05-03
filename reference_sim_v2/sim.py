@@ -177,7 +177,12 @@ def _run_sub_pass(
         apply_radiation(scenario.cells, derived, scenario.element_table, scenario.world)
 
     flux.clear()
-    run_region_kernels(scenario.cells, derived, scenario.world, flux, active_phases=active)
+    run_region_kernels(
+        scenario.cells, derived, scenario.world, flux,
+        active_phases=active,
+        phase_diagrams=scenario.phase_diagrams,
+        element_table=scenario.element_table,
+    )
     # Energy region kernel (M5'.7b): conduction + convection. Reads
     # flux.mass for the convective term, so must run after run_region_kernels.
     first_element = next(iter(scenario.element_table))

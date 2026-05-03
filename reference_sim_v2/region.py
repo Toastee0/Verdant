@@ -38,6 +38,7 @@ import numpy as np
 from .cell import (
     COMPOSITION_SLOTS,
     CellArrays,
+    EQUILIBRIUM_CENTER,
     N_PHASES,
     N_PETAL_DIRS,
     PHASE_GAS,
@@ -45,10 +46,12 @@ from .cell import (
     PHASE_PLASMA,
     PHASE_SOLID,
 )
-from .flux import FLAG_NO_FLOW, FluxBuffer
+from .flux import DST_PHASE_SENTINEL, FLAG_NO_FLOW, FluxBuffer
+from .transitions import _latent_heat_per_kg
 
 if TYPE_CHECKING:
     from .derive import DerivedFields
+    from .phase_diagram import PhaseDiagram1D
     from .scenario import WorldConfig
 
 
@@ -69,6 +72,8 @@ def run_region_kernels(
     world: "WorldConfig",
     flux: FluxBuffer,
     active_phases: set[int] | None = None,
+    phase_diagrams: dict[int, "PhaseDiagram1D"] | None = None,
+    element_table=None,
 ) -> None:
     """Compute per-cell outgoing mass flux into `flux.mass` for every cell
     in the grid. Vectorised stencil compute; equivalent to per-cell
@@ -80,8 +85,23 @@ def run_region_kernels(
     a phase that has hit its budget stops updating). Default None = all
     phases active (M5'.3 behaviour, unchanged for non-scheduler tests).
 
-    Mutates `flux.mass` in place; expected to be called between flux.clear()
-    and apply_veto().
+    `phase_diagrams` (optional) enables the gen5 sorting-ruleset extension
+    for cross-phase mass transmutation (verdant_sim_design.md §"Cells are
+    indivisible; boundary interactions apply a sorting ruleset" + §"Cross-
+    phase dynamics → Evaporation"). When provided, for each (A, d, slot)
+    the kernel looks up the phase that A's slot species would adopt at
+    neighbour B's (T, P), writes that into flux.dst_phase_per_slot, and
+    when src_phase ≠ dst_phase debits the source-cell's energy by
+    L_phase_change × Δm_kg (source pays per Q1 verdict). When phase_diagrams
+    is None the dst_phase array stays at the sentinel value and integration
+    falls back to same-phase routing — Tier 0 behaviour unchanged.
+
+    `element_table` is required when `phase_diagrams` is provided so the
+    kernel can look up L_fusion / L_vaporization and density_solid for
+    the kg_per_unit conversion.
+
+    Mutates `flux.mass`, `flux.dst_phase_per_slot`, and `flux.energy_self`
+    in place; expected to be called between flux.clear() and apply_veto().
     """
     n = cells.n
     if n == 0:
@@ -134,6 +154,145 @@ def run_region_kernels(
 
     # flux.mass[i, d, slot, phase] = phi[i, d, phase] × slot_frac[i, slot]
     np.copyto(flux.mass, phi[:, :, None, :] * slot_frac[:, None, :, None])
+
+    # ---- Cross-phase sorting ruleset (gen5 evaporation/sublimation path) ----
+    if phase_diagrams:
+        _apply_sorting_ruleset(
+            cells, derived, world, flux, neighbors, valid, phase_diagrams,
+            element_table,
+        )
+
+
+def _apply_sorting_ruleset(
+    cells: CellArrays,
+    derived: "DerivedFields",
+    world: "WorldConfig",
+    flux: FluxBuffer,
+    neighbors: np.ndarray,
+    valid: np.ndarray,
+    phase_diagrams: dict[int, "PhaseDiagram1D"],
+    element_table,
+) -> None:
+    """Fill flux.dst_phase_per_slot from neighbour-side phase-diagram lookup,
+    and accumulate source-side latent-heat debits into flux.energy_self.
+
+    For each (A, d, slot) where A holds species s and neighbour B exists:
+        dst_phase = phase_diagrams[s].lookup(T_B, P_B).phase
+        flux.dst_phase_per_slot[A, d, slot] = dst_phase
+
+    For each (A, d, slot, src_phase) entry where flux.mass > 0 and
+    src_phase ≠ dst_phase:
+        Δm_units = flux.mass[A, d, slot, src_phase]
+        Δm_kg    = Δm_units × kg_per_unit(species, density_solid, eq_solid)
+        L_J/kg   = _latent_heat_per_kg(src_phase, dst_phase, element)
+        flux.energy_self[A] += L_J/kg × Δm_kg / energy_scale
+            (sign: melting/boiling → L_J/kg < 0 → debit; freezing/condensing
+             → L_J/kg > 0 → credit. Source pays per Q1 verdict.)
+    """
+    n = cells.n
+    if n == 0 or not element_table:
+        return
+
+    elements_by_id = {el.element_id: el for el in element_table}
+    volume = float(world.cell_size_m) ** 3
+    eq_solid = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
+
+    # Precompute per-element per-cell phase decision (shape: dict[eid] -> uint8[N]).
+    # Unique element ids that appear in any composition slot.
+    eids_flat = cells.composition[:, :, 0].ravel()
+    unique_eids = np.unique(eids_flat[eids_flat > 0])
+
+    phase_by_eid: dict[int, np.ndarray] = {}
+    for eid in unique_eids:
+        eid_int = int(eid)
+        diagram = phase_diagrams.get(eid_int)
+        if diagram is None:
+            continue
+        Ts = np.array([row[0] for row in diagram.rows], dtype=np.float32)
+        phases = np.array([row[1] for row in diagram.rows], dtype=np.uint8)
+        # Last row index where Ts <= T (clip to [0, len-1])
+        T_query = derived.temperature
+        idx = np.searchsorted(Ts, T_query, side="right") - 1
+        idx = np.clip(idx, 0, len(phases) - 1)
+        phase_by_eid[eid_int] = phases[idx]   # uint8[N]
+
+    # Build flux.dst_phase_per_slot via per-slot, per-direction iteration.
+    # For each slot s: which species does A hold there? Look up that species
+    # at neighbour B's temperature → that's the dst_phase.
+    slot_eids_A = cells.composition[:, :, 0]   # int16[N, 16]
+
+    for slot in range(COMPOSITION_SLOTS):
+        eids_A = slot_eids_A[:, slot]   # int16[N], 0 = empty slot
+        # Per-direction lookups (small loop; fully vectorised within each)
+        for d in range(N_PETAL_DIRS):
+            nbr_idx = neighbors[:, d]
+            edge_valid = valid[:, d]
+            # Per-element scatter: only cells whose slot s holds element e
+            # get dst_phase[A,d,s] = phase_by_eid[e][B].
+            for eid_int, phase_at_cell in phase_by_eid.items():
+                mask = edge_valid & (eids_A == eid_int)
+                if not mask.any():
+                    continue
+                Bs = nbr_idx[mask]
+                flux.dst_phase_per_slot[mask, d, slot] = phase_at_cell[Bs]
+
+    # Latent heat debit on cross-phase events. Loop over the small
+    # 4×4×16 (src_phase, dst_phase, slot) space; per-element scaling is a
+    # cell-level mask, kept compact.
+    energy_scale_default = float(next(iter(element_table)).energy_scale)
+    for slot in range(COMPOSITION_SLOTS):
+        eids_A = slot_eids_A[:, slot]                     # int16[N]
+        for eid_int in phase_by_eid.keys():
+            element = elements_by_id.get(eid_int)
+            if element is None:
+                continue
+            # kg per phase-mass-unit for this element. Per gen5 hex-arithmetic
+            # we use density_solid/eq_solid as the canonical unit conversion
+            # (gen5 §"Phases and density equilibrium centers"). Per-phase
+            # density refinement is M6'.x calibration work.
+            kg_per_unit = float(element.density_solid * volume / max(eq_solid, 1e-12))
+            energy_scale = float(getattr(element, "energy_scale", energy_scale_default))
+
+            slot_mask_A = (eids_A == eid_int)              # bool[N]
+            if not slot_mask_A.any():
+                continue
+
+            # For each (d, src_phase, dst_phase) combination check transmute:
+            for d in range(N_PETAL_DIRS):
+                # Per-cell dst_phase for this (slot, d), restricted to A cells holding eid:
+                dst_per_A = flux.dst_phase_per_slot[:, d, slot]   # uint8[N]
+                edge_active = slot_mask_A & (dst_per_A != DST_PHASE_SENTINEL)
+                if not edge_active.any():
+                    continue
+                for src_p in range(N_PHASES):
+                    # Asymmetry per Q3 verdict: only fire latent-heat debit
+                    # for transitions to a higher-energy phase (dst > src).
+                    # Reverse transitions (condensation, freezing, deposition,
+                    # recombination) defer to in-place apply_phase_transitions
+                    # at the destination — no source-side latent debit here.
+                    mass_entry = flux.mass[:, d, slot, src_p]         # f32[N]
+                    fire = edge_active & (dst_per_A > np.uint8(src_p)) & (mass_entry > 0.0)
+                    if not fire.any():
+                        continue
+                    # Per-cell dst_phase for the firing cells
+                    dst_phase_fire = dst_per_A[fire].astype(np.int32)
+                    src_phase_fire = np.full(fire.sum(), src_p, dtype=np.int32)
+                    # Aggregate latent heat per firing cell. Different dst phases
+                    # per cell are possible, so loop dst_phase value by value.
+                    fire_indices = np.where(fire)[0]
+                    for dst_p_val in np.unique(dst_phase_fire):
+                        inner = (dst_phase_fire == dst_p_val)
+                        if not inner.any():
+                            continue
+                        cells_idx = fire_indices[inner]
+                        L = _latent_heat_per_kg(src_p, int(dst_p_val), element)
+                        if L == 0.0:
+                            continue
+                        delta_m_kg = mass_entry[cells_idx] * kg_per_unit
+                        delta_E_J = L * delta_m_kg
+                        flux.energy_self[cells_idx] += np.float32(
+                            delta_E_J / max(energy_scale, 1e-12)
+                        )
 
 
 def run_energy_kernels(

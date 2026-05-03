@@ -33,17 +33,25 @@ can resume without re-deriving the architecture decisions.
   - **M6'.0** Tier 1 data: H + O element rows, H2O.csv phase diagram,
     `compounds.py` with `set_compound()` / water macro 200, smoke test
     `g6_water_static`.
+  - **M6'.1** Tier 1 transition + multi-element flux: `t1_ice_melt`,
+    `t1_water_pressure_drop`.
+  - **M6'.2** Sorting-ruleset extension for cross-phase mass transmutation
+    (`flux.dst_phase_per_slot` + `flux.energy_self`; region kernel
+    consults neighbour-side phase-diagram lookup at flux-compute time;
+    asymmetry: dst > src cross-phase routes; dst ≤ src defers to in-place
+    transitions). First scenario `t1_evaporation` ships with it.
 
-**Validation:** `python -m checker.regression_v2` → 10/10 PASS.
+**Validation:** `python -m checker.regression_v2` → 13/13 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
 
-**Next up (M6'.1+ Tier 1 scenarios):**
+**Next up (M6'.x Tier 1 scenarios):**
 
-- **M6'.1** t1_ice_melt — cold water cell heated until solid→liquid transition fires.
-- **M6'.2** t1_evaporation — liquid water adjacent to vapor, mass flux liquid→gas.
-- **M6'.3** t1_humidity — gas cell with water-vapor composition.
-- **M6'.4** t1_condensation — humid gas cooled to dewpoint; vapor flips to liquid;
-  cohesion drives droplet nucleation.
+- **M6'.3** t1_humidity — gas cell with water-vapor composition (largely
+  a state-construction test; doesn't need cross-phase flux per se).
+- **M6'.4** t1_condensation — humid gas cooled to dewpoint; vapor flips
+  to liquid via in-place phase transition; cohesion-driven liquid flux
+  pulls new liquid into nearby liquid cells. Per Q3 verdict this is the
+  asymmetric path — does NOT use the sorting-ruleset extension.
 
 Per user direction: keep doing physics scenarios; ping when eyeballs needed
 (viewer port). M6'.1 is "interesting enough" for first eyeball gate but user
@@ -307,11 +315,6 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 ## Open M6'.x work after Tier 1 scenarios
 
-- **M6'.x cross-phase mass transmutation in flux** — region kernel
-  currently transports mass within the same phase channel. Real
-  evaporation/condensation needs mass to LEAVE the source as liquid and
-  ARRIVE at destination as gas (or vice versa). Blocks t1_humidity,
-  t1_condensation, t1_evaporation.
 - **M6'.x calibration:** compound-aware phase resolution (currently both
   H and O point to H2O.csv; cleaner approach is a per-compound table).
 - **M6'.x energy fractional accumulator** (M5'.7c) — sub-unit ΔE residual
@@ -375,8 +378,11 @@ These applied throughout M1–M6'.1 and remain in force:
 ## How a fresh session resumes
 
 1. Read this `HANDOFF.md` end-to-end.
-2. Run `python -m checker.regression_v2` to confirm the 12-scenario
+2. Read [verdant_sim_design.md](verdant_sim_design.md) — it is the canonical
+   physics design (commit `4e8a6e3` enshrined it). When this file and the
+   design doc disagree, the design doc wins.
+3. Run `python -m checker.regression_v2` to confirm the 13-scenario
    baseline is green.
-3. Run `python -m checker.test_diff_ticks_v2` to confirm 11/11 self-tests.
-4. Check `git log --oneline | head -20` for the last work cadence.
-5. Pick up from §"Open M6'.x work" or wait for user direction.
+4. Run `python -m checker.test_diff_ticks_v2` to confirm 11/11 self-tests.
+5. Check `git log --oneline | head -20` for the last work cadence.
+6. Pick up from §"Open M6'.x work" or wait for user direction.

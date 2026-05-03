@@ -11,9 +11,26 @@ separate incoming buffer; integration walks neighbours and sums.
 
 Channels:
   - mass:     (N, 6, COMPOSITION_SLOTS, N_PHASES) f32 — element/phase
-              transport. Per-element so multi-composition cells flow
-              independently per slot; per-phase so mixed-phase cells
-              transport each phase fraction independently.
+              transport. The phase axis is the SOURCE phase channel that
+              the mass is debited from at the source cell. The destination
+              cell's credit goes to dst_phase_per_slot (per gen5 §"Cells
+              are indivisible; boundary interactions apply a sorting
+              ruleset"). For same-phase transport (no cross-phase event)
+              dst_phase_per_slot is the sentinel value 255, and the
+              integration step credits the same phase channel — Tier 0
+              behaviour. For cross-phase transport (evaporation,
+              sublimation) dst_phase_per_slot[A, d, slot] is the phase
+              the destination cell will hold the slot's species in,
+              determined by neighbour-side phase-diagram lookup at flux-
+              compute time.
+  - dst_phase_per_slot: (N, 6, COMPOSITION_SLOTS) uint8 — per-edge phase
+              exposure for each species slot. Sentinel 255 means "same-
+              phase as source; use the src-phase axis on flux.mass for
+              the destination credit too."
+  - energy_self: (N,) f32 — cell-local energy adjustments accumulated
+              by the region kernel; today this carries source-side
+              latent-heat debits when the sorting ruleset detects a
+              cross-phase event. Applied to cells.energy_raw at integrate.
   - momentum: (N, 6, 2) f32 — 2D vector momentum carried with mass.
   - energy:   (N, 6)   f32 — kinetic + thermal + pressure work.
   - stress:   (N, 6)   f32 — directional stress (solid only).
@@ -51,6 +68,11 @@ FLAG_FIXED_STATE = 1 << 3
 FLAG_CULLED = 1 << 4
 
 
+# Sentinel for dst_phase_per_slot meaning "same-phase routing" (default).
+# Picked so any real phase id (0..3) is distinguishable.
+DST_PHASE_SENTINEL = 255
+
+
 @dataclass
 class FluxBuffer:
     """Per-cell-per-direction outgoing flux, allocated once per scenario,
@@ -59,6 +81,9 @@ class FluxBuffer:
     momentum: np.ndarray   # float32[N, 6, 2]
     energy:   np.ndarray   # float32[N, 6]
     stress:   np.ndarray   # float32[N, 6]
+    # gen5 sorting-ruleset extension (cross-phase mass transmutation):
+    dst_phase_per_slot: np.ndarray  # uint8[N, 6, COMPOSITION_SLOTS]
+    energy_self: np.ndarray          # float32[N]
 
     @classmethod
     def allocate(cls, n: int) -> "FluxBuffer":
@@ -67,6 +92,12 @@ class FluxBuffer:
             momentum=np.zeros((n, N_PETAL_DIRS, 2), dtype=np.float32),
             energy=np.zeros((n, N_PETAL_DIRS), dtype=np.float32),
             stress=np.zeros((n, N_PETAL_DIRS), dtype=np.float32),
+            dst_phase_per_slot=np.full(
+                (n, N_PETAL_DIRS, COMPOSITION_SLOTS),
+                DST_PHASE_SENTINEL,
+                dtype=np.uint8,
+            ),
+            energy_self=np.zeros(n, dtype=np.float32),
         )
 
     def clear(self) -> None:
@@ -74,6 +105,8 @@ class FluxBuffer:
         self.momentum.fill(0)
         self.energy.fill(0)
         self.stress.fill(0)
+        self.dst_phase_per_slot.fill(DST_PHASE_SENTINEL)
+        self.energy_self.fill(0)
 
 
 # --------------------------------------------------------------------------
@@ -162,20 +195,69 @@ def integrate(
     fixed = (cells.flags & FLAG_FIXED_STATE) != 0
 
     # ----- Mass -----
-    # outgoing per (cell, phase) = sum over (direction, slot)
+    #
+    # OUTGOING per (cell, src_phase) = sum over (direction, slot) of
+    #   flux.mass[cell, direction, slot, src_phase]. The src_phase axis
+    #   is unchanged regardless of cross-phase routing — flux entries
+    #   always debit the source phase channel they were drawn from.
+    #
+    # INCOMING per (cell, dst_phase) = scatter-add per slot using
+    #   flux.dst_phase_per_slot[neighbor, OPP[d], slot] to choose the
+    #   destination channel. Sentinel value DST_PHASE_SENTINEL falls
+    #   back to the src_phase axis (= same-phase transport, Tier 0
+    #   behaviour). Non-sentinel values route the slot's mass to the
+    #   neighbour-side phase that the slot's species would adopt at the
+    #   destination's (T, P) — that's the cross-phase / sorting-ruleset
+    #   path that lets liquid water arrive in a hot gas cell directly
+    #   in the gas channel.
     outgoing_phase_mass = flux.mass.sum(axis=(1, 2))             # (N, 4)
 
-    # incoming per (cell, phase) = sum over (direction, slot) of
-    #   flux[neighbor[cell, d], OPPOSITE[d], slot, phase]
     flux_mass_padded = np.concatenate([
         flux.mass,
         np.zeros((1, N_PETAL_DIRS, COMPOSITION_SLOTS, N_PHASES), dtype=np.float32),
     ])
+    flux_dst_padded = np.concatenate([
+        flux.dst_phase_per_slot,
+        np.full((1, N_PETAL_DIRS, COMPOSITION_SLOTS), DST_PHASE_SENTINEL, dtype=np.uint8),
+    ])
+
+    # Per-edge per-slot per-src_phase routing decision:
+    #   cross_phase_fires <=> dst_phase != SENTINEL  AND  dst_phase > src_phase
+    # The "dst > src" asymmetry implements gen5's Q3 verdict: only
+    # transitions to a higher-energy phase (liquid→gas evaporation,
+    # solid→liquid melting, gas→plasma ionisation, solid→gas sublimation)
+    # use cross-phase routing here. Reverse transitions (gas→liquid
+    # condensation, liquid→solid freezing, gas→solid deposition) defer to
+    # in-place phase transitions + same-phase cohesion-driven flux on the
+    # destination side. Sentinel is < any real phase id by virtue of being
+    # 255 — but the "!= SENTINEL" guard rejects it explicitly so the
+    # asymmetry test isn't fooled.
     incoming_phase_mass = np.zeros((n, N_PHASES), dtype=np.float32)
     for d in range(N_PETAL_DIRS):
         opp = OPPOSITE_DIRECTION[d]
-        contributions = flux_mass_padded[neighbors[:, d], opp, :, :].sum(axis=1)  # (N, 4)
-        incoming_phase_mass += contributions
+        nbr_idx = neighbors[:, d]                                # (N,)
+        nbr_mass = flux_mass_padded[nbr_idx, opp, :, :]          # (N, 16, 4)
+        nbr_dst  = flux_dst_padded[nbr_idx, opp, :]              # (N, 16) uint8
+
+        not_sentinel = (nbr_dst != DST_PHASE_SENTINEL)           # (N, 16)
+        for src_p in range(N_PHASES):
+            mass_at_src = nbr_mass[:, :, src_p]                  # (N, 16)
+            cross_phase = not_sentinel & (nbr_dst > np.uint8(src_p))   # (N, 16)
+
+            # Same-phase fallback: credit src_p channel where not cross-phase.
+            # This handles sentinel, dst == src, and the "asymmetry-defers"
+            # case (dst < src, e.g. condensation/freezing).
+            same_phase_mass = np.where(~cross_phase, mass_at_src, 0.0).sum(axis=1)
+            incoming_phase_mass[:, src_p] += same_phase_mass
+
+            # Cross-phase scatter: credit dst_phase channel where dst > src.
+            for dst_p in range(src_p + 1, N_PHASES):
+                scatter_mask = cross_phase & (nbr_dst == np.uint8(dst_p))
+                if not scatter_mask.any():
+                    continue
+                incoming_phase_mass[:, dst_p] += (
+                    mass_at_src * scatter_mask
+                ).sum(axis=1)
 
     delta_phase_mass = incoming_phase_mass - outgoing_phase_mass
     if fixed.any():
@@ -190,7 +272,9 @@ def integrate(
         opp = OPPOSITE_DIRECTION[d]
         incoming_energy += flux_energy_padded[neighbors[:, d], opp]
 
-    delta_energy = incoming_energy - outgoing_energy
+    # Self-energy adjustments (e.g., source-side latent-heat debits from
+    # cross-phase mass transmutation). Per gen5 verdict: source pays.
+    delta_energy = incoming_energy - outgoing_energy + flux.energy_self
     if fixed.any():
         delta_energy[fixed] = 0.0
     # Apply with u16 clamp (re-encode at canonical-state boundary)
