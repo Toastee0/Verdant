@@ -1,4 +1,38 @@
-# VerdantSim Wiki
+# VerdantSim Wiki — ARCHIVED
+
+> **This wiki was frozen on 2026-04-17 and describes the schema-v1 / Tier 0
+> design era, before the gen5 rewrite (M5'.0+) replaced the cell struct,
+> pipeline, and flux semantics. Do NOT cite these pages as authoritative
+> for current code.**
+>
+> Concrete divergences (non-exhaustive):
+> - `cell-struct.md` claims ~16 B / 4 composition slots / single `phase: u2`.
+>   Gen5 has 16 composition slots × 4 phase channels (fractions + masses)
+>   plus 6 directional petals. Hundreds of bytes per cell.
+> - `pipeline.md` describes a 4-phase "Derive → Resolve → Propagate →
+>   Reconcile" stage order with numbered Stage 1/2/3/4. Gen5 uses a
+>   7-sub-pass cycle with a concurrent per-phase scheduler
+>   (`PHASE_BUDGETS`).
+> - `mass-flow.md`, `elastic-flow.md`, `overflow.md` describe machinery
+>   that gen5 either restructured (region kernel) or removed (3-tier
+>   overflow cascade).
+> - `magnetism.md`, `precipitation.md`, `walls.md` describe Tier 0
+>   aspirations that gen5 deferred or hasn't implemented.
+>
+> Pages still roughly conceptually accurate (gen5 inherited the *idea*,
+> not the implementation): `gravity.md`, `cohesion.md`, `glossary.md`,
+> `dt-and-units.md`, `element-table.md`. Even these should be cross-
+> checked against live code before being cited.
+>
+> Authoritative sources for gen5 are: `../HANDOFF.md`,
+> `../verdant_sim_design.md`, `../gen5_implementation_spec.md`,
+> `../gen5_roadmap.md`, and the live code in `../reference_sim_v2/`.
+
+---
+
+Original front matter follows, preserved for historical context.
+
+---
 
 Reference knowledge for the VerdantSim physics engine. Organized for walkability — each page is narrow and self-contained, cross-linked where needed. Load the pages you care about, skip the rest.
 
