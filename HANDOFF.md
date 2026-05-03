@@ -307,6 +307,11 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 ## Open M6'.x work after Tier 1 scenarios
 
+- **M6'.x cross-phase mass transmutation in flux** — region kernel
+  currently transports mass within the same phase channel. Real
+  evaporation/condensation needs mass to LEAVE the source as liquid and
+  ARRIVE at destination as gas (or vice versa). Blocks t1_humidity,
+  t1_condensation, t1_evaporation.
 - **M6'.x calibration:** compound-aware phase resolution (currently both
   H and O point to H2O.csv; cleaner approach is a per-compound table).
 - **M6'.x energy fractional accumulator** (M5'.7c) — sub-unit ΔE residual
@@ -315,7 +320,63 @@ python -m checker.test_diff_ticks  # 8 self-tests
   populates flux.stress; integrate sums onto petals on both endpoints.
 - **M6'.x partial transition energy balance** (M5'.5c) — energy-balanced
   rather than rate-limited, so cells settle exactly at phase boundary.
+  Also addresses the t1_ice_melt L_blend / c_p mismatch oscillation.
 - **M6'.x viewer port** — schema-v2-aware SVG/canvas viewer for
   fractional phases, identity, petals, gravity vec.
 - **M7' Tier 2** — C, Fe → cast iron with lower melt point than pure Fe
   (mixing math falls out of composition-weighted phase boundaries).
+
+---
+
+## Working principles (carried forward, non-negotiable)
+
+These applied throughout M1–M6'.1 and remain in force:
+
+- **Physics completeness first.** Before adding a scenario, enumerate the
+  physical inputs and check them against the cell struct. A scenario that
+  runs but silently misses an input is worse than no scenario.
+- **Doc and code stay synchronized.** When either changes, update the other
+  in the same commit. Drift is its own bug.
+- **Iterative, with consensus.** No big unilateral restructuring. Schema
+  changes, cell-struct changes, staging-order changes are *design
+  decisions, not coding decisions* — stop and check in.
+- **Reference sim is the oracle.** Python correctness is the contract.
+  CUDA perf is the eventual goal. The schema-v2 JSON bridges them.
+- **"Properties move, cells don't."** Eulerian invariant. Every behavior
+  is a flow on a static grid. If you ever want to move a cell, that's
+  a bug.
+- **No hand-tuned fudge constants.** Material values come from
+  `data/element_table.tsv` (NIST-sourced) and `data/phase_diagrams/*.csv`.
+  If something doesn't behave right and the impulse is to tweak a number,
+  find the bug instead. (Calibration of compound-blend properties is the
+  exception — documented as M6'.x.)
+- **Small, scoped commits.** Each milestone is one or more commits. Tests
+  must pass before the next milestone starts.
+- **Conservation enforced in code, not hoped for.** `verify_v2.py` runs
+  every tick. A failing run halts work; diagnosis happens before the
+  next physics line is written.
+
+## When to stop and check with the user
+
+- A statement in `verdant_sim_design.md` (gen5) conflicts with a
+  scenario's observed behaviour, OR with locked architectural decisions.
+- A TODO in the skeleton has unclear intent and isn't covered by the
+  spec docs (`gen5_implementation_spec.md`, `gen5_roadmap.md`).
+- A scenario passes invariants but produces visibly wrong behaviour
+  (humid air rendering, condensation that doesn't form droplets, etc.) —
+  user wants to see these explicitly.
+- The schema would need to change (schema is a contract; bump version
+  and discuss before implementing).
+- An open question from §"Open M6'.x work" comes up in practice. Don't
+  unilaterally resolve it; flag it.
+- Any destructive git operation (force-push, branch delete, reset --hard,
+  retiring tracked files) needs explicit authorisation.
+
+## How a fresh session resumes
+
+1. Read this `HANDOFF.md` end-to-end.
+2. Run `python -m checker.regression_v2` to confirm the 12-scenario
+   baseline is green.
+3. Run `python -m checker.test_diff_ticks_v2` to confirm 11/11 self-tests.
+4. Check `git log --oneline | head -20` for the last work cadence.
+5. Pick up from §"Open M6'.x work" or wait for user direction.
