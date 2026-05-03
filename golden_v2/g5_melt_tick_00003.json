@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_melt_20260502T220543",
+  "run_id": "g5_melt_20260503T020148",
   "scenario": "g5_melt",
   "tick": 3,
   "cycle": 3,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -11901,13 +11901,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.1804000241681933,
-    "sub_pass_1_ms": 0.6333999335765839,
-    "sub_pass_2_ms": 0.6229999708011746,
-    "sub_pass_3_ms": 0.6135000148788095,
-    "sub_pass_4_ms": 0.6122000049799681,
-    "sub_pass_5_ms": 0.6107999943196774,
-    "sub_pass_6_ms": 0.5999000277370214,
-    "cycle_total_ms": 4.87750000320375
+    "sub_pass_0_ms": 1.232899958267808,
+    "sub_pass_1_ms": 0.8679999737069011,
+    "sub_pass_2_ms": 1.1186000192537904,
+    "sub_pass_3_ms": 0.74819999281317,
+    "sub_pass_4_ms": 0.8146000327542424,
+    "sub_pass_5_ms": 0.6981999613344669,
+    "sub_pass_6_ms": 0.8190999506041408,
+    "cycle_total_ms": 6.305299932137132
   }
 }

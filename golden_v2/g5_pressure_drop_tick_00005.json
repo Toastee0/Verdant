@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_pressure_drop_20260502T212715",
+  "run_id": "g5_pressure_drop_20260503T020147",
   "scenario": "g5_pressure_drop",
   "tick": 5,
   "cycle": 5,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -11901,13 +11901,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 0.7084000390022993,
-    "sub_pass_1_ms": 0.5241000326350331,
-    "sub_pass_2_ms": 0.5116999382153153,
-    "sub_pass_3_ms": 0.5200000014156103,
-    "sub_pass_4_ms": 0.4953000461682677,
-    "sub_pass_5_ms": 0.49969996325671673,
-    "sub_pass_6_ms": 0.49180001951754093,
-    "cycle_total_ms": 3.7551000714302063
+    "sub_pass_0_ms": 0.8335000602528453,
+    "sub_pass_1_ms": 0.6914000259712338,
+    "sub_pass_2_ms": 0.6702999817207456,
+    "sub_pass_3_ms": 0.6672999588772655,
+    "sub_pass_4_ms": 0.7540000369772315,
+    "sub_pass_5_ms": 0.7308999774977565,
+    "sub_pass_6_ms": 0.676299910992384,
+    "cycle_total_ms": 5.02849998883903
   }
 }

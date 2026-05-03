@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_radiative_boundary_20260502T220150",
+  "run_id": "g5_radiative_boundary_20260503T020148",
   "scenario": "g5_radiative_boundary",
   "tick": 5,
   "cycle": 5,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -11901,13 +11901,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.011700020171702,
-    "sub_pass_1_ms": 0.632300041615963,
-    "sub_pass_2_ms": 0.6323999259620905,
-    "sub_pass_3_ms": 0.6119000026956201,
-    "sub_pass_4_ms": 0.7916999747976661,
-    "sub_pass_5_ms": 0.6679000798612833,
-    "sub_pass_6_ms": 0.6509999511763453,
-    "cycle_total_ms": 5.00350003130734
+    "sub_pass_0_ms": 1.160199986770749,
+    "sub_pass_1_ms": 0.8570000063627958,
+    "sub_pass_2_ms": 0.7015999872237444,
+    "sub_pass_3_ms": 0.6855999818071723,
+    "sub_pass_4_ms": 0.6733000045642257,
+    "sub_pass_5_ms": 0.667500076815486,
+    "sub_pass_6_ms": 0.6760999094694853,
+    "cycle_total_ms": 5.425799987278879
   }
 }

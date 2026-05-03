@@ -1,0 +1,21 @@
+# H2O phase diagram — M6'.0 1D T-only stub.
+#
+# NIST water triple point (273.16 K, 611.657 Pa) and critical point
+# (647.096 K, 22.064 MPa). Boundaries chosen at 1 atm:
+#   ice-water at 273.15 K
+#   water-vapor at 373.15 K
+#   gas-plasma transition placed at the critical point (no ionisation
+#   physics yet; M9 work).
+# Mohs of ice ranges 1.5–4 depending on temperature; M6'.0 stub uses 2.
+#
+# Format: T_K, phase, initial_mohs
+# Lookup: highest threshold where T_K >= threshold. P axis ignored at M6'.0.
+#
+T_K,phase,initial_mohs
+0,solid,2
+273.15,solid,2
+273.16,liquid,0
+373.15,liquid,0
+373.16,gas,0
+647.096,gas,0
+647.1,plasma,0

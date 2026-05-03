@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_grav_two_body_20260502T220853",
+  "run_id": "g5_grav_two_body_20260503T020147",
   "scenario": "g5_grav_two_body",
   "tick": 3,
   "cycle": 3,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -12265,13 +12265,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.3421999756246805,
-    "sub_pass_1_ms": 1.2052999809384346,
-    "sub_pass_2_ms": 1.2330000754445791,
-    "sub_pass_3_ms": 1.6540999058634043,
-    "sub_pass_4_ms": 1.231500064022839,
-    "sub_pass_5_ms": 1.1813999153673649,
-    "sub_pass_6_ms": 1.1757001047953963,
-    "cycle_total_ms": 9.028299944475293
+    "sub_pass_0_ms": 1.3753999955952168,
+    "sub_pass_1_ms": 1.2026999611407518,
+    "sub_pass_2_ms": 1.1768999975174665,
+    "sub_pass_3_ms": 1.19270000141114,
+    "sub_pass_4_ms": 1.5420999843627214,
+    "sub_pass_5_ms": 1.3476000167429447,
+    "sub_pass_6_ms": 1.2048999778926373,
+    "cycle_total_ms": 9.047599975019693
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_mixed_phase_20260502T212715",
+  "run_id": "g5_mixed_phase_20260503T020147",
   "scenario": "g5_mixed_phase",
   "tick": 5,
   "cycle": 5,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -11901,13 +11901,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 0.681100063957274,
-    "sub_pass_1_ms": 0.5364000098779798,
-    "sub_pass_2_ms": 0.5518000107258558,
-    "sub_pass_3_ms": 0.519599998369813,
-    "sub_pass_4_ms": 0.5008999723941088,
-    "sub_pass_5_ms": 0.48480008263140917,
-    "sub_pass_6_ms": 0.4977999487891793,
-    "cycle_total_ms": 3.7770000053569674
+    "sub_pass_0_ms": 0.8754999144002795,
+    "sub_pass_1_ms": 0.7254000520333648,
+    "sub_pass_2_ms": 0.7647000020369887,
+    "sub_pass_3_ms": 0.7199000101536512,
+    "sub_pass_4_ms": 0.7229999173432589,
+    "sub_pass_5_ms": 0.6774000357836485,
+    "sub_pass_6_ms": 0.6650000577792525,
+    "cycle_total_ms": 5.155500024557114
   }
 }

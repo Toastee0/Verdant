@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "run_id": "g5_static_20260502T212714",
+  "run_id": "g5_static_20260503T020147",
   "scenario": "g5_static",
   "tick": 5,
   "cycle": 5,
@@ -12,7 +12,7 @@
     "cell_count": 91,
     "coordinate_system": "axial_qr"
   },
-  "element_table_hash": "sha256:af5ed1f9a52dac50",
+  "element_table_hash": "sha256:1059e23160d9532e",
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
@@ -11901,13 +11901,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 0.6382999708876014,
-    "sub_pass_1_ms": 0.5420000525191426,
-    "sub_pass_2_ms": 0.5087000317871571,
-    "sub_pass_3_ms": 0.4883999936282635,
-    "sub_pass_4_ms": 0.4920999053865671,
-    "sub_pass_5_ms": 0.4873001016676426,
-    "sub_pass_6_ms": 0.4827999509871006,
-    "cycle_total_ms": 3.643800038844347
+    "sub_pass_0_ms": 1.0009000543504953,
+    "sub_pass_1_ms": 0.6999000906944275,
+    "sub_pass_2_ms": 0.6853999802842736,
+    "sub_pass_3_ms": 0.6793999345973134,
+    "sub_pass_4_ms": 0.6644000532105565,
+    "sub_pass_5_ms": 0.6657999474555254,
+    "sub_pass_6_ms": 0.6759000243619084,
+    "cycle_total_ms": 5.07750001270324
   }
 }

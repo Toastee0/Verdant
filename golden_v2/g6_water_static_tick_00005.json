@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "run_id": "g5_ratchet_20260503T020148",
-  "scenario": "g5_ratchet",
-  "tick": 30,
-  "cycle": 30,
+  "run_id": "g6_water_static_20260503T020148",
+  "scenario": "g6_water_static",
+  "tick": 5,
+  "cycle": 5,
   "sub_pass": 6,
   "stage": "post_integration",
   "grid": {
@@ -16,7 +16,8 @@
   "phase_diagram_hash": "sha256:none",
   "border_table_hash": "sha256:none",
   "allowed_elements": [
-    "Si"
+    "H",
+    "O"
   ],
   "cells": [
     {
@@ -27,41 +28,45 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
-      "pressure_raw": 50000,
-      "energy_raw": 350,
-      "mohs_level": 7,
-      "sustained_overpressure": 1148.4375,
+      "pressure_raw": 0,
+      "energy_raw": 1075,
+      "mohs_level": 0,
+      "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
         "radiates": false,
         "insulated": false,
         "fixed_state": false,
-        "culled": false,
+        "culled": true,
         "fractured": false,
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 211.66067504882812,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -157,29 +162,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -191,7 +200,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -287,29 +296,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -321,7 +334,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -417,29 +430,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -451,7 +468,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -547,29 +564,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -581,7 +602,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -677,29 +698,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -711,7 +736,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -807,29 +832,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -841,7 +870,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -937,29 +966,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -971,7 +1004,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1067,29 +1100,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1101,7 +1138,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1197,29 +1234,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1231,7 +1272,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1327,29 +1368,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1361,7 +1406,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1457,29 +1502,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1491,7 +1540,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1587,29 +1636,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1621,7 +1674,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1717,29 +1770,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1751,7 +1808,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1847,29 +1904,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -1881,7 +1942,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -1977,29 +2038,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2011,7 +2076,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2107,29 +2172,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2141,7 +2210,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2237,29 +2306,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2271,7 +2344,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2367,29 +2440,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2401,7 +2478,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2497,29 +2574,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2531,7 +2612,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2627,29 +2708,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2661,7 +2746,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2757,29 +2842,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2791,7 +2880,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -2887,29 +2976,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -2921,7 +3014,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3017,29 +3110,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3051,7 +3148,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3147,29 +3244,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3181,7 +3282,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3277,29 +3378,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3311,7 +3416,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3407,29 +3512,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3441,7 +3550,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3537,29 +3646,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3571,7 +3684,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3667,29 +3780,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3701,7 +3818,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3797,29 +3914,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3831,7 +3952,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -3927,29 +4048,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -3961,7 +4086,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4057,29 +4182,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4091,7 +4220,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4187,29 +4316,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4221,7 +4354,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4317,29 +4450,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4351,7 +4488,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4447,29 +4584,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4481,7 +4622,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4577,29 +4718,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4611,7 +4756,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4707,29 +4852,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4741,7 +4890,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4837,29 +4986,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -4871,7 +5024,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -4967,29 +5120,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5001,7 +5158,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5097,29 +5254,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5131,7 +5292,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5227,29 +5388,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5261,7 +5426,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5357,29 +5522,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5391,7 +5560,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5487,29 +5656,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5521,7 +5694,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5617,29 +5790,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5651,7 +5828,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5747,29 +5924,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5781,7 +5962,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -5877,29 +6058,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -5911,7 +6096,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6007,29 +6192,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6041,7 +6230,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6137,29 +6326,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6171,7 +6364,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6267,29 +6460,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6301,7 +6498,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6397,29 +6594,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6431,7 +6632,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6527,29 +6728,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6561,7 +6766,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6657,29 +6862,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6691,7 +6900,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6787,29 +6996,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6821,7 +7034,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -6917,29 +7130,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -6951,7 +7168,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7047,29 +7264,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7081,7 +7302,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7177,29 +7398,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7211,7 +7436,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7307,29 +7532,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7341,7 +7570,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7437,29 +7666,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7471,7 +7704,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7567,29 +7800,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7601,7 +7838,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7697,29 +7934,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7731,7 +7972,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7827,29 +8068,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7861,7 +8106,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -7957,29 +8202,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -7991,7 +8240,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8087,29 +8336,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8121,7 +8374,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8217,29 +8470,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8251,7 +8508,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8347,29 +8604,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8381,7 +8642,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8477,29 +8738,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8511,7 +8776,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8607,29 +8872,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8641,7 +8910,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8737,29 +9006,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8771,7 +9044,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8867,29 +9140,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -8901,7 +9178,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -8997,29 +9274,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9031,7 +9312,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9127,29 +9408,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9161,7 +9446,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9257,29 +9542,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9291,7 +9580,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9387,29 +9676,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9421,7 +9714,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9517,29 +9810,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9551,7 +9848,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9647,29 +9944,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9681,7 +9982,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9777,29 +10078,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9811,7 +10116,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -9907,29 +10212,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -9941,7 +10250,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10037,29 +10346,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10071,7 +10384,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10167,29 +10480,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10201,7 +10518,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10297,29 +10614,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10331,7 +10652,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10427,29 +10748,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10461,7 +10786,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10557,29 +10882,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10591,7 +10920,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10687,29 +11016,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10721,7 +11054,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10817,29 +11150,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10851,7 +11188,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -10947,29 +11284,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -10981,7 +11322,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11077,29 +11418,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11111,7 +11456,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11207,29 +11552,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11241,7 +11590,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11337,29 +11686,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11371,7 +11724,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11467,29 +11820,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11501,7 +11858,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11597,29 +11954,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11631,7 +11992,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11727,29 +12088,33 @@
       ],
       "composition": [
         [
-          "Si",
-          255
+          "H",
+          114
+        ],
+        [
+          "O",
+          141
         ]
       ],
       "phase_fraction": [
-        1.0,
         0.0,
+        1.0,
         0.0,
         0.0
       ],
       "phase_mass": [
-        74088.0,
         0.0,
+        1764.0,
         0.0,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 300,
-      "mohs_level": 6,
+      "energy_raw": 1075,
+      "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
-        "phase": "solid",
-        "element": "Si"
+        "phase": "liquid",
+        "element": "O"
       },
       "flags": {
         "no_flow": false,
@@ -11761,7 +12126,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 181.42344665527344,
+      "temperature_K": 299.8648986816406,
       "petals": [
         {
           "direction": 0,
@@ -11852,26 +12217,32 @@
   ],
   "totals": {
     "mass_by_element_by_phase": {
-      "Si": {
-        "solid": 6742008.0,
-        "liquid": 0.0,
+      "H": {
+        "solid": 0.0,
+        "liquid": 71763.703125,
+        "gas": 0.0,
+        "plasma": 0.0
+      },
+      "O": {
+        "solid": 0.0,
+        "liquid": 88760.34375,
         "gas": 0.0,
         "plasma": 0.0
       }
     },
-    "energy_total": 27350.0,
+    "energy_total": 97825.0,
     "momentum_total": [
       0.0,
       0.0
     ],
     "cells_by_dominant_phase": {
-      "solid": 91,
-      "liquid": 0,
+      "solid": 0,
+      "liquid": 91,
       "gas": 0,
       "plasma": 0,
       "void": 0
     },
-    "cells_culled": 90,
+    "cells_culled": 91,
     "cells_fractured": 0,
     "cells_ratcheted_this_tick": 0,
     "cells_excluded": 0
@@ -11891,9 +12262,15 @@
       "name": "mass_by_element_by_phase_self_report",
       "status": "pass",
       "totals": {
-        "Si": {
-          "solid": 6742008.0,
-          "liquid": 0.0,
+        "H": {
+          "solid": 0.0,
+          "liquid": 71763.703125,
+          "gas": 0.0,
+          "plasma": 0.0
+        },
+        "O": {
+          "solid": 0.0,
+          "liquid": 88760.34375,
           "gas": 0.0,
           "plasma": 0.0
         }
@@ -11901,13 +12278,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.191799994558096,
-    "sub_pass_1_ms": 0.7162000983953476,
-    "sub_pass_2_ms": 0.6871999939903617,
-    "sub_pass_3_ms": 0.6757999071851373,
-    "sub_pass_4_ms": 0.8531000930815935,
-    "sub_pass_5_ms": 0.7060999050736427,
-    "sub_pass_6_ms": 0.7019999902695417,
-    "cycle_total_ms": 5.536900018341839
+    "sub_pass_0_ms": 1.2288999278098345,
+    "sub_pass_1_ms": 0.8391999872401357,
+    "sub_pass_2_ms": 0.7379000307992101,
+    "sub_pass_3_ms": 0.7160999812185764,
+    "sub_pass_4_ms": 0.7150999736040831,
+    "sub_pass_5_ms": 0.7147000869736075,
+    "sub_pass_6_ms": 0.7033000001683831,
+    "cycle_total_ms": 5.660500028170645
   }
 }
