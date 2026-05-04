@@ -58,18 +58,20 @@ can resume without re-deriving the architecture decisions.
   - **Schema versioning dropped.** No external consumers; verifier and
     producer ship in the same repo. The `schema_version` field is gone
     from emissions, baseline-compat checks, diff_ticks, and self-tests.
+  - **M6'.3 + M6'.4** Tier 1 humid-air + condensation scenarios:
+    `t1_humidity` (humid gas at T>boil, static-uniform baseline);
+    `t1_condensation` (humid gas at T<boil, in-place GAS→LIQUID
+    transition fires every cycle, releases latent heat). Validates the
+    Q3 asymmetry rule: condensation edges (dst<src) defer to same-phase
+    integration; the sorting-ruleset extension stays inert; latent heat
+    lands via `apply_phase_transitions` in-place rather than
+    `flux.energy_self`. T crashes on the post-transition step because
+    `compute_thermal_blends` mass formula uses phase_fraction × density
+    (gas→liquid 800× density jump shows up as cell-mass jump → T = E/m
+    drops). Documented as the next M6'.x calibration.
 
-**Validation:** `python -m checker.regression_v2` → 13/13 PASS.
+**Validation:** `python -m checker.regression_v2` → 15/15 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
-
-**Next up (M6'.x Tier 1 scenarios):**
-
-- **M6'.3** t1_humidity — gas cell with water-vapor composition (largely
-  a state-construction test; doesn't need cross-phase flux per se).
-- **M6'.4** t1_condensation — humid gas cooled to dewpoint; vapor flips
-  to liquid via in-place phase transition; cohesion-driven liquid flux
-  pulls new liquid into nearby liquid cells. Per Q3 verdict this is the
-  asymmetric path — does NOT use the sorting-ruleset extension.
 
 Per user direction: keep doing physics scenarios; ping when eyeballs needed
 (viewer port). M6'.1 is "interesting enough" for first eyeball gate but user
@@ -341,10 +343,30 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 ## Open M6'.x work after Tier 1 scenarios
 
+- **M6'.x phase_mass ↔ kg semantics.** `compute_thermal_blends` uses
+  phase_fraction × density to derive cell mass; this works at equilibrium
+  but jumps when phase_fraction shifts (e.g., during in-place
+  condensation a tiny new liquid fraction adds 800× kg-per-fraction →
+  computed mass jumps → T = E/m crashes). Two candidate fixes:
+  (a) phase_mass-based mass blending (`mass_kg = Σ phase_mass[p] ×
+  density[p] × volume / EQ[p]`) — still has a smaller jump because
+  liquid hex-per-kg differs from gas's; (b) renormalise phase_mass so
+  1 hex unit is universal kg regardless of phase channel, with
+  EQ_PHASE recomputed from per-element densities. Both touch every
+  scenario's init energy. Pre-requisite for stable post-condensation
+  T behaviour and for raising the M5'.5c transition cap from 1/16 to 1.0.
 - **M6'.x calibration:** compound-aware phase resolution (currently both
   H and O point to H2O.csv; cleaner approach is a per-compound table).
 - **M6'.x petal stress flux integration** (M5'.6b') — region kernel
   populates flux.stress; integrate sums onto petals on both endpoints.
+- **M6'.x cohesion-as-attractor / signed-pressure decode** — for the
+  cohesion-driven liquid migration in the design doc's condensation
+  passage. Either a new flow term in the region kernel that pulls mass
+  from low-saturation toward high-cohesion same-element neighbours, or
+  a signed log-encoding for pressure_raw so under-equilibrium cells
+  register negative deviation and pull mass via the existing pressure
+  gradient. Currently t1_condensation only validates the in-place
+  transition, not the migration.
 - **M6'.x viewer port** — schema-v2-aware SVG/canvas viewer for
   fractional phases, identity, petals, gravity vec.
 - **M7' Tier 2** — C, Fe → cast iron with lower melt point than pure Fe
