@@ -44,6 +44,7 @@ from .cell import (
     PHASE_LIQUID,
     PHASE_PLASMA,
     PHASE_SOLID,
+    Q_KG,
     compute_identity,
 )
 from .gravity import compute_gravity_field
@@ -119,9 +120,19 @@ def compute_thermal_blends(
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute per-cell composition-and-phase-fraction-weighted (κ, c_p, ρ).
 
-    Returns (kappa, cp, density) all f32[N]. Each is a blend over the
-    cell's composition slots and the cell's phase distribution. For void
-    cells (no composition) returns 0 in all three arrays.
+    Returns (kappa, cp, density) all f32[N]. κ and c_p are blends over
+    composition slots × phase fractions (both volumetric and mass-weighted
+    treatments collapse to the same formula at equilibrium). Density is
+    derived from `phase_mass × Q_KG / volume` — the physical mass per
+    unit volume of the cell, NOT a phase-fraction-weighted equilibrium
+    density. This guarantees that phase transitions and cross-phase
+    transmutation conserve the cell's computed mass: 1 hex unit transferred
+    from one phase channel to another keeps `sum(phase_mass) × Q_KG`
+    invariant, so T = E / (m × c_p) doesn't crash when phase_fraction
+    shifts at constant kg.
+
+    For void cells (no composition or no phase mass) returns 0 in all
+    three arrays.
 
     Used by both compute_temperature (T = energy / (mass × c_p)) and the
     energy region kernel (conduction κ + convective c_p × T_source).
@@ -130,6 +141,12 @@ def compute_thermal_blends(
     kappa = np.zeros(n, dtype=np.float32)
     cp = np.zeros(n, dtype=np.float32)
     density = np.zeros(n, dtype=np.float32)
+
+    volume = float(world.cell_size_m) ** 3
+    # Mass density derived from phase_mass (kg-conserving across phase shifts)
+    total_phase_mass = cells.phase_mass.sum(axis=1).astype(np.float32)   # (N,)
+    density[:] = total_phase_mass * np.float32(Q_KG) / np.float32(max(volume, 1e-30))
+
     for slot in range(COMPOSITION_SLOTS):
         eid = cells.composition[:, slot, 0]
         frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
@@ -139,11 +156,6 @@ def compute_thermal_blends(
             mask = (eid == element.element_id) & (frac > 0)
             if not mask.any():
                 continue
-            d_per_phase = np.array(
-                [element.density_solid, element.density_liquid,
-                 element.density_gas_stp, element.density_gas_stp],
-                dtype=np.float32,
-            )
             cp_per_phase = np.array(
                 [element.specific_heat_solid, element.specific_heat_liquid,
                  element.specific_heat_gas, element.specific_heat_gas],
@@ -156,10 +168,8 @@ def compute_thermal_blends(
                  element.thermal_conductivity_gas],
                 dtype=np.float32,
             )
-            d_blend = (cells.phase_fraction[mask] * d_per_phase).sum(axis=1)
             cp_blend = (cells.phase_fraction[mask] * cp_per_phase).sum(axis=1)
             k_blend = (cells.phase_fraction[mask] * k_per_phase).sum(axis=1)
-            density[mask] += d_blend * frac[mask]
             cp[mask]      += cp_blend * frac[mask]
             kappa[mask]   += k_blend * frac[mask]
     return kappa, cp, density
@@ -184,12 +194,17 @@ def compute_temperature(
     For void cells (no composition) returns 0.
     """
     n = cells.n
-    volume = float(world.cell_size_m ** 3)
 
     # Reuse thermal-blends helper (also computes kappa for the energy region kernel)
-    _, cp, density = compute_thermal_blends(cells, element_table, world)
+    _, cp, _ = compute_thermal_blends(cells, element_table, world)
 
-    mass_kg = density * volume
+    # Cell mass in kg derives from total phase_mass × Q_KG. This is
+    # phase-fraction-INVARIANT and only changes when actual mass enters or
+    # leaves the cell — so phase transitions and cross-phase routing don't
+    # cause spurious T jumps.
+    total_phase_mass = cells.phase_mass.sum(axis=1).astype(np.float32)
+    mass_kg = total_phase_mass * np.float32(Q_KG)
+
     # Energy in joules. Per D6, working state is f32 throughout the cycle;
     # u16 ↔ f32 round-trip happens here (decode) and at integration
     # boundary (encode). gen5 uses log10(1+E) encoding so tiny gas-cell
@@ -278,8 +293,8 @@ def run_derive(
     majority_element); pressure and temperature are independent of the
     others.
     """
-    # Identity
-    majority_phase, majority_element = compute_identity(cells)
+    # Identity — uses per-cell EQ for proper compound/non-Si saturation
+    majority_phase, majority_element = compute_identity(cells, element_table, world)
     derived.majority_phase[:]   = majority_phase
     derived.majority_element[:] = majority_element
 

@@ -42,6 +42,7 @@ from ..cell import (
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_LIQUID,
     PHASE_SOLID,
+    Q_KG,
 )
 from ..compounds import set_compound
 from ..encoding import encode_energy_J_scalar
@@ -85,13 +86,19 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     energy_J = mass_kg * cp_blend * INITIAL_T_K
     initial_energy_raw = encode_energy_J_scalar(energy_J)
 
+    # Per-cell EQ for water (compound) — gen5 phase_mass↔kg semantics:
+    density_solid_water  = f_h * h.density_solid  + f_o * o.density_solid
+    density_liquid_water = f_h * h.density_liquid + f_o * o.density_liquid
+    EQ_SOLID_water  = density_solid_water  * volume / Q_KG
+    EQ_LIQUID_water = density_liquid_water * volume / Q_KG
+
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         set_compound(cells, cell_id, compound_id=200, element_table=table)
         cells.phase_fraction[cell_id, PHASE_SOLID]  = 0.5
         cells.phase_fraction[cell_id, PHASE_LIQUID] = 0.5
-        cells.phase_mass[cell_id, PHASE_SOLID]      = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_SOLID])
-        cells.phase_mass[cell_id, PHASE_LIQUID]     = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
+        cells.phase_mass[cell_id, PHASE_SOLID]      = 0.5 * float(EQ_SOLID_water)
+        cells.phase_mass[cell_id, PHASE_LIQUID]     = 0.5 * float(EQ_LIQUID_water)
         cells.energy_raw[cell_id]                   = initial_energy_raw
         cells.mohs_level[cell_id]                   = 2   # ice mohs from H2O.csv
         cells.flags[cell_id]                        = 0

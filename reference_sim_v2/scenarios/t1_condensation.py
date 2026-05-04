@@ -69,6 +69,7 @@ from ..cell import (
     EQUILIBRIUM_CENTER,
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_GAS,
+    Q_KG,
 )
 from ..compounds import set_compound
 from ..encoding import encode_energy_J_scalar
@@ -104,9 +105,13 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     volume = cell_size_m ** 3
 
     # Per-cell physical mass + cp for humid (gas-phase) water blend at T_cond.
+    # Per gen5 phase_mass↔kg semantics: EQ_GAS_water = density × volume / Q_KG
+    # and the cell's actual mass at GAS_MASS_FRAC saturation is
+    # GAS_MASS_FRAC × density × volume.
     density_g = f_h * h.density_gas_stp + f_o * o.density_gas_stp
     cp_g      = f_h * h.specific_heat_gas + f_o * o.specific_heat_gas
-    mass_g_kg = density_g * volume
+    EQ_GAS_water = density_g * volume / Q_KG
+    mass_g_kg = GAS_MASS_FRAC * density_g * volume
     energy_J = mass_g_kg * cp_g * COND_T_K
     initial_energy_raw = encode_energy_J_scalar(energy_J)
 
@@ -115,7 +120,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         set_compound(cells, cell_id, compound_id=200, element_table=table)
         cells.phase_fraction[cell_id, PHASE_GAS] = 1.0
         cells.phase_mass[cell_id, PHASE_GAS]     = (
-            GAS_MASS_FRAC * float(EQUILIBRIUM_CENTER[PHASE_GAS])
+            GAS_MASS_FRAC * float(EQ_GAS_water)
         )
         cells.pressure_raw[cell_id]              = 0
         cells.energy_raw[cell_id]                = initial_energy_raw

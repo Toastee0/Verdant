@@ -25,10 +25,14 @@ See gen5_implementation_spec.md and gen5_roadmap.md §3.1 for the full rationale
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from .grid import HexGrid
+
+if TYPE_CHECKING:
+    pass
 
 
 # Composition slots — gen5 commitment (verdant_sim_design.md §"Per-cell state")
@@ -53,14 +57,88 @@ PHASE_FROM_NAME = {v: k for k, v in PHASE_NAMES.items()}
 
 # Phase-density equilibrium centers (gen5 §"Phases and density equilibrium centers").
 # Hex-arithmetic universals: 42 = 6×7, 1764 = 42², 74088 = 42³.
-# Per-element scaling factors multiply these at scenario init (gen5 §"Per-element
-# density scaling"); for M5'.0 we use the bare values as stubs.
+# These remain useful as scenario-side hex-arithmetic anchors (e.g. "Si solid
+# at equilibrium has phase_mass = 74088") but the runtime code reads per-cell
+# composition-weighted EQ via `compute_eq_phase`, not these globals.
 EQUILIBRIUM_CENTER = {
     PHASE_SOLID:  74088.0,
     PHASE_LIQUID:  1764.0,
     PHASE_GAS:       42.0,
     PHASE_PLASMA:    42.0,    # plasma shares gas's density per gen5
 }
+
+
+# Universal kg quantum: every hex unit of phase_mass represents Q_KG kg of
+# physical mass, regardless of phase channel. Anchored so that the original
+# Si-solid universal EQ (74088 hex units) corresponds to the physical mass
+# of a full Si solid cell at our 0.01-m reference cell size:
+#
+#     Q_KG = density_solid_Si × cell_volume_ref / EQUILIBRIUM_CENTER[SOLID]
+#          = 2329 kg/m³ × 1e-6 m³ / 74088
+#          ≈ 3.143e-8 kg
+#
+# Choosing Q_KG this way keeps g5_static's Si-solid scenario numerically
+# identical (phase_mass[SOLID] stays 74088); every non-Si-solid scenario gets
+# a per-cell EQ derived from real per-element densities. Phase transitions
+# and cross-phase mass transmutation transfer hex units 1:1 → kg conserves
+# trivially because 1 hex unit IS Q_KG kg, regardless of which phase channel
+# holds the unit. compute_thermal_blends in derive.py reads mass_kg as
+# sum(phase_mass) × Q_KG — independent of phase_fraction, so condensation
+# and evaporation no longer cause apparent mass jumps in T = E/(m×cp).
+Q_KG: float = 2329.0 * 1.0e-6 / 74088.0   # ≈ 3.1435e-8 kg per hex unit
+
+
+def compute_eq_phase(
+    cells: "CellArrays",
+    element_table,
+    world,
+    phase: int,
+) -> np.ndarray:
+    """Per-cell equilibrium centre for the given phase.
+
+    Returns float32[N] where each entry is `density_phase_blend × volume / Q_KG`,
+    the hex-unit count a fully-saturated cell of this composition would hold
+    in the given phase channel at equilibrium.
+
+    Composition-weighted: a cell that holds water (compound 200 = H 114 + O 141)
+    gets a blended density (44.7%·ρ_H + 55.3%·ρ_O) per phase. For pure-element
+    cells the result is just the element's per-phase density × volume / Q_KG.
+
+    Used by:
+      - scenario init (set phase_mass at equilibrium for the cell's composition)
+      - identity computation (saturation = phase_mass / EQ)
+      - pressure-deviation derivation (M5'.5+)
+    """
+    n = cells.n
+    eq_arr = np.zeros(n, dtype=np.float32)
+    if n == 0:
+        return eq_arr
+
+    volume = float(world.cell_size_m) ** 3
+    elements_by_id = {el.element_id: el for el in element_table}
+
+    for slot in range(COMPOSITION_SLOTS):
+        eids = cells.composition[:, slot, 0]
+        fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+        for eid in np.unique(eids):
+            if eid == 0:
+                continue
+            element = elements_by_id.get(int(eid))
+            if element is None:
+                continue
+            if phase == PHASE_SOLID:
+                d = element.density_solid
+            elif phase == PHASE_LIQUID:
+                d = element.density_liquid
+            elif phase == PHASE_GAS or phase == PHASE_PLASMA:
+                d = element.density_gas_stp
+            else:
+                d = 0.0
+            mask = (eids == eid)
+            if not mask.any():
+                continue
+            eq_arr[mask] += np.float32(d * volume / Q_KG) * fracs[mask]
+    return eq_arr
 
 # Petal directions are the same six as the grid neighbour ordering. Each cell
 # has one petal per direction holding persistent per-edge state.
@@ -203,10 +281,21 @@ def composition_pairs(cells: CellArrays, cell_id: int, id_to_symbol=None) -> lis
 # phases register as displacement candidates rather than stealing identity.
 # --------------------------------------------------------------------------
 
-def compute_identity(cells: CellArrays) -> tuple[np.ndarray, np.ndarray]:
+def compute_identity(
+    cells: CellArrays,
+    element_table=None,
+    world=None,
+) -> tuple[np.ndarray, np.ndarray]:
     """Per-cell (majority_phase, majority_element) computed from current
     state. Phase wins by fraction-of-equilibrium-saturation, not raw mass.
     Element wins by composition fraction within the majority-phase context.
+
+    When `element_table` and `world` are provided, saturation uses per-cell
+    equilibrium centres derived from each cell's composition × per-element
+    densities (gen5 phase_mass↔kg semantics). When None (legacy/cheap
+    callers), saturation uses the universal hex anchors 42/1764/74088 —
+    correct for Si-anchored scenarios but inaccurate for compound or
+    non-Si elements where the per-cell EQ differs from universal.
 
     Returns:
         majority_phase: uint8[N], values in {0..3, 255 for void}
@@ -220,12 +309,18 @@ def compute_identity(cells: CellArrays) -> tuple[np.ndarray, np.ndarray]:
     if n == 0:
         return majority_phase, majority_element
 
-    # Saturation per phase = phase_mass / equilibrium_center (per phase)
-    centers = np.array(
-        [EQUILIBRIUM_CENTER[p] for p in range(N_PHASES)],
-        dtype=np.float32,
-    )
-    saturation = cells.phase_mass / np.maximum(centers, 1e-12)   # (N, 4)
+    if element_table is not None and world is not None:
+        # Per-cell EQ for each phase
+        eq_per_phase = np.zeros((n, N_PHASES), dtype=np.float32)
+        for p in range(N_PHASES):
+            eq_per_phase[:, p] = compute_eq_phase(cells, element_table, world, p)
+        saturation = cells.phase_mass / np.maximum(eq_per_phase, 1e-12)
+    else:
+        centers = np.array(
+            [EQUILIBRIUM_CENTER[p] for p in range(N_PHASES)],
+            dtype=np.float32,
+        )
+        saturation = cells.phase_mass / np.maximum(centers, 1e-12)   # (N, 4)
 
     nonzero = (saturation.sum(axis=1) > 0)
     majority_phase[nonzero] = saturation[nonzero].argmax(axis=1).astype(np.uint8)

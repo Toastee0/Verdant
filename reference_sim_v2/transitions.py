@@ -36,6 +36,7 @@ from .cell import (
     PHASE_LIQUID,
     PHASE_PLASMA,
     PHASE_SOLID,
+    Q_KG,
 )
 
 if TYPE_CHECKING:
@@ -153,7 +154,6 @@ def apply_phase_transitions(
     density_arr = derived.density
 
     volume = float(world.cell_size_m) ** 3
-    eq_solid = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
 
     elements_by_id = {el.element_id: el for el in element_table}
 
@@ -177,11 +177,11 @@ def apply_phase_transitions(
         m_total_kg = float(density_arr[cid]) * volume
         if m_total_kg <= 0 or cp_blend <= 0:
             continue
-        # kg_per_unit — same approximation as elsewhere; per-phase density
-        # refinement is M6'.x calibration work.
-        kg_per_unit = float(element.density_solid) * volume / max(eq_solid, 1e-12)
-        if kg_per_unit <= 0:
-            continue
+        # kg_per_unit is universal: 1 hex unit of phase_mass = Q_KG kg
+        # regardless of which phase channel holds it. This is the gen5
+        # phase_mass↔kg semantics — transitions transfer hex units 1:1
+        # and kg conserves trivially.
+        kg_per_unit = Q_KG
 
         any_transitioned = False
         for current_phase in (PHASE_SOLID, PHASE_LIQUID, PHASE_GAS, PHASE_PLASMA):

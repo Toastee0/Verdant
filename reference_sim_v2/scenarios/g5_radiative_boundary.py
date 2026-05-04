@@ -36,6 +36,7 @@ from ..cell import (
     EQUILIBRIUM_CENTER,
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_LIQUID,
+    Q_KG,
     set_single_element,
 )
 from ..encoding import encode_energy_J_scalar
@@ -64,12 +65,13 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     mass_l = si.density_liquid * volume
     cp_l = si.specific_heat_liquid
     initial_energy_raw = encode_energy_J_scalar(mass_l * cp_l * INITIAL_T_K)
+    EQ_LIQUID_Si = si.density_liquid * volume / Q_KG
 
     cells = CellArrays.empty(grid)
     for cell_id, coord in enumerate(grid.coords):
         set_single_element(cells, cell_id, element_id=si.element_id, fraction=255)
         cells.phase_fraction[cell_id, PHASE_LIQUID] = 1.0
-        cells.phase_mass[cell_id, PHASE_LIQUID]     = float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
+        cells.phase_mass[cell_id, PHASE_LIQUID]     = float(EQ_LIQUID_Si)
         cells.energy_raw[cell_id]                   = initial_energy_raw
         cells.mohs_level[cell_id]                   = 0
         # Outer ring → RADIATES

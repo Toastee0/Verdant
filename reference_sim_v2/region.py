@@ -45,6 +45,7 @@ from .cell import (
     PHASE_LIQUID,
     PHASE_PLASMA,
     PHASE_SOLID,
+    Q_KG,
 )
 from .flux import DST_PHASE_SENTINEL, FLAG_NO_FLOW, FluxBuffer
 from .transitions import _latent_heat_per_kg
@@ -195,7 +196,6 @@ def _apply_sorting_ruleset(
 
     elements_by_id = {el.element_id: el for el in element_table}
     volume = float(world.cell_size_m) ** 3
-    eq_solid = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
 
     # Precompute per-element per-cell phase decision (shape: dict[eid] -> uint8[N]).
     # Unique element ids that appear in any composition slot.
@@ -247,11 +247,9 @@ def _apply_sorting_ruleset(
             element = elements_by_id.get(eid_int)
             if element is None:
                 continue
-            # kg per phase-mass-unit for this element. Per gen5 hex-arithmetic
-            # we use density_solid/eq_solid as the canonical unit conversion
-            # (gen5 §"Phases and density equilibrium centers"). Per-phase
-            # density refinement is M6'.x calibration work.
-            kg_per_unit = float(element.density_solid * volume / max(eq_solid, 1e-12))
+            # Universal kg-per-hex-unit — gen5 phase_mass↔kg semantics:
+            # 1 hex unit of phase_mass = Q_KG kg regardless of phase channel.
+            kg_per_unit = Q_KG
 
             slot_mask_A = (eids_A == eid_int)              # bool[N]
             if not slot_mask_A.any():
@@ -355,23 +353,15 @@ def run_energy_kernels(
     # This is sound for Tier 0 single-element cells; multi-element mixing
     # uses the cell-level blend, which is correct only at uniform
     # composition (good for Tier 0/1).
-    volume = float(world.cell_size_m) ** 3
     # Total per-direction mass flux (sum over slots and phases); this
-    # represents physical mass leaving in phase-mass units. Convert via
-    # the cell's density blend × volume × (1/EQ_CENTER) — we approximate
-    # by taking the SOLID equilibrium center because Tier 0/1 source
-    # cells are typically solid-or-liquid; gen5's per-element density
-    # scaling lands at M6'+ when this matters.
-    from .cell import EQUILIBRIUM_CENTER, PHASE_SOLID
-    eq_center = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
-    kg_per_unit = (derived.density * volume / max(eq_center, 1e-12)).astype(np.float32)
-    # Per-direction mass leaving the cell: sum over (slot, phase) of POSITIVE
-    # contributions only (negative entries indicate this cell received,
-    # not sent — those are recipients of others' bids).
+    # represents physical mass leaving in phase-mass units. Under gen5
+    # phase_mass↔kg semantics (M6'.x), 1 hex unit = Q_KG kg universally,
+    # regardless of phase channel. So the kg-per-unit conversion is
+    # simply Q_KG — no element- or phase-dependent factor needed.
     mass_outgoing_per_direction = np.maximum(flux.mass, 0.0).sum(axis=(2, 3))  # (N, 6)
     convect_J = (
         mass_outgoing_per_direction
-        * kg_per_unit[:, None]
+        * np.float32(Q_KG)
         * derived.cp[:, None]
         * T[:, None]
     )

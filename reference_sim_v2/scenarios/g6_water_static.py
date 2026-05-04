@@ -30,6 +30,7 @@ from ..cell import (
     EQUILIBRIUM_CENTER,
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_LIQUID,
+    Q_KG,
 )
 from ..compounds import set_compound
 from ..encoding import encode_energy_J_scalar
@@ -80,13 +81,14 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     mass = density_l * volume
     energy_J = mass * cp_l * INITIAL_T_K
     initial_energy_raw = encode_energy_J_scalar(energy_J)
+    EQ_LIQUID_water = density_l * volume / Q_KG
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         # Water composition (compound macro 200 expands to H + O)
         set_compound(cells, cell_id, compound_id=200, element_table=table)
         cells.phase_fraction[cell_id, PHASE_LIQUID] = 1.0
-        cells.phase_mass[cell_id, PHASE_LIQUID]     = float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
+        cells.phase_mass[cell_id, PHASE_LIQUID]     = float(EQ_LIQUID_water)
         cells.pressure_raw[cell_id]                 = 0
         cells.energy_raw[cell_id]                   = initial_energy_raw
         cells.mohs_level[cell_id]                   = 0   # liquid — no solid component

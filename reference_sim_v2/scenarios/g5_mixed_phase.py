@@ -32,6 +32,7 @@ from ..cell import (
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_LIQUID,
     PHASE_SOLID,
+    Q_KG,
     set_single_element,
 )
 from ..encoding import encode_energy_J_scalar
@@ -64,13 +65,19 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     initial_energy_J = 2000.0
     initial_energy_raw = encode_energy_J_scalar(initial_energy_J)
 
+    # Per-cell EQ for Si under gen5 phase_mass↔kg semantics:
+    cell_size_m_default = 0.01    # matches WorldConfig below
+    volume_default = cell_size_m_default ** 3
+    EQ_SOLID_Si  = si.density_solid  * volume_default / Q_KG
+    EQ_LIQUID_Si = si.density_liquid * volume_default / Q_KG
+
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         set_single_element(cells, cell_id, element_id=si.element_id, fraction=255)
         cells.phase_fraction[cell_id, PHASE_SOLID]  = 0.5
         cells.phase_fraction[cell_id, PHASE_LIQUID] = 0.5
-        cells.phase_mass[cell_id, PHASE_SOLID]      = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_SOLID])
-        cells.phase_mass[cell_id, PHASE_LIQUID]     = 0.5 * float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
+        cells.phase_mass[cell_id, PHASE_SOLID]      = 0.5 * float(EQ_SOLID_Si)
+        cells.phase_mass[cell_id, PHASE_LIQUID]     = 0.5 * float(EQ_LIQUID_Si)
         cells.energy_raw[cell_id]                   = initial_energy_raw
         # Solid is the tie-break majority → mohs_level = 6 (Si solid)
         cells.mohs_level[cell_id]                   = 6

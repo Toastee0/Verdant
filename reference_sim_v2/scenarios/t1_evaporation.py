@@ -53,6 +53,7 @@ from ..cell import (
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_GAS,
     PHASE_LIQUID,
+    Q_KG,
 )
 from ..compounds import set_compound
 from ..encoding import encode_energy_J_scalar
@@ -99,14 +100,14 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     energy_l_J = mass_l_kg * cp_l * CENTER_T_K
     center_energy_raw = encode_energy_J_scalar(energy_l_J)
 
-    # Neighbours: 100% gas (phase_fraction-wise) at low gas mass.
-    # Under log-encoded energy_raw the per-cell resolution is sub-K even
-    # for these tiny gas-cell masses, so we can target NEIGHBOR_T_K
-    # directly without the hand-tuned-quantum workaround the linear
-    # encoding required.
+    # Neighbours: 100% gas (phase_fraction-wise) at NEIGHBOR_GAS_MASS_FRAC
+    # of full-equilibrium gas mass. Under gen5 phase_mass↔kg semantics
+    # (M6'.x), the cell's actual mass is the saturation fraction × full
+    # equilibrium mass — so energy must be set against THIS mass, not the
+    # full-equilibrium mass.
     density_g = f_h * h.density_gas_stp + f_o * o.density_gas_stp
     cp_g      = f_h * h.specific_heat_gas + f_o * o.specific_heat_gas
-    mass_g_kg = density_g * volume
+    mass_g_kg = NEIGHBOR_GAS_MASS_FRAC * density_g * volume
     energy_g_J = mass_g_kg * cp_g * NEIGHBOR_T_K
     neighbor_energy_raw = encode_energy_J_scalar(energy_g_J)
 
@@ -118,9 +119,15 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
             if grid.neighbors[cell_id][d] == -1:
                 cells.petal_topology[cell_id, d] |= PETAL_TOPO_IS_GRID_EDGE
 
+    # Per-cell equilibrium hex-unit counts derived from compound-blended
+    # densities (gen5 phase_mass↔kg semantics, M6'.x). 1 hex unit = Q_KG kg
+    # universally, so EQ_phase_water = density_phase_water_blend × volume / Q_KG.
+    EQ_LIQUID_water = density_l * volume / Q_KG
+    EQ_GAS_water    = density_g * volume / Q_KG
+
     # Center cell — liquid water, elevated pressure
     cells.phase_fraction[0, PHASE_LIQUID] = 1.0
-    cells.phase_mass[0, PHASE_LIQUID]     = float(EQUILIBRIUM_CENTER[PHASE_LIQUID])
+    cells.phase_mass[0, PHASE_LIQUID]     = float(EQ_LIQUID_water)
     cells.pressure_raw[0]                 = ELEVATED_PRESSURE
     cells.energy_raw[0]                   = center_energy_raw
 
@@ -128,7 +135,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     for cell_id in range(1, grid.cell_count):
         cells.phase_fraction[cell_id, PHASE_GAS] = 1.0
         cells.phase_mass[cell_id, PHASE_GAS]     = (
-            NEIGHBOR_GAS_MASS_FRAC * float(EQUILIBRIUM_CENTER[PHASE_GAS])
+            NEIGHBOR_GAS_MASS_FRAC * float(EQ_GAS_water)
         )
         cells.pressure_raw[cell_id]              = 0
         cells.energy_raw[cell_id]                = neighbor_energy_raw

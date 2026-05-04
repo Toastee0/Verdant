@@ -65,10 +65,26 @@ can resume without re-deriving the architecture decisions.
     Q3 asymmetry rule: condensation edges (dst<src) defer to same-phase
     integration; the sorting-ruleset extension stays inert; latent heat
     lands via `apply_phase_transitions` in-place rather than
-    `flux.energy_self`. T crashes on the post-transition step because
-    `compute_thermal_blends` mass formula uses phase_fraction × density
-    (gas→liquid 800× density jump shows up as cell-mass jump → T = E/m
-    drops). Documented as the next M6'.x calibration.
+    `flux.energy_self`.
+  - **M6'.x phase_mass↔kg semantics.** `cell.Q_KG` (~3.143×10⁻⁸ kg per
+    hex unit, anchored so Si solid keeps EQ=74088) is the universal
+    kg-per-hex-unit conversion. Per-cell EQ for any phase is
+    `density_phase_blend × volume / Q_KG` via `compute_eq_phase`.
+    `compute_thermal_blends` derives mass from `Σ phase_mass × Q_KG`
+    instead of `phase_fraction × density`, so phase transitions and
+    cross-phase routing conserve cell mass exactly — T no longer
+    crashes when phase fractions shift. `compute_identity` takes
+    optional `(element_table, world)` to use per-cell EQ for
+    saturation. Transitions and cross-phase latent heat use
+    `kg_per_unit = Q_KG` universally. All scenarios updated:
+    Si-solid scenarios are numerically unchanged (Q_KG anchor preserves
+    them), Si-liquid/Si-mixed/water scenarios now initialise phase_mass
+    at per-cell EQ values (e.g., `EQ_LIQUID_water = density_water_blend
+    × volume / Q_KG ≈ 21080`). t1_condensation now shows latent heat
+    raising T from 350 K toward 374 K (settling at the boil boundary)
+    instead of crashing to 7 K. t1_ice_melt now starts at the intended
+    290 K and oscillates around 273.16 K (water-blend cp ratio
+    artefact, awaits compound calibration).
 
 **Validation:** `python -m checker.regression_v2` → 15/15 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
@@ -343,18 +359,6 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 ## Open M6'.x work after Tier 1 scenarios
 
-- **M6'.x phase_mass ↔ kg semantics.** `compute_thermal_blends` uses
-  phase_fraction × density to derive cell mass; this works at equilibrium
-  but jumps when phase_fraction shifts (e.g., during in-place
-  condensation a tiny new liquid fraction adds 800× kg-per-fraction →
-  computed mass jumps → T = E/m crashes). Two candidate fixes:
-  (a) phase_mass-based mass blending (`mass_kg = Σ phase_mass[p] ×
-  density[p] × volume / EQ[p]`) — still has a smaller jump because
-  liquid hex-per-kg differs from gas's; (b) renormalise phase_mass so
-  1 hex unit is universal kg regardless of phase channel, with
-  EQ_PHASE recomputed from per-element densities. Both touch every
-  scenario's init energy. Pre-requisite for stable post-condensation
-  T behaviour and for raising the M5'.5c transition cap from 1/16 to 1.0.
 - **M6'.x calibration:** compound-aware phase resolution (currently both
   H and O point to H2O.csv; cleaner approach is a per-compound table).
 - **M6'.x petal stress flux integration** (M5'.6b') — region kernel
