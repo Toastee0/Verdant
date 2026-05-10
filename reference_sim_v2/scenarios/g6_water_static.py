@@ -32,7 +32,7 @@ from ..cell import (
     PHASE_LIQUID,
     Q_KG,
 )
-from ..compounds import set_compound
+from ..compounds import compound_cell_energy_J, compound_eq_phase_mass, set_compound
 from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagram, load_phase_diagrams_for_table
@@ -71,17 +71,16 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     cell_size_m = 0.01
     volume = cell_size_m ** 3
 
-    # Per-cell physical mass and c_p for liquid water at composition
-    # (H, 114), (O, 141) summed by fraction-weighted contributions:
-    h = table["H"]; o = table["O"]
-    f_h = 114 / 255.0
-    f_o = 141 / 255.0
-    density_l = f_h * h.density_liquid + f_o * o.density_liquid     # kg/m³
-    cp_l      = f_h * h.specific_heat_liquid + f_o * o.specific_heat_liquid  # J/(kg·K)
-    mass = density_l * volume
-    energy_J = mass * cp_l * INITIAL_T_K
+    world_proxy = type("W", (), {"cell_size_m": cell_size_m})()
+    EQ_LIQUID_water = compound_eq_phase_mass(200, PHASE_LIQUID, world_proxy)
+    energy_J = compound_cell_energy_J(
+        phase_mass_solid=0.0,
+        phase_mass_liquid=EQ_LIQUID_water,
+        phase_mass_gas=0.0,
+        T_K=INITIAL_T_K,
+        compound_id=200,
+    )
     initial_energy_raw = encode_energy_J_scalar(energy_J)
-    EQ_LIQUID_water = density_l * volume / Q_KG
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):

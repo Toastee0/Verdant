@@ -55,7 +55,7 @@ from ..cell import (
     PHASE_LIQUID,
     Q_KG,
 )
-from ..compounds import set_compound
+from ..compounds import compound_cell_energy_J, compound_eq_phase_mass, set_compound
 from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagram
@@ -85,31 +85,35 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         table["Si"].element_id: si,
     }
 
-    h = table["H"]; o = table["O"]
-    f_h = 114 / 255.0
-    f_o = 141 / 255.0
-
     cell_size_m = 0.01
-    volume = cell_size_m ** 3
+    world_proxy = type("W", (), {"cell_size_m": cell_size_m})()
 
-    # ---- Energy levels per cell type --------------------------------------
-    # Center: 100% liquid, T = CENTER_T_K
-    density_l = f_h * h.density_liquid + f_o * o.density_liquid
-    cp_l      = f_h * h.specific_heat_liquid + f_o * o.specific_heat_liquid
-    mass_l_kg = density_l * volume
-    energy_l_J = mass_l_kg * cp_l * CENTER_T_K
-    center_energy_raw = encode_energy_J_scalar(energy_l_J)
+    # Compound-calibrated EQ values for water (compound_id=200).
+    EQ_LIQUID_water = compound_eq_phase_mass(200, PHASE_LIQUID, world_proxy)
+    EQ_GAS_water    = compound_eq_phase_mass(200, PHASE_GAS,    world_proxy)
 
-    # Neighbours: 100% gas (phase_fraction-wise) at NEIGHBOR_GAS_MASS_FRAC
-    # of full-equilibrium gas mass. Under gen5 phase_mass↔kg semantics
-    # (M6'.x), the cell's actual mass is the saturation fraction × full
-    # equilibrium mass — so energy must be set against THIS mass, not the
-    # full-equilibrium mass.
-    density_g = f_h * h.density_gas_stp + f_o * o.density_gas_stp
-    cp_g      = f_h * h.specific_heat_gas + f_o * o.specific_heat_gas
-    mass_g_kg = NEIGHBOR_GAS_MASS_FRAC * density_g * volume
-    energy_g_J = mass_g_kg * cp_g * NEIGHBOR_T_K
-    neighbor_energy_raw = encode_energy_J_scalar(energy_g_J)
+    # Centre: full liquid water at CENTER_T_K
+    center_energy_raw = encode_energy_J_scalar(
+        compound_cell_energy_J(
+            phase_mass_solid=0.0,
+            phase_mass_liquid=EQ_LIQUID_water,
+            phase_mass_gas=0.0,
+            T_K=CENTER_T_K,
+            compound_id=200,
+        )
+    )
+
+    # Neighbours: 100% gas-volume cell at NEIGHBOR_GAS_MASS_FRAC saturation
+    pm_neighbor_gas = NEIGHBOR_GAS_MASS_FRAC * EQ_GAS_water
+    neighbor_energy_raw = encode_energy_J_scalar(
+        compound_cell_energy_J(
+            phase_mass_solid=0.0,
+            phase_mass_liquid=0.0,
+            phase_mass_gas=pm_neighbor_gas,
+            T_K=NEIGHBOR_T_K,
+            compound_id=200,
+        )
+    )
 
     # ---- Build the cells -------------------------------------------------
     cells = CellArrays.empty(grid)
@@ -119,13 +123,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
             if grid.neighbors[cell_id][d] == -1:
                 cells.petal_topology[cell_id, d] |= PETAL_TOPO_IS_GRID_EDGE
 
-    # Per-cell equilibrium hex-unit counts derived from compound-blended
-    # densities (gen5 phase_mass↔kg semantics, M6'.x). 1 hex unit = Q_KG kg
-    # universally, so EQ_phase_water = density_phase_water_blend × volume / Q_KG.
-    EQ_LIQUID_water = density_l * volume / Q_KG
-    EQ_GAS_water    = density_g * volume / Q_KG
-
-    # Center cell — liquid water, elevated pressure
+    # Centre — full liquid water, elevated pressure
     cells.phase_fraction[0, PHASE_LIQUID] = 1.0
     cells.phase_mass[0, PHASE_LIQUID]     = float(EQ_LIQUID_water)
     cells.pressure_raw[0]                 = ELEVATED_PRESSURE
@@ -134,9 +132,7 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     # Neighbour cells — hot under-saturated gas water
     for cell_id in range(1, grid.cell_count):
         cells.phase_fraction[cell_id, PHASE_GAS] = 1.0
-        cells.phase_mass[cell_id, PHASE_GAS]     = (
-            NEIGHBOR_GAS_MASS_FRAC * float(EQ_GAS_water)
-        )
+        cells.phase_mass[cell_id, PHASE_GAS]     = float(pm_neighbor_gas)
         cells.pressure_raw[cell_id]              = 0
         cells.energy_raw[cell_id]                = neighbor_energy_raw
 

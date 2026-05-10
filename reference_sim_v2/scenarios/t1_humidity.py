@@ -40,7 +40,7 @@ from ..cell import (
     PHASE_GAS,
     Q_KG,
 )
-from ..compounds import set_compound
+from ..compounds import compound_cell_energy_J, compound_eq_phase_mass, set_compound
 from ..encoding import encode_energy_J_scalar
 from ..grid import build_hex_disc
 from ..phase_diagram import load_phase_diagram
@@ -67,30 +67,25 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         table["Si"].element_id: si,
     }
 
-    h = table["H"]; o = table["O"]
-    f_h = 114 / 255.0
-    f_o = 141 / 255.0
     cell_size_m = 0.01
-    volume = cell_size_m ** 3
-
-    # Per-cell physical mass + cp for humid (gas-phase) water blend.
-    # Under gen5 phase_mass↔kg semantics, EQ_GAS_water = density_blend ×
-    # volume / Q_KG, and the cell's actual mass at GAS_MASS_FRAC saturation
-    # is GAS_MASS_FRAC × density × volume.
-    density_g = f_h * h.density_gas_stp + f_o * o.density_gas_stp
-    cp_g      = f_h * h.specific_heat_gas + f_o * o.specific_heat_gas
-    EQ_GAS_water = density_g * volume / Q_KG
-    mass_g_kg = GAS_MASS_FRAC * density_g * volume
-    energy_J = mass_g_kg * cp_g * HUMID_T_K
-    initial_energy_raw = encode_energy_J_scalar(energy_J)
+    world_proxy = type("W", (), {"cell_size_m": cell_size_m})()
+    EQ_GAS_water = compound_eq_phase_mass(200, PHASE_GAS, world_proxy)
+    pm_gas = GAS_MASS_FRAC * EQ_GAS_water
+    initial_energy_raw = encode_energy_J_scalar(
+        compound_cell_energy_J(
+            phase_mass_solid=0.0,
+            phase_mass_liquid=0.0,
+            phase_mass_gas=pm_gas,
+            T_K=HUMID_T_K,
+            compound_id=200,
+        )
+    )
 
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         set_compound(cells, cell_id, compound_id=200, element_table=table)
         cells.phase_fraction[cell_id, PHASE_GAS] = 1.0
-        cells.phase_mass[cell_id, PHASE_GAS]     = (
-            GAS_MASS_FRAC * float(EQ_GAS_water)
-        )
+        cells.phase_mass[cell_id, PHASE_GAS]     = float(pm_gas)
         cells.pressure_raw[cell_id]              = 0
         cells.energy_raw[cell_id]                = initial_energy_raw
         cells.mohs_level[cell_id]                = 0      # no solid component

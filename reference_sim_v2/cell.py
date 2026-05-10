@@ -96,18 +96,16 @@ def compute_eq_phase(
 ) -> np.ndarray:
     """Per-cell equilibrium centre for the given phase.
 
-    Returns float32[N] where each entry is `density_phase_blend × volume / Q_KG`,
+    Returns float32[N] where each entry is `density_phase × volume / Q_KG`,
     the hex-unit count a fully-saturated cell of this composition would hold
     in the given phase channel at equilibrium.
 
-    Composition-weighted: a cell that holds water (compound 200 = H 114 + O 141)
-    gets a blended density (44.7%·ρ_H + 55.3%·ρ_O) per phase. For pure-element
-    cells the result is just the element's per-phase density × volume / Q_KG.
-
-    Used by:
-      - scenario init (set phase_mass at equilibrium for the cell's composition)
-      - identity computation (saturation = phase_mass / EQ)
-      - pressure-deviation derivation (M5'.5+)
+    For cells tagged with a compound id (set via `set_compound`), the
+    per-phase density comes from the compound's calibrated `props` —
+    matching real-molecule behaviour rather than the atomic blend
+    (e.g., real H₂O liquid 1000 kg/m³ vs the 47%-H + 53%-O blend's
+    662 kg/m³). Untagged cells fall back to composition-weighted
+    per-element densities.
     """
     n = cells.n
     eq_arr = np.zeros(n, dtype=np.float32)
@@ -115,29 +113,55 @@ def compute_eq_phase(
         return eq_arr
 
     volume = float(world.cell_size_m) ** 3
-    elements_by_id = {el.element_id: el for el in element_table}
 
-    for slot in range(COMPOSITION_SLOTS):
-        eids = cells.composition[:, slot, 0]
-        fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
-        for eid in np.unique(eids):
-            if eid == 0:
-                continue
-            element = elements_by_id.get(int(eid))
-            if element is None:
-                continue
-            if phase == PHASE_SOLID:
-                d = element.density_solid
-            elif phase == PHASE_LIQUID:
-                d = element.density_liquid
-            elif phase == PHASE_GAS or phase == PHASE_PLASMA:
-                d = element.density_gas_stp
-            else:
-                d = 0.0
-            mask = (eids == eid)
-            if not mask.any():
-                continue
-            eq_arr[mask] += np.float32(d * volume / Q_KG) * fracs[mask]
+    # Lazy import to avoid circular imports (compounds.py imports from cell.py).
+    from .compounds import get_compound_properties
+
+    compound_id = cells.compound_id
+    untagged = (compound_id == 0)
+
+    # Compound-tagged cells: use compound density for the phase
+    for cid_val in np.unique(compound_id):
+        if cid_val == 0:
+            continue
+        props = get_compound_properties(int(cid_val))
+        if props is None:
+            continue
+        if phase == PHASE_SOLID:
+            d = props.density_solid
+        elif phase == PHASE_LIQUID:
+            d = props.density_liquid
+        elif phase == PHASE_GAS or phase == PHASE_PLASMA:
+            d = props.density_gas
+        else:
+            d = 0.0
+        mask = (compound_id == cid_val)
+        eq_arr[mask] = np.float32(d * volume / Q_KG)
+
+    # Untagged cells: composition-weighted per-element densities
+    if untagged.any():
+        elements_by_id = {el.element_id: el for el in element_table}
+        for slot in range(COMPOSITION_SLOTS):
+            eids = cells.composition[:, slot, 0]
+            fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+            for eid in np.unique(eids):
+                if eid == 0:
+                    continue
+                element = elements_by_id.get(int(eid))
+                if element is None:
+                    continue
+                if phase == PHASE_SOLID:
+                    d = element.density_solid
+                elif phase == PHASE_LIQUID:
+                    d = element.density_liquid
+                elif phase == PHASE_GAS or phase == PHASE_PLASMA:
+                    d = element.density_gas_stp
+                else:
+                    d = 0.0
+                mask = (eids == eid) & untagged
+                if not mask.any():
+                    continue
+                eq_arr[mask] += np.float32(d * volume / Q_KG) * fracs[mask]
     return eq_arr
 
 # Petal directions are the same six as the grid neighbour ordering. Each cell
@@ -196,6 +220,14 @@ class CellArrays:
     # u8 cycles_above_threshold counter.
     sustained_overpressure: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.float32))
 
+    # Compound id (M6'.x calibration). When non-zero, indicates the cell was
+    # initialised via `set_compound` and should use the compound's calibrated
+    # per-phase density / specific heat / latent heats instead of an atomic
+    # blend over composition slots. Compound-aware paths exist in derive
+    # (compute_thermal_blends, compute_eq_phase) and transitions
+    # (_latent_heat_per_kg). compound_id == 0 = atomic-blend behaviour.
+    compound_id: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.uint8))
+
     # ---- petal data (persistent per-cell-per-direction) ----------------
 
     petal_stress: np.ndarray   = field(default_factory=lambda: np.zeros((0, N_PETAL_DIRS), dtype=np.float32))
@@ -224,6 +256,7 @@ class CellArrays:
             energy_raw=np.zeros(n, dtype=np.uint16),
             mohs_level=np.zeros(n, dtype=np.uint8),
             sustained_overpressure=np.zeros(n, dtype=np.float32),
+            compound_id=np.zeros(n, dtype=np.uint8),
             petal_stress=np.zeros((n, N_PETAL_DIRS), dtype=np.float32),
             petal_velocity=np.zeros((n, N_PETAL_DIRS, 2), dtype=np.float32),
             petal_topology=np.zeros((n, N_PETAL_DIRS), dtype=np.uint8),

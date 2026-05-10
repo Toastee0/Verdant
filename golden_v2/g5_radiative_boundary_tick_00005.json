@@ -1,5 +1,5 @@
 {
-  "run_id": "g5_radiative_boundary_20260504T233838",
+  "run_id": "g5_radiative_boundary_20260510T042434",
   "scenario": "g5_radiative_boundary",
   "tick": 5,
   "cycle": 5,
@@ -11900,13 +11900,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 2.055699937045574,
-    "sub_pass_1_ms": 1.4340999769046903,
-    "sub_pass_2_ms": 1.3659000396728516,
-    "sub_pass_3_ms": 1.3763000024482608,
-    "sub_pass_4_ms": 1.4882999239489436,
-    "sub_pass_5_ms": 1.3674000510945916,
-    "sub_pass_6_ms": 1.366600045002997,
-    "cycle_total_ms": 10.459499899297953
+    "sub_pass_0_ms": 2.3574999067932367,
+    "sub_pass_1_ms": 1.705799950286746,
+    "sub_pass_2_ms": 1.71849993057549,
+    "sub_pass_3_ms": 1.9414001144468784,
+    "sub_pass_4_ms": 1.742199994623661,
+    "sub_pass_5_ms": 2.3123999126255512,
+    "sub_pass_6_ms": 1.9555999897420406,
+    "cycle_total_ms": 13.739400077611208
   }
 }

@@ -51,16 +51,16 @@ FLAG_FRACTURED   = 1 << 5
 FLAG_RATCHETED   = 1 << 6
 
 
-# Per-cycle safety cap on the energy-balance Δm. With properly-calibrated
-# materials (real cp ratios of ~2× across phase boundaries), the analytical
-# Δm derived from constant-cp_blend assumption lands close enough to the
-# boundary that a full transition is fine. Our Tier 1 (H,114)+(O,141) water
-# compound has cp_liquid/cp_solid ≈ 4.7× — far above real water's ~2×.
-# Under that mis-calibration the constant-cp assumption breaks down at full
-# conversion (cp jumps so much that T overshoots T_boundary by hundreds
-# of kelvin), so we cap Δm to a small fraction of avail per cycle. Once
-# M6'.x compound calibration lands, this cap can rise back to 1.0.
-MAX_TRANSITION_FRACTION_PER_CYCLE: float = 0.0625    # 1/16, matches old rate-limit cadence
+# Per-cycle safety cap on the energy-balance Δm. Real water has a cp ratio
+# of 2× across the solid/liquid boundary (4186/2090) — modest, so compound
+# calibration brings us much closer to a stable transition formula than
+# the atomic-blend cp_l/cp_s ≈ 4.7× did. But the constant-cp linearisation
+# in the Δm formula still overshoots when the cell isn't tracking enthalpy
+# (we use simplified T = E/(m·cp) without latent-energy bookkeeping). So a
+# cap stays in place; with compound props 1/8 per cycle is stable for the
+# cp-2× water scenarios, twice the 1/16 cap that was needed under atomic
+# blends. M7'+ enthalpy-aware energy field would lift this fully.
+MAX_TRANSITION_FRACTION_PER_CYCLE: float = 0.125
 
 
 # Ratchet constants — first-order tunable. Real calibration awaits M5'.7+.
@@ -79,19 +79,24 @@ MOHS_MAX = 10
 def _latent_heat_per_kg(
     current_phase: int,
     target_phase: int,
-    element,
+    element_or_props,
 ) -> float:
     """Joules absorbed (negative) or released (positive) per kg converted
     from current_phase to target_phase. Per gen5 §"Phase transitions":
     melting/boiling absorb (energy is consumed by breaking bonds);
     freezing/condensing release.
 
+    `element_or_props` is either an element row (with `.L_fusion` /
+    `.L_vaporization`) or a `CompoundProperties` record (same attributes).
+    Compound calibration takes precedence when the cell carries a
+    compound_id — see `apply_phase_transitions` for the dispatch.
+
     Tier 0/1 handles the common four directions (solid↔liquid,
     liquid↔gas). Sublimation, deposition, ionisation latent heats are
     deferred to M6'+ when scenarios actually exercise them.
     """
-    L_f = float(element.L_fusion)
-    L_v = float(element.L_vaporization)
+    L_f = float(element_or_props.L_fusion)
+    L_v = float(element_or_props.L_vaporization)
     if   current_phase == PHASE_SOLID  and target_phase == PHASE_LIQUID: return -L_f
     elif current_phase == PHASE_LIQUID and target_phase == PHASE_SOLID:  return +L_f
     elif current_phase == PHASE_LIQUID and target_phase == PHASE_GAS:    return -L_v
@@ -157,6 +162,9 @@ def apply_phase_transitions(
 
     elements_by_id = {el.element_id: el for el in element_table}
 
+    # Lazy import to avoid circular reference (compounds imports from cell).
+    from .compounds import get_compound_properties
+
     for cid in range(n):
         if fixed[cid]:
             continue
@@ -169,6 +177,13 @@ def apply_phase_transitions(
         element = elements_by_id.get(eid)
         if element is None:
             continue
+
+        # Compound calibration: when the cell carries a compound_id, use
+        # the compound's properties for latent heat. Atomic blends (e.g.
+        # 47%-H + 53%-O) misrepresent real H₂O's L_fusion/L_vap by ~10×.
+        compound_id_val = int(cells.compound_id[cid])
+        compound_props = get_compound_properties(compound_id_val) if compound_id_val else None
+        latent_source = compound_props if compound_props is not None else element
 
         T_now = float(T_arr[cid])
         target_phase, target_mohs = diagram.lookup(T_now, float(P_arr[cid]))
@@ -192,7 +207,7 @@ def apply_phase_transitions(
             if avail_mass <= 0 and avail_frac <= 0:
                 continue
 
-            L_J_per_kg = _latent_heat_per_kg(current_phase, target_phase, element)
+            L_J_per_kg = _latent_heat_per_kg(current_phase, target_phase, latent_source)
             if L_J_per_kg == 0.0:
                 continue
 

@@ -1,5 +1,5 @@
 {
-  "run_id": "t1_condensation_20260504T233840",
+  "run_id": "t1_condensation_20260510T042435",
   "scenario": "t1_condensation",
   "tick": 5,
   "cycle": 5,
@@ -37,18 +37,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -65,7 +65,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -171,18 +171,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -199,7 +199,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -305,18 +305,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -333,7 +333,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -439,18 +439,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -467,7 +467,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -573,18 +573,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -601,7 +601,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -707,18 +707,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -735,7 +735,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -841,18 +841,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -869,7 +869,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -975,18 +975,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1003,7 +1003,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1109,18 +1109,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1137,7 +1137,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1243,18 +1243,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1271,7 +1271,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1377,18 +1377,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1405,7 +1405,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1511,18 +1511,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1539,7 +1539,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1645,18 +1645,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1673,7 +1673,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1779,18 +1779,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1807,7 +1807,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -1913,18 +1913,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -1941,7 +1941,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2047,18 +2047,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2075,7 +2075,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2181,18 +2181,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2209,7 +2209,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2315,18 +2315,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2343,7 +2343,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2449,18 +2449,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2477,7 +2477,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2583,18 +2583,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2611,7 +2611,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2717,18 +2717,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2745,7 +2745,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2851,18 +2851,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -2879,7 +2879,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -2985,18 +2985,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3013,7 +3013,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3119,18 +3119,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3147,7 +3147,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3253,18 +3253,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3281,7 +3281,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3387,18 +3387,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3415,7 +3415,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3521,18 +3521,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3549,7 +3549,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3655,18 +3655,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3683,7 +3683,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3789,18 +3789,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3817,7 +3817,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -3923,18 +3923,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -3951,7 +3951,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4057,18 +4057,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4085,7 +4085,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4191,18 +4191,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4219,7 +4219,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4325,18 +4325,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4353,7 +4353,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4459,18 +4459,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4487,7 +4487,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4593,18 +4593,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4621,7 +4621,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4727,18 +4727,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4755,7 +4755,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4861,18 +4861,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -4889,7 +4889,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -4995,18 +4995,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5023,7 +5023,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5129,18 +5129,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5157,7 +5157,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5263,18 +5263,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5291,7 +5291,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5397,18 +5397,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5425,7 +5425,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5531,18 +5531,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5559,7 +5559,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5665,18 +5665,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5693,7 +5693,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5799,18 +5799,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5827,7 +5827,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -5933,18 +5933,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -5961,7 +5961,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6067,18 +6067,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6095,7 +6095,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6201,18 +6201,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6229,7 +6229,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6335,18 +6335,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6363,7 +6363,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6469,18 +6469,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6497,7 +6497,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6603,18 +6603,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6631,7 +6631,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6737,18 +6737,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6765,7 +6765,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -6871,18 +6871,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -6899,7 +6899,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7005,18 +7005,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7033,7 +7033,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7139,18 +7139,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7167,7 +7167,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7273,18 +7273,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7301,7 +7301,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7407,18 +7407,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7435,7 +7435,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7541,18 +7541,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7569,7 +7569,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7675,18 +7675,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7703,7 +7703,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7809,18 +7809,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7837,7 +7837,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -7943,18 +7943,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -7971,7 +7971,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8077,18 +8077,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8105,7 +8105,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8211,18 +8211,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8239,7 +8239,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8345,18 +8345,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8373,7 +8373,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8479,18 +8479,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8507,7 +8507,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8613,18 +8613,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8641,7 +8641,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8747,18 +8747,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8775,7 +8775,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -8881,18 +8881,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -8909,7 +8909,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9015,18 +9015,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9043,7 +9043,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9149,18 +9149,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9177,7 +9177,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9283,18 +9283,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9311,7 +9311,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9417,18 +9417,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9445,7 +9445,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9551,18 +9551,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9579,7 +9579,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9685,18 +9685,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9713,7 +9713,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9819,18 +9819,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9847,7 +9847,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -9953,18 +9953,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -9981,7 +9981,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10087,18 +10087,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10115,7 +10115,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10221,18 +10221,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10249,7 +10249,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10355,18 +10355,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10383,7 +10383,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10489,18 +10489,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10517,7 +10517,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10623,18 +10623,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10651,7 +10651,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10757,18 +10757,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10785,7 +10785,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -10891,18 +10891,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -10919,7 +10919,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11025,18 +11025,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11053,7 +11053,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11159,18 +11159,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11187,7 +11187,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11293,18 +11293,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11321,7 +11321,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11427,18 +11427,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11455,7 +11455,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11561,18 +11561,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11589,7 +11589,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11695,18 +11695,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11723,7 +11723,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11829,18 +11829,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11857,7 +11857,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -11963,18 +11963,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -11991,7 +11991,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -12097,18 +12097,18 @@
       ],
       "phase_fraction": [
         0.0,
-        0.2133035659790039,
-        0.7866964340209961,
+        0.030409879982471466,
+        0.9695901274681091,
         0.0
       ],
       "phase_mass": [
         0.0,
-        0.563416600227356,
-        2.077967405319214,
+        0.07777663320302963,
+        2.4798338413238525,
         0.0
       ],
       "pressure_raw": 0,
-      "energy_raw": 882,
+      "energy_raw": 287,
       "mohs_level": 0,
       "sustained_overpressure": 0.0,
       "identity": {
@@ -12125,7 +12125,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 373.7569274902344,
+      "temperature_K": 373.6285095214844,
       "petals": [
         {
           "direction": 0,
@@ -12218,18 +12218,18 @@
     "mass_by_element_by_phase": {
       "H": {
         "solid": 0.0,
-        "liquid": 22.92111298336697,
-        "gas": 84.536603383457,
+        "liquid": 3.164136442542072,
+        "gas": 100.88547556821042,
         "plasma": 0.0
       },
       "O": {
         "solid": 0.0,
-        "liquid": 28.34979763732243,
-        "gas": 104.55843050059146,
+        "liquid": 3.913537178933627,
+        "gas": 124.77940399226016,
         "plasma": 0.0
       }
     },
-    "energy_total": 18.594419479370117,
+    "energy_total": 5.675454616546631,
     "momentum_total": [
       0.0,
       0.0
@@ -12263,27 +12263,27 @@
       "totals": {
         "H": {
           "solid": 0.0,
-          "liquid": 22.92111298336697,
-          "gas": 84.536603383457,
+          "liquid": 3.164136442542072,
+          "gas": 100.88547556821042,
           "plasma": 0.0
         },
         "O": {
           "solid": 0.0,
-          "liquid": 28.34979763732243,
-          "gas": 104.55843050059146,
+          "liquid": 3.913537178933627,
+          "gas": 124.77940399226016,
           "plasma": 0.0
         }
       }
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 3.4085999941453338,
-    "sub_pass_1_ms": 1.883499906398356,
-    "sub_pass_2_ms": 1.9518000772222877,
-    "sub_pass_3_ms": 2.015799982473254,
-    "sub_pass_4_ms": 1.7354999436065555,
-    "sub_pass_5_ms": 1.7865999834612012,
-    "sub_pass_6_ms": 1.721200067549944,
-    "cycle_total_ms": 14.509100001305342
+    "sub_pass_0_ms": 2.8580999933183193,
+    "sub_pass_1_ms": 1.8078000284731388,
+    "sub_pass_2_ms": 1.7436000052839518,
+    "sub_pass_3_ms": 1.6813999973237514,
+    "sub_pass_4_ms": 1.5491999220103025,
+    "sub_pass_5_ms": 1.5670000575482845,
+    "sub_pass_6_ms": 1.5583999920636415,
+    "cycle_total_ms": 12.77119992300868
   }
 }

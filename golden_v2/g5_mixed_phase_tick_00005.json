@@ -1,5 +1,5 @@
 {
-  "run_id": "g5_mixed_phase_20260504T233837",
+  "run_id": "g5_mixed_phase_20260510T042432",
   "scenario": "g5_mixed_phase",
   "tick": 5,
   "cycle": 5,
@@ -60,7 +60,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.3088989257812,
+      "temperature_K": 966.007568359375,
       "petals": [
         {
           "direction": 0,
@@ -190,7 +190,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -320,7 +320,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -450,7 +450,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -580,7 +580,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -710,7 +710,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -840,7 +840,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2662353515625,
+      "temperature_K": 965.9590454101562,
       "petals": [
         {
           "direction": 0,
@@ -970,7 +970,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1100,7 +1100,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1230,7 +1230,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1360,7 +1360,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1490,7 +1490,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1620,7 +1620,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1750,7 +1750,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -1880,7 +1880,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2010,7 +2010,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2140,7 +2140,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2270,7 +2270,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2400,7 +2400,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2530,7 +2530,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2660,7 +2660,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2790,7 +2790,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -2920,7 +2920,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3050,7 +3050,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3180,7 +3180,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3310,7 +3310,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3440,7 +3440,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3570,7 +3570,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3700,7 +3700,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3830,7 +3830,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -3960,7 +3960,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4090,7 +4090,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4220,7 +4220,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4350,7 +4350,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4480,7 +4480,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4610,7 +4610,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4740,7 +4740,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -4870,7 +4870,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5000,7 +5000,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5130,7 +5130,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5260,7 +5260,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5390,7 +5390,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5520,7 +5520,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5650,7 +5650,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5780,7 +5780,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -5910,7 +5910,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6040,7 +6040,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6170,7 +6170,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6300,7 +6300,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6430,7 +6430,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6560,7 +6560,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6690,7 +6690,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6820,7 +6820,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -6950,7 +6950,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7080,7 +7080,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7210,7 +7210,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7340,7 +7340,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7470,7 +7470,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7600,7 +7600,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7730,7 +7730,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7860,7 +7860,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -7990,7 +7990,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8120,7 +8120,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8250,7 +8250,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8380,7 +8380,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8510,7 +8510,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8640,7 +8640,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8770,7 +8770,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -8900,7 +8900,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9030,7 +9030,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9160,7 +9160,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9290,7 +9290,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9420,7 +9420,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9550,7 +9550,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9680,7 +9680,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9810,7 +9810,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -9940,7 +9940,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10070,7 +10070,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10200,7 +10200,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10330,7 +10330,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10460,7 +10460,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10590,7 +10590,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10720,7 +10720,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10850,7 +10850,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -10980,7 +10980,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11110,7 +11110,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11240,7 +11240,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11370,7 +11370,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11500,7 +11500,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11630,7 +11630,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11760,7 +11760,7 @@
         "ratcheted_this_tick": false,
         "excluded": false
       },
-      "temperature_K": 973.2723388671875,
+      "temperature_K": 965.966064453125,
       "petals": [
         {
           "direction": 0,
@@ -11900,13 +11900,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.180000021122396,
-    "sub_pass_1_ms": 1.158699975349009,
-    "sub_pass_2_ms": 1.0486000683158636,
-    "sub_pass_3_ms": 1.0234999936074018,
-    "sub_pass_4_ms": 1.0148999281227589,
-    "sub_pass_5_ms": 1.0980999795719981,
-    "sub_pass_6_ms": 1.027400023303926,
-    "cycle_total_ms": 7.55630002822727
+    "sub_pass_0_ms": 1.2807000894099474,
+    "sub_pass_1_ms": 1.0758000425994396,
+    "sub_pass_2_ms": 1.0531998705118895,
+    "sub_pass_3_ms": 1.0510999709367752,
+    "sub_pass_4_ms": 1.0496999602764845,
+    "sub_pass_5_ms": 1.0279000271111727,
+    "sub_pass_6_ms": 1.0408000089228153,
+    "cycle_total_ms": 7.583899889141321
   }
 }

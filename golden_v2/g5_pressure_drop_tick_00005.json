@@ -1,5 +1,5 @@
 {
-  "run_id": "g5_pressure_drop_20260504T233836",
+  "run_id": "g5_pressure_drop_20260510T042432",
   "scenario": "g5_pressure_drop",
   "tick": 5,
   "cycle": 5,
@@ -11900,13 +11900,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 1.297399983741343,
-    "sub_pass_1_ms": 1.1127999750897288,
-    "sub_pass_2_ms": 1.1626000050455332,
-    "sub_pass_3_ms": 1.0221999837085605,
-    "sub_pass_4_ms": 1.030400046147406,
-    "sub_pass_5_ms": 1.0620999382808805,
-    "sub_pass_6_ms": 1.0061999782919884,
-    "cycle_total_ms": 7.699899957515299
+    "sub_pass_0_ms": 1.167000038549304,
+    "sub_pass_1_ms": 1.0714000090956688,
+    "sub_pass_2_ms": 1.0754999238997698,
+    "sub_pass_3_ms": 1.0483001824468374,
+    "sub_pass_4_ms": 1.358899986371398,
+    "sub_pass_5_ms": 1.0786999482661486,
+    "sub_pass_6_ms": 1.1048000305891037,
+    "cycle_total_ms": 7.909600157290697
   }
 }

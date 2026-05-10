@@ -67,6 +67,21 @@ PHASE_CONDUCTANCE = np.array([
 ], dtype=np.float32)
 
 
+# Cohesion-as-attractor mobility per phase — gen5 §"Cross-phase dynamics →
+# Condensation": "Liquid cohesion pulls the dispersed droplets toward cells
+# with existing liquid water (high cohesion attractor)." Scales the rate at
+# which mass migrates UPHILL on the saturation gradient (i.e., from low-
+# saturation toward high-saturation same-phase same-element neighbours).
+# Solids barely coalesce (sand grains don't merge), gases spread rather than
+# clump — so the attractor is dominantly a liquid phenomenon.
+PHASE_ATTRACT_K = np.array([
+    1e-5,   # solid  — minimal coalescence
+    1e-1,   # liquid — strong droplet-merging
+    1e-3,   # gas    — weak; gas spreads more than clumps
+    1e-3,   # plasma — gas-like
+], dtype=np.float32)
+
+
 def run_region_kernels(
     cells: CellArrays,
     derived: "DerivedFields",
@@ -156,12 +171,109 @@ def run_region_kernels(
     # flux.mass[i, d, slot, phase] = phi[i, d, phase] × slot_frac[i, slot]
     np.copyto(flux.mass, phi[:, :, None, :] * slot_frac[:, None, :, None])
 
+    # ---- Cohesion-as-attractor (gen5 condensation droplet migration) -------
+    # Per the design doc, liquid cohesion pulls droplets toward existing
+    # liquid water. We model this as an UPHILL flux on the saturation
+    # gradient: when a same-phase neighbour is more saturated than the
+    # source, mass migrates source → neighbour at a rate proportional to
+    # (sat_neighbour - sat_self) × cohesion × PHASE_ATTRACT_K[phase] × dt
+    # × source phase_mass. Requires phase_diagrams + element_table to
+    # compute per-cell EQ for saturation; falls back to no-op when these
+    # aren't supplied. Adds to flux.mass on top of the pressure-driven term.
+    if phase_diagrams and element_table is not None:
+        _apply_cohesion_attractor(
+            cells, derived, world, flux, neighbors, valid, cohesion,
+            bond_open, slot_frac, active_phases, element_table,
+        )
+
     # ---- Cross-phase sorting ruleset (gen5 evaporation/sublimation path) ----
     if phase_diagrams:
         _apply_sorting_ruleset(
             cells, derived, world, flux, neighbors, valid, phase_diagrams,
             element_table,
         )
+
+
+def _apply_cohesion_attractor(
+    cells: CellArrays,
+    derived: "DerivedFields",
+    world: "WorldConfig",
+    flux: FluxBuffer,
+    neighbors: np.ndarray,
+    valid: np.ndarray,
+    cohesion: np.ndarray,
+    bond_open: np.ndarray,
+    slot_frac: np.ndarray,
+    active_phases: set[int] | None,
+    element_table,
+) -> None:
+    """Add cohesion-driven uphill saturation flow to `flux.mass`.
+
+    Per gen5 §"Cross-phase dynamics → Condensation": liquid cohesion pulls
+    dispersed droplets (low-saturation cells) toward existing liquid water
+    (high-saturation same-phase neighbours). Concretely, for each
+    (cell, direction, phase) where the neighbour's saturation in that phase
+    exceeds the cell's, mass flows cell → neighbour at:
+
+        Δm_attract = K_phase × (sat_nbr - sat_self) × cohesion × dt × phase_mass[self, p]
+
+    Using `phase_mass` (not phase_fraction) as the source-side amount
+    means the attractor is bounded by the actual mass available — a
+    1.0-unit liquid droplet can lose at most ~K × dt × 1.0 = a fraction
+    of itself per direction per cycle. The cohesion factor zeros the
+    attractor at cross-material edges (different majority element) so
+    droplets don't clump into unrelated phases.
+
+    Mass is distributed across composition slots in the usual way.
+    """
+    from .cell import compute_eq_phase
+
+    n = cells.n
+    if n == 0:
+        return
+
+    # Per-cell EQ per phase (composition-weighted real density × volume / Q_KG).
+    eq_per_cell = np.zeros((n, N_PHASES), dtype=np.float32)
+    for p in range(N_PHASES):
+        eq_per_cell[:, p] = compute_eq_phase(cells, element_table, world, p)
+
+    # Saturation per cell per phase
+    saturation = cells.phase_mass / np.maximum(eq_per_cell, 1e-12)   # (N, 4)
+
+    # Neighbour saturation (padded sentinel row of zeros for invalid neighbours)
+    sat_padded = np.concatenate(
+        [saturation, np.zeros((1, N_PHASES), dtype=np.float32)], axis=0
+    )                                                                # (N+1, 4)
+    nbr_sat = sat_padded[neighbors]                                  # (N, 6, 4)
+
+    # Pull gradient: positive ⇒ neighbour more saturated → mass flows out.
+    sat_pull = np.maximum(nbr_sat - saturation[:, None, :], 0.0)     # (N, 6, 4)
+
+    # Attractor amplitude per (cell, dir, phase). Note phase_mass (not
+    # phase_fraction) — under-dense cells have proportionally less mass
+    # to give up, which prevents over-aggressive draining.
+    phi_attract = (
+        sat_pull
+        * cohesion[:, :, None]
+        * float(world.dt)
+        * cells.phase_mass[:, None, :]
+        * PHASE_ATTRACT_K[None, None, :]
+    )                                                                # (N, 6, 4)
+
+    # Gate by NO_FLOW + grid edges (matches main pressure-driven gating)
+    phi_attract = np.where(bond_open[:, :, None], phi_attract, 0.0)
+
+    # Phase-active mask (sub-pass scheduler)
+    if active_phases is not None:
+        mask = np.zeros(N_PHASES, dtype=np.float32)
+        for p in active_phases:
+            mask[p] = 1.0
+        phi_attract = phi_attract * mask[None, None, :]
+
+    # Distribute across composition slots and add to flux.mass
+    flux.mass += (phi_attract[:, :, None, :] * slot_frac[:, None, :, None]).astype(
+        np.float32
+    )
 
 
 def _apply_sorting_ruleset(

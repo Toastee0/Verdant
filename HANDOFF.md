@@ -70,23 +70,37 @@ can resume without re-deriving the architecture decisions.
     hex unit, anchored so Si solid keeps EQ=74088) is the universal
     kg-per-hex-unit conversion. Per-cell EQ for any phase is
     `density_phase_blend × volume / Q_KG` via `compute_eq_phase`.
-    `compute_thermal_blends` derives mass from `Σ phase_mass × Q_KG`
-    instead of `phase_fraction × density`, so phase transitions and
-    cross-phase routing conserve cell mass exactly — T no longer
-    crashes when phase fractions shift. `compute_identity` takes
-    optional `(element_table, world)` to use per-cell EQ for
-    saturation. Transitions and cross-phase latent heat use
-    `kg_per_unit = Q_KG` universally. All scenarios updated:
-    Si-solid scenarios are numerically unchanged (Q_KG anchor preserves
-    them), Si-liquid/Si-mixed/water scenarios now initialise phase_mass
-    at per-cell EQ values (e.g., `EQ_LIQUID_water = density_water_blend
-    × volume / Q_KG ≈ 21080`). t1_condensation now shows latent heat
-    raising T from 350 K toward 374 K (settling at the boil boundary)
-    instead of crashing to 7 K. t1_ice_melt now starts at the intended
-    290 K and oscillates around 273.16 K (water-blend cp ratio
-    artefact, awaits compound calibration).
+    `compute_thermal_blends` derives mass from `Σ phase_mass × Q_KG`,
+    so phase transitions and cross-phase routing conserve cell mass
+    exactly. mass-weighted (not phase-fraction-weighted) cp blend.
+  - **Cohesion-as-attractor + t1_droplet_migration.** Region kernel
+    adds an uphill-saturation flux term: low-saturation cells lose
+    mass toward high-saturation same-phase neighbours at a rate
+    proportional to `K_phase × (sat_neighbour - sat_self) × cohesion ×
+    dt × phase_mass`. Liquid coalescence dominates (K=0.1); solids
+    barely coalesce (K=1e-5); gases spread (K=1e-3). t1_droplet_migration
+    scenario validates: centre humid cell with newly-condensed liquid
+    drains toward ring-1 fully-saturated liquid attractors at ~84
+    hex units / 5 ticks while ring-2+ humid cells with no high-sat
+    neighbour migrate only via in-place condensation. Closes the
+    gen5 §"Condensation" droplet-migration loop.
+  - **M6'.x compound calibration.** `compounds.py` now ships
+    `CompoundProperties` with NIST-sourced H₂O parameters
+    (ρ_solid=917, ρ_liquid=1000, ρ_gas=0.804; cp_s=2090, cp_l=4186,
+    cp_g=2010; L_f=334000, L_v=2257000). Cells initialised via
+    `set_compound` carry a `compound_id` (uint8) tag that
+    `compute_eq_phase`, `compute_thermal_blends`, and
+    `_latent_heat_per_kg` consult — overriding the atomic-blend math
+    that gave the old (H,114)+(O,141) cp_l/cp_s ≈ 4.7× ratio. With
+    real water cp ratio of 2.0× the M5'.5c energy-balance
+    Δm formula stays linear-stable; the per-cycle cap rises from
+    1/16 to 1/8. t1_ice_melt now settles to 273.46 K at tick 2 and
+    drifts ±2 K instead of crashing to 162 K and back.
+    `compound_eq_phase_mass(compound_id, phase, world)` and
+    `compound_cell_energy_J(...)` are scenario-side helpers that keep
+    init code in sync with the runtime's compound-aware derive.
 
-**Validation:** `python -m checker.regression_v2` → 15/15 PASS.
+**Validation:** `python -m checker.regression_v2` → 16/16 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
 
 Per user direction: keep doing physics scenarios; ping when eyeballs needed
@@ -359,18 +373,16 @@ python -m checker.test_diff_ticks  # 8 self-tests
 
 ## Open M6'.x work after Tier 1 scenarios
 
-- **M6'.x calibration:** compound-aware phase resolution (currently both
-  H and O point to H2O.csv; cleaner approach is a per-compound table).
 - **M6'.x petal stress flux integration** (M5'.6b') — region kernel
   populates flux.stress; integrate sums onto petals on both endpoints.
-- **M6'.x cohesion-as-attractor / signed-pressure decode** — for the
-  cohesion-driven liquid migration in the design doc's condensation
-  passage. Either a new flow term in the region kernel that pulls mass
-  from low-saturation toward high-cohesion same-element neighbours, or
-  a signed log-encoding for pressure_raw so under-equilibrium cells
-  register negative deviation and pull mass via the existing pressure
-  gradient. Currently t1_condensation only validates the in-place
-  transition, not the migration.
+- **M7'+ enthalpy-aware energy field** — the simplified T = E / (m × cp)
+  formulation doesn't bookkeep latent energy stored in mixed-phase cells.
+  Compound calibration brought the M5'.5c constant-cp linearisation
+  much closer to physics, but the cap stays at 1/8 because the
+  linearisation still overshoots if it's lifted. A proper enthalpy
+  formulation (H = m_solid·cp_s·T + m_liquid·(cp_s·T_melt + L_f +
+  cp_l·(T-T_melt)) + …) would let the cap rise to 1.0 and produce
+  perfectly-stable phase boundaries.
 - **M6'.x viewer port** — schema-v2-aware SVG/canvas viewer for
   fractional phases, identity, petals, gravity vec.
 - **M7' Tier 2** — C, Fe → cast iron with lower melt point than pure Fe

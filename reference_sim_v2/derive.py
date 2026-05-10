@@ -118,24 +118,20 @@ def compute_thermal_blends(
     element_table,
     world: "WorldConfig",
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Compute per-cell composition-and-phase-fraction-weighted (κ, c_p, ρ).
+    """Compute per-cell composition-and-phase-mass-weighted (κ, c_p, ρ).
 
-    Returns (kappa, cp, density) all f32[N]. κ and c_p are blends over
-    composition slots × phase fractions (both volumetric and mass-weighted
-    treatments collapse to the same formula at equilibrium). Density is
-    derived from `phase_mass × Q_KG / volume` — the physical mass per
-    unit volume of the cell, NOT a phase-fraction-weighted equilibrium
-    density. This guarantees that phase transitions and cross-phase
-    transmutation conserve the cell's computed mass: 1 hex unit transferred
-    from one phase channel to another keeps `sum(phase_mass) × Q_KG`
-    invariant, so T = E / (m × c_p) doesn't crash when phase_fraction
-    shifts at constant kg.
+    Returns (kappa, cp, density) all f32[N]. Cell mass is derived from
+    Σ phase_mass × Q_KG (kg-conserving across phase shifts; M6'.x). c_p
+    and κ are *phase-mass-weighted* averages — physically the cell's
+    internal energy is E = Σ_p mass_p × cp_p × T, so the "effective cp"
+    is Σ_p mass_p × cp_p / Σ_p mass_p, mass-weighted. Phase-fraction-
+    weighted blends (the earlier formulation) gave wrong T for under-
+    saturated mixed cells where phase_mass distribution doesn't track
+    phase_fraction (e.g., humid air with a small newly-condensed liquid
+    droplet — gas fraction 0.95 but only ~2% of cell mass).
 
     For void cells (no composition or no phase mass) returns 0 in all
     three arrays.
-
-    Used by both compute_temperature (T = energy / (mass × c_p)) and the
-    energy region kernel (conduction κ + convective c_p × T_source).
     """
     n = cells.n
     kappa = np.zeros(n, dtype=np.float32)
@@ -143,35 +139,71 @@ def compute_thermal_blends(
     density = np.zeros(n, dtype=np.float32)
 
     volume = float(world.cell_size_m) ** 3
-    # Mass density derived from phase_mass (kg-conserving across phase shifts)
     total_phase_mass = cells.phase_mass.sum(axis=1).astype(np.float32)   # (N,)
     density[:] = total_phase_mass * np.float32(Q_KG) / np.float32(max(volume, 1e-30))
 
-    for slot in range(COMPOSITION_SLOTS):
-        eid = cells.composition[:, slot, 0]
-        frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
-        if not (frac > 0).any():
+    # Σ_p mass_p × cp_p (numerator of mass-weighted cp)
+    cp_numerator = np.zeros(n, dtype=np.float32)
+    k_numerator  = np.zeros(n, dtype=np.float32)
+
+    # Compound-tagged cells: use compound's calibrated per-phase cp / k.
+    from .compounds import get_compound_properties
+    compound_id = cells.compound_id
+    untagged = (compound_id == 0)
+    for cid_val in np.unique(compound_id):
+        if cid_val == 0:
             continue
-        for element in element_table:
-            mask = (eid == element.element_id) & (frac > 0)
-            if not mask.any():
+        props = get_compound_properties(int(cid_val))
+        if props is None:
+            continue
+        cp_per_phase = np.array([
+            props.specific_heat_solid,
+            props.specific_heat_liquid,
+            props.specific_heat_gas,
+            props.specific_heat_gas,    # plasma → gas-equivalent
+        ], dtype=np.float32)
+        k_per_phase = np.array([
+            props.thermal_conductivity_solid,
+            props.thermal_conductivity_liquid,
+            props.thermal_conductivity_gas,
+            props.thermal_conductivity_gas,
+        ], dtype=np.float32)
+        mask = (compound_id == cid_val)
+        cp_numerator[mask] = (cells.phase_mass[mask] * cp_per_phase).sum(axis=1)
+        k_numerator[mask]  = (cells.phase_mass[mask] * k_per_phase).sum(axis=1)
+
+    # Untagged cells: composition-weighted atomic blend
+    if untagged.any():
+        for slot in range(COMPOSITION_SLOTS):
+            eid = cells.composition[:, slot, 0]
+            frac = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+            if not (frac > 0).any():
                 continue
-            cp_per_phase = np.array(
-                [element.specific_heat_solid, element.specific_heat_liquid,
-                 element.specific_heat_gas, element.specific_heat_gas],
-                dtype=np.float32,
-            )
-            k_per_phase = np.array(
-                [element.thermal_conductivity_solid,
-                 element.thermal_conductivity_liquid,
-                 element.thermal_conductivity_gas,
-                 element.thermal_conductivity_gas],
-                dtype=np.float32,
-            )
-            cp_blend = (cells.phase_fraction[mask] * cp_per_phase).sum(axis=1)
-            k_blend = (cells.phase_fraction[mask] * k_per_phase).sum(axis=1)
-            cp[mask]      += cp_blend * frac[mask]
-            kappa[mask]   += k_blend * frac[mask]
+            for element in element_table:
+                mask = (eid == element.element_id) & (frac > 0) & untagged
+                if not mask.any():
+                    continue
+                cp_per_phase = np.array(
+                    [element.specific_heat_solid, element.specific_heat_liquid,
+                     element.specific_heat_gas, element.specific_heat_gas],
+                    dtype=np.float32,
+                )
+                k_per_phase = np.array(
+                    [element.thermal_conductivity_solid,
+                     element.thermal_conductivity_liquid,
+                     element.thermal_conductivity_gas,
+                     element.thermal_conductivity_gas],
+                    dtype=np.float32,
+                )
+                mass_cp = (cells.phase_mass[mask] * cp_per_phase).sum(axis=1)
+                mass_k  = (cells.phase_mass[mask] * k_per_phase).sum(axis=1)
+                cp_numerator[mask] += mass_cp * frac[mask]
+                k_numerator[mask]  += mass_k  * frac[mask]
+
+    # cp_eff = Σ(mass × cp) / Σ(mass) — mass-weighted, not fraction-weighted.
+    nonzero = total_phase_mass > 0
+    cp[nonzero]    = cp_numerator[nonzero]    / total_phase_mass[nonzero]
+    kappa[nonzero] = k_numerator[nonzero]     / total_phase_mass[nonzero]
     return kappa, cp, density
 
 
