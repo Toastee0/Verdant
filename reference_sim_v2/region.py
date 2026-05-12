@@ -58,13 +58,22 @@ if TYPE_CHECKING:
 
 # Per-phase mass conductance — first-order tunable. Solid is non-zero so
 # sustained gravity loading eventually moves rock; gas equilibrates fast.
-# These constants will be replaced by element-table-driven values at M5'.5.
+# These constants were originally tuned for the pre-Q_KG=1 era when
+# phase_mass was in hex-units of ~3.14e-8 kg. To preserve flow behaviour
+# under kg-native phase_mass, phi is scaled by FLOW_SCALE_KG below. The
+# right long-term fix is physically-grounded permeability constants in
+# m²/(Pa·s), wired through Darcy's law — M7+ work.
 PHASE_CONDUCTANCE = np.array([
     1e-6,   # solid  — non-opportunistic; only flows under sustained loading
     1e-3,   # liquid — modest opportunistic flow
     1e-2,   # gas    — fastest opportunistic flow
     1e-2,   # plasma — gas-like for mass; thermal amplification at M5'.5
 ], dtype=np.float32)
+
+# Converts old hex-unit-era flow to kg-native flow. Equal to the legacy
+# Q_KG ≈ 3.143e-8 kg/hex. Keeps the magnitudes of pre-kg-native scenarios
+# (Si melt, ratchet, pressure-drop) numerically comparable.
+FLOW_SCALE_KG: float = 2329.0 * 1.0e-6 / 74088.0    # ≈ 3.1435e-8
 
 
 # Cohesion-as-attractor mobility per phase — gen5 §"Cross-phase dynamics →
@@ -146,13 +155,15 @@ def run_region_kernels(
     effective_dP = np.where(bond_open, effective_dP, 0.0)
 
     # Per-phase transport amplitude — phi[N, 6, PHASE]
-    # phi = K_phase × dP × cohesion × dt × phase_fraction
+    # phi = K_phase × dP × cohesion × dt × phase_fraction × FLOW_SCALE_KG
+    # (FLOW_SCALE bridges legacy hex-unit constants into kg-native phase_mass)
     phi = (
         effective_dP[:, :, None]
         * cohesion[:, :, None]
         * float(world.dt)
         * cells.phase_fraction[:, None, :]
         * PHASE_CONDUCTANCE[None, None, :]
+        * np.float32(FLOW_SCALE_KG)
     )                                                            # (N, 6, 4)
 
     # Phase-active mask: gas/liquid/solid/plasma phases that are still
@@ -251,7 +262,9 @@ def _apply_cohesion_attractor(
 
     # Attractor amplitude per (cell, dir, phase). Note phase_mass (not
     # phase_fraction) — under-dense cells have proportionally less mass
-    # to give up, which prevents over-aggressive draining.
+    # to give up, which prevents over-aggressive draining. Uses
+    # phase_mass directly (kg under Q_KG=1) so no FLOW_SCALE bridge
+    # is needed here.
     phi_attract = (
         sat_pull
         * cohesion[:, :, None]

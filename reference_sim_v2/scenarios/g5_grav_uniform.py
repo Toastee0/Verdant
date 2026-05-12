@@ -21,9 +21,9 @@ from reference_sim.element_table import load_element_table
 
 from ..cell import (
     CellArrays,
-    EQUILIBRIUM_CENTER,
     PETAL_TOPO_IS_GRID_EDGE,
     PHASE_SOLID,
+    Q_KG,
     set_single_element,
 )
 from ..encoding import encode_energy_J_scalar
@@ -50,11 +50,14 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     element_table = load_element_table(table_path)
     si = element_table["Si"]
 
+    cell_size_m = 0.01
+    EQ_SOLID_Si = si.density_solid * (cell_size_m ** 3) / Q_KG
+
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         set_single_element(cells, cell_id, element_id=si.element_id, fraction=255)
         cells.phase_fraction[cell_id, PHASE_SOLID] = 1.0
-        cells.phase_mass[cell_id, PHASE_SOLID]     = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
+        cells.phase_mass[cell_id, PHASE_SOLID]     = float(EQ_SOLID_Si)
         cells.pressure_raw[cell_id]                = 0
         cells.energy_raw[cell_id]                  = encode_energy_J_scalar(DEFAULT_ENERGY_J)
         cells.mohs_level[cell_id]                  = DEFAULT_MOHS

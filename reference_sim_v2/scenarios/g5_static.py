@@ -23,9 +23,9 @@ from reference_sim.element_table import load_element_table
 
 from ..cell import (
     CellArrays,
-    EQUILIBRIUM_CENTER,
     PHASE_SOLID,
     PETAL_TOPO_IS_GRID_EDGE,
+    Q_KG,
     set_single_element,
 )
 from ..encoding import encode_energy_J_scalar
@@ -47,6 +47,9 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
     element_table = load_element_table(table_path)
     si = element_table["Si"]
 
+    cell_size_m = 0.01
+    EQ_SOLID_Si = si.density_solid * (cell_size_m ** 3) / Q_KG
+
     cells = CellArrays.empty(grid)
     for cell_id in range(grid.cell_count):
         # Composition: 100% Si in slot 0
@@ -54,8 +57,8 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
 
         # Phase distribution: pure solid, no liquid/gas/plasma, no vacuum
         cells.phase_fraction[cell_id, PHASE_SOLID]  = 1.0
-        # Phase mass at the gen5 hex-arithmetic equilibrium center for solid
-        cells.phase_mass[cell_id, PHASE_SOLID]      = float(EQUILIBRIUM_CENTER[PHASE_SOLID])
+        # Phase mass at full Si-solid saturation (kg-native: 2.329e-3 kg/cell)
+        cells.phase_mass[cell_id, PHASE_SOLID]      = float(EQ_SOLID_Si)
 
         cells.pressure_raw[cell_id]            = 0       # zero deviation from center
         cells.energy_raw[cell_id]              = encode_energy_J_scalar(DEFAULT_ENERGY_J)
@@ -97,9 +100,9 @@ def build(output_dir: Path | str | None = None, emission_mode: str = "tick") -> 
         element_table=element_table,
         allowed_elements=("Si",),
         description=(
-            "91-cell hex disc, uniform Mohs-6 Si solid at phase-density "
-            f"equilibrium center ({EQUILIBRIUM_CENTER[PHASE_SOLID]:.0f} mass units), "
-            "zero pressure deviation, energy_raw=300, no gravity, no walls. "
+            f"91-cell hex disc, uniform Mohs-6 Si solid at phase-density "
+            f"equilibrium ({EQ_SOLID_Si:.4g} kg/cell at 0.01-m cell size), "
+            "zero pressure deviation, low T, no gravity, no walls. "
             "Expected: zero deltas every tick; mass per (element, phase) conserved exactly."
         ),
     )

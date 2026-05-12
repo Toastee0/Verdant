@@ -68,24 +68,119 @@ EQUILIBRIUM_CENTER = {
 }
 
 
-# Universal kg quantum: every hex unit of phase_mass represents Q_KG kg of
-# physical mass, regardless of phase channel. Anchored so that the original
-# Si-solid universal EQ (74088 hex units) corresponds to the physical mass
-# of a full Si solid cell at our 0.01-m reference cell size:
+# Universal kg quantum. Every hex unit of phase_mass IS 1 kg of physical
+# mass — kg are the native simulation unit. A "fully saturated cell" of
+# water liquid at the canonical 0.1-m cell size carries phase_mass[LIQUID]
+# = 1000 × 0.1³ = 1.0 kg ≈ 1 hex unit; ice → 0.917; air → ~0.0012; Si
+# solid → 2.329. Energy follows: 1 kg of water heated 1 K = 4184 J.
 #
-#     Q_KG = density_solid_Si × cell_volume_ref / EQUILIBRIUM_CENTER[SOLID]
-#          = 2329 kg/m³ × 1e-6 m³ / 74088
-#          ≈ 3.143e-8 kg
-#
-# Choosing Q_KG this way keeps g5_static's Si-solid scenario numerically
-# identical (phase_mass[SOLID] stays 74088); every non-Si-solid scenario gets
-# a per-cell EQ derived from real per-element densities. Phase transitions
-# and cross-phase mass transmutation transfer hex units 1:1 → kg conserves
-# trivially because 1 hex unit IS Q_KG kg, regardless of which phase channel
-# holds the unit. compute_thermal_blends in derive.py reads mass_kg as
-# sum(phase_mass) × Q_KG — independent of phase_fraction, so condensation
-# and evaporation no longer cause apparent mass jumps in T = E/(m×cp).
-Q_KG: float = 2329.0 * 1.0e-6 / 74088.0   # ≈ 3.1435e-8 kg per hex unit
+# Choosing Q_KG = 1.0 instead of the earlier Si-solid-anchored
+# ~3.14e-8 kg/unit puts every per-cell quantity on a human-readable
+# SI scale. The hex-arithmetic universals 42 / 1764 / 74088 no longer
+# correspond to phase_mass scales — they were a useful Tier 0 mnemonic
+# but are dropped from runtime semantics under gen5 kg-native physics.
+Q_KG: float = 1.0   # 1 kg of matter per hex unit of phase_mass
+
+
+def compute_phase_fraction_from_mass(
+    cells: "CellArrays",
+    element_table,
+    world,
+) -> np.ndarray:
+    """Per-cell volumetric phase_fraction derived from phase_mass + per-phase
+    densities. Replaces the old "set at init, shift proportionally during
+    transitions" pattern which gave incorrect fractions when (a) solid and
+    liquid have different densities (ice/water volume mismatch) or (b) the
+    cell is under-saturated.
+
+    Physical model:
+      - solid and liquid are incompressible: each takes fixed volume per kg.
+        frac_p = phase_mass[p] × Q_KG / (ρ_p × V_cell)
+      - gas and plasma are compressible: they fill the *remaining* cell
+        volume (1 − solid_frac − liquid_frac), proportional to mass.
+      - Vacuum is the implicit complement when no compressible phase has
+        mass (`Σ phase_fraction < 1`).
+
+    For a fully-melted-ice cell: solid_mass converts 1:1 in hex units, but
+    ρ_liquid > ρ_solid means the liquid occupies less volume than the ice
+    did → vacuum opens (~9 % for water at the 0.01-m cell scale).
+    """
+    n = cells.n
+    out = np.zeros((n, N_PHASES), dtype=np.float32)
+    if n == 0:
+        return out
+
+    volume = float(world.cell_size_m) ** 3
+
+    # Lazy import to avoid circular reference
+    from .compounds import get_compound_properties
+
+    elements_by_id = {el.element_id: el for el in element_table}
+
+    compound_id = cells.compound_id
+    pm = cells.phase_mass
+
+    # Per-cell per-phase density (kg/m³) — same logic as compute_eq_phase
+    # but vectorised across all four phases.
+    density = np.zeros((n, N_PHASES), dtype=np.float32)
+    untagged = (compound_id == 0)
+
+    for cid_val in np.unique(compound_id):
+        if cid_val == 0:
+            continue
+        props = get_compound_properties(int(cid_val))
+        if props is None:
+            continue
+        mask = (compound_id == cid_val)
+        density[mask, PHASE_SOLID]   = props.density_solid
+        density[mask, PHASE_LIQUID]  = props.density_liquid
+        density[mask, PHASE_GAS]     = props.density_gas
+        density[mask, PHASE_PLASMA]  = props.density_gas
+
+    if untagged.any():
+        for slot in range(COMPOSITION_SLOTS):
+            eids = cells.composition[:, slot, 0]
+            fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+            for eid in np.unique(eids):
+                if eid == 0:
+                    continue
+                element = elements_by_id.get(int(eid))
+                if element is None:
+                    continue
+                mask = (eids == eid) & untagged
+                if not mask.any():
+                    continue
+                density[mask, PHASE_SOLID]   += element.density_solid    * fracs[mask]
+                density[mask, PHASE_LIQUID]  += element.density_liquid   * fracs[mask]
+                density[mask, PHASE_GAS]     += element.density_gas_stp  * fracs[mask]
+                density[mask, PHASE_PLASMA]  += element.density_gas_stp  * fracs[mask]
+
+    # solid + liquid: fixed-density volumetric
+    solid_frac  = pm[:, PHASE_SOLID]  * np.float32(Q_KG) / np.maximum(density[:, PHASE_SOLID],  1e-12) / np.float32(volume)
+    liquid_frac = pm[:, PHASE_LIQUID] * np.float32(Q_KG) / np.maximum(density[:, PHASE_LIQUID], 1e-12) / np.float32(volume)
+
+    # Clamp the incompressible fractions: f32 accumulation can drift them
+    # marginally above 1.0 for cells at exactly EQ.
+    solid_frac  = np.minimum(solid_frac,  1.0)
+    liquid_frac = np.minimum(np.maximum(0.0, liquid_frac), np.maximum(0.0, 1.0 - solid_frac))
+
+    # gas + plasma fill remaining volume proportional to mass
+    remaining = np.maximum(0.0, 1.0 - solid_frac - liquid_frac)
+    gas_mass    = pm[:, PHASE_GAS]
+    plasma_mass = pm[:, PHASE_PLASMA]
+    total_gp = gas_mass + plasma_mass
+    has_compressible = total_gp > 1e-12
+
+    gas_frac    = np.zeros(n, dtype=np.float32)
+    plasma_frac = np.zeros(n, dtype=np.float32)
+    gas_frac[has_compressible]    = remaining[has_compressible] * gas_mass[has_compressible]    / total_gp[has_compressible]
+    plasma_frac[has_compressible] = remaining[has_compressible] * plasma_mass[has_compressible] / total_gp[has_compressible]
+
+    out[:, PHASE_SOLID]   = solid_frac
+    out[:, PHASE_LIQUID]  = liquid_frac
+    out[:, PHASE_GAS]     = gas_frac
+    out[:, PHASE_PLASMA]  = plasma_frac
+    return out
 
 
 def compute_eq_phase(
@@ -228,6 +323,14 @@ class CellArrays:
     # (_latent_heat_per_kg). compound_id == 0 = atomic-blend behaviour.
     compound_id: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.uint8))
 
+    # Sub-quantum energy residual (M5'.7c). At low cell mass × low conductivity
+    # (water cells especially), per-sub-pass conduction ΔE can be far below
+    # one u16 log-encoded quantum (~0.1 J at E ≈ 1 kJ). Encoding such a
+    # tiny delta rounds to zero and heat refuses to flow. This f32 residual
+    # accumulates the sub-quantum part of every integration; when it crosses
+    # one quantum it flips the raw value. Working state only — not emitted.
+    energy_residual: np.ndarray = field(default_factory=lambda: np.zeros(0, dtype=np.float32))
+
     # ---- petal data (persistent per-cell-per-direction) ----------------
 
     petal_stress: np.ndarray   = field(default_factory=lambda: np.zeros((0, N_PETAL_DIRS), dtype=np.float32))
@@ -257,6 +360,7 @@ class CellArrays:
             mohs_level=np.zeros(n, dtype=np.uint8),
             sustained_overpressure=np.zeros(n, dtype=np.float32),
             compound_id=np.zeros(n, dtype=np.uint8),
+            energy_residual=np.zeros(n, dtype=np.float32),
             petal_stress=np.zeros((n, N_PETAL_DIRS), dtype=np.float32),
             petal_velocity=np.zeros((n, N_PETAL_DIRS, 2), dtype=np.float32),
             petal_topology=np.zeros((n, N_PETAL_DIRS), dtype=np.uint8),

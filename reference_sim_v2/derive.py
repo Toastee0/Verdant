@@ -46,6 +46,7 @@ from .cell import (
     PHASE_SOLID,
     Q_KG,
     compute_identity,
+    compute_phase_fraction_from_mass,
 )
 from .gravity import compute_gravity_field
 
@@ -325,6 +326,11 @@ def run_derive(
     majority_element); pressure and temperature are independent of the
     others.
     """
+    # Recompute volumetric phase_fraction from phase_mass + per-phase densities
+    # so ice/water density mismatch (and any other ρ_solid ≠ ρ_liquid) is
+    # tracked correctly (gen5 §"Phase-fraction = volumetric occupancy").
+    cells.phase_fraction[:, :] = compute_phase_fraction_from_mass(cells, element_table, world)
+
     # Identity — uses per-cell EQ for proper compound/non-Si saturation
     majority_phase, majority_element = compute_identity(cells, element_table, world)
     derived.majority_phase[:]   = majority_phase

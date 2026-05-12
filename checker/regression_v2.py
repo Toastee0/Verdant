@@ -47,7 +47,7 @@ SCENARIOS: tuple[ScenarioCheck, ...] = (
     ScenarioCheck("g5_ratchet",            "reference_sim_v2.scenarios.g5_ratchet",           30, 30),
     ScenarioCheck("g5_radiative_boundary", "reference_sim_v2.scenarios.g5_radiative_boundary", 5,  5),
     ScenarioCheck("g6_water_static",       "reference_sim_v2.scenarios.g6_water_static",       5,  5),
-    ScenarioCheck("t1_ice_melt",           "reference_sim_v2.scenarios.t1_ice_melt",           5,  5),
+    ScenarioCheck("t1_ice_melt",           "reference_sim_v2.scenarios.t1_ice_melt",          30, 30),
     ScenarioCheck("t1_water_pressure_drop","reference_sim_v2.scenarios.t1_water_pressure_drop",5,  5),
     ScenarioCheck("t1_evaporation",        "reference_sim_v2.scenarios.t1_evaporation",        5,  5),
     ScenarioCheck("t1_humidity",           "reference_sim_v2.scenarios.t1_humidity",           5,  5),

@@ -201,16 +201,22 @@ def integrate(
     #   is unchanged regardless of cross-phase routing — flux entries
     #   always debit the source phase channel they were drawn from.
     #
-    # INCOMING per (cell, dst_phase) = scatter-add per slot using
-    #   flux.dst_phase_per_slot[neighbor, OPP[d], slot] to choose the
-    #   destination channel. Sentinel value DST_PHASE_SENTINEL falls
-    #   back to the src_phase axis (= same-phase transport, Tier 0
-    #   behaviour). Non-sentinel values route the slot's mass to the
-    #   neighbour-side phase that the slot's species would adopt at the
-    #   destination's (T, P) — that's the cross-phase / sorting-ruleset
-    #   path that lets liquid water arrive in a hot gas cell directly
-    #   in the gas channel.
-    outgoing_phase_mass = flux.mass.sum(axis=(1, 2))             # (N, 4)
+    # Cap outgoing per (cell, phase) to phase_mass available — phi in
+    # the region kernel uses phase_fraction, which over-estimates flow
+    # for under-saturated cells (e.g. humid gas at 10 % of EQ). Without
+    # this cap, integrating a 0.358 kg "outgoing" from a 0.001 kg cell
+    # would create a negative phase_mass and the f32-clamp would mint
+    # mass from thin air, breaking the per-element conservation check.
+    outgoing_per_phase = flux.mass.sum(axis=(1, 2))              # (N, 4)
+    overdraw = np.maximum(0.0, outgoing_per_phase - cells.phase_mass)
+    if overdraw.any():
+        # Per (cell, phase) scale-down ratio: 1 - overdraw / outgoing
+        # (only where outgoing > 0 to avoid div-by-zero on empty channels).
+        ratio = np.ones_like(outgoing_per_phase)
+        np.divide(outgoing_per_phase - overdraw, outgoing_per_phase,
+                  out=ratio, where=(outgoing_per_phase > 0))
+        flux.mass *= ratio[:, None, None, :]
+    outgoing_phase_mass = flux.mass.sum(axis=(1, 2))             # (N, 4) — post-cap
 
     flux_mass_padded = np.concatenate([
         flux.mass,
@@ -263,6 +269,10 @@ def integrate(
     if fixed.any():
         delta_phase_mass[fixed, :] = 0.0
     cells.phase_mass[:, :] += delta_phase_mass
+    # Guard against tiny f32 negatives in untouched channels (kg-native
+    # scale puts plasma/empty channels at ~1e-9 noise levels). Outgoing
+    # already capped above, so any remaining negative is rounding noise.
+    np.clip(cells.phase_mass, 0.0, None, out=cells.phase_mass)
 
     # ----- Energy -----
     outgoing_energy = flux.energy.sum(axis=1)                    # (N,)
@@ -275,13 +285,19 @@ def integrate(
     # Self-energy adjustments (e.g., source-side latent-heat debits from
     # cross-phase mass transmutation). Per gen5 verdict: source pays.
     # delta_energy is in joules; cells.energy_raw is log-encoded u16, so
-    # re-encode at the integration boundary.
+    # decode → add Δ + sub-quantum residual → re-encode. The residual
+    # carries the part of the new energy that didn't reach the next u16
+    # quantum, so very small per-cycle ΔE values (e.g. low-conductivity
+    # cells like water under tiny ΔT) accumulate over many cycles instead
+    # of round-tripping back to zero.
     delta_energy_J = incoming_energy - outgoing_energy + flux.energy_self
     if fixed.any():
         delta_energy_J[fixed] = 0.0
     from .encoding import decode_energy_J, encode_energy_J
-    new_J = decode_energy_J(cells.energy_raw) + delta_energy_J
-    cells.energy_raw[:] = encode_energy_J(new_J)
+    target_J = decode_energy_J(cells.energy_raw) + delta_energy_J + cells.energy_residual
+    new_raw  = encode_energy_J(target_J)
+    cells.energy_residual[:] = (target_J - decode_energy_J(new_raw)).astype(np.float32)
+    cells.energy_raw[:] = new_raw
 
     # ----- Momentum, stress -----
     # M5'.3 stubs — these channels integrate to petal data at M5'.6.

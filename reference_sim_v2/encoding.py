@@ -35,9 +35,12 @@ from __future__ import annotations
 import numpy as np
 
 
-# 65535 / log10(1 + 1e6) ≈ 10922.5 — pick an integer multiplier so the
-# round-trip is reproducible across machine f64 representations.
-LOG_E_MULTIPLIER: float = 10923.0
+# Under gen5 kg-native physics (Q_KG = 1.0), per-cell energies span a wider
+# range: 1 kg of water at +20 °C carries 1.23 MJ, and high-T scenarios push
+# toward 10 MJ. We pick M=8000 so the u16 covers 0..~150 MJ
+# (log₁₀(1+1.5e8) × 8000 ≈ 65535). Resolution at E=1 J is ~0.29 mJ, still
+# fine for sub-Kelvin steps on most cells.
+LOG_E_MULTIPLIER: float = 8000.0
 
 
 def encode_energy_J(E_J) -> np.ndarray:

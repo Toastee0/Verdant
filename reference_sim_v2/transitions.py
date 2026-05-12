@@ -237,15 +237,12 @@ def apply_phase_transitions(
             if delta_mass_units <= 0:
                 continue
 
-            # Phase fraction tracks the same proportion as phase mass
-            # (caller maintains this invariant at scenario init).
-            frac_ratio = (delta_mass_units / avail_mass) if avail_mass > 0 else 0.0
-            delta_frac = avail_frac * frac_ratio
-
-            cells.phase_mass[cid, current_phase]     -= np.float32(delta_mass_units)
-            cells.phase_mass[cid, target_phase]      += np.float32(delta_mass_units)
-            cells.phase_fraction[cid, current_phase] -= np.float32(delta_frac)
-            cells.phase_fraction[cid, target_phase]  += np.float32(delta_frac)
+            # Mass updates only — phase_fraction is recomputed volumetrically
+            # by `compute_phase_fraction_from_mass` in derive.run_derive each
+            # cycle from phase_mass + per-phase densities, so we don't need
+            # to maintain it incrementally here.
+            cells.phase_mass[cid, current_phase] -= np.float32(delta_mass_units)
+            cells.phase_mass[cid, target_phase]  += np.float32(delta_mass_units)
 
             # Apply latent heat through log-encoding decode/re-encode
             delta_mass_kg_actual = delta_mass_units * kg_per_unit

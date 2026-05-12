@@ -284,6 +284,11 @@
       <div id="invariants-panel"></div>
     </div>
 
+    <div class="panel" id="history-panel-wrap" style="display:none">
+      <h3>history (all ticks)</h3>
+      <div id="history-panel" style="font-size:10px"></div>
+    </div>
+
     <div class="panel">
       <h3>legend</h3>
       <div class="legend" id="legend"></div>
@@ -348,6 +353,7 @@ document.getElementById('file-input').addEventListener('change', async (e) => {
   }
   allTicks.sort((a, b) => a.tick - b.tick || a.stage.localeCompare(b.stage));
   if (allTicks.length === 0) return;
+  historyStats = null;   // recompute on next renderHistory
   currentIdx = 0;
   document.getElementById('tick-slider').max = allTicks.length - 1;
   document.getElementById('tick-slider').value = 0;
@@ -435,10 +441,11 @@ function cellColorIdentity(cell) {
 function cellColorTemperature(cell) {
   const T = cell.temperature_K;
   if (T === undefined || T === null) return '#2c3137';
-  // Cool→hot: blue (240) → red (0) through cyan/green/yellow
-  // Map T range 0..1000 K (clip outside) to hue 240..0
-  const tClamped = Math.max(0, Math.min(1000, T));
-  const hue = 240 * (1 - tClamped / 1000);
+  // Cool→hot: blue (240) → red (0). Map −100..+1500 °C to hue 240..0
+  // so water's freeze/boil/Si melt all fall in distinct colour bands.
+  const T_C = T - 273.15;
+  const cClamped = Math.max(-100, Math.min(1500, T_C));
+  const hue = 240 * (1 - (cClamped - (-100)) / 1600);
   return `hsl(${hue}, 80%, 50%)`;
 }
 
@@ -526,7 +533,7 @@ function renderGrid() {
       txt.setAttribute('pointer-events', 'none');
       let label = '';
       if (viewMode === 'temperature' && c.temperature_K !== undefined) {
-        label = `${c.temperature_K.toFixed(0)}K`;
+        label = `${(c.temperature_K - 273.15).toFixed(0)}°C`;
       } else if (viewMode === 'identity') {
         label = (c.identity && c.identity.element) || '';
       } else if (viewMode === 'pressure') {
@@ -617,7 +624,10 @@ function renderInspector() {
     field('IDENTITY', `${(cell.identity && cell.identity.phase) || '—'} · ${(cell.identity && cell.identity.element) || '—'}`) +
     field('PHASE FRACTION', phaseBar) +
     field('PHASE MASS (hex)', pmStr) +
-    field('TEMPERATURE', cell.temperature_K !== undefined ? `${cell.temperature_K.toFixed(2)} K` : '—') +
+    field('TEMPERATURE',
+      cell.temperature_K !== undefined
+        ? `${(cell.temperature_K - 273.15).toFixed(2)} °C  <span style="color:var(--text-dim)">(${cell.temperature_K.toFixed(2)} K)</span>`
+        : '—') +
     field('ENERGY (raw, log10(1+J)·M)', cell.energy_raw ?? '—') +
     field('PRESSURE (raw, dev)', cell.pressure_raw ?? '—') +
     field('MOHS', cell.mohs_level ?? '—') +
@@ -693,9 +703,10 @@ function renderLegend() {
       }
     });
   } else if (viewMode === 'temperature') {
-    [0, 250, 500, 750, 1000].forEach(T => {
-      const hue = 240 * (1 - T / 1000);
-      html += `<span><i style="background:hsl(${hue}, 80%, 50%)"></i>${T} K</span>`;
+    [-50, 0, 100, 500, 1000].forEach(T_C => {
+      const cClamped = Math.max(-100, Math.min(1500, T_C));
+      const hue = 240 * (1 - (cClamped - (-100)) / 1600);
+      html += `<span><i style="background:hsl(${hue}, 80%, 50%)"></i>${T_C}°C</span>`;
     });
   } else if (viewMode === 'pressure') {
     [0, 2500, 5000, 7500, 10000].forEach(p => {
@@ -711,6 +722,118 @@ function renderAll() {
   renderInspector();
   renderSidebar();
   renderLegend();
+  renderHistory();
+}
+
+// ============================================================
+// History sparklines — show how totals change across all loaded ticks.
+// Lets the user see "what happened" without scrubbing every cycle.
+// ============================================================
+let historyStats = null;
+
+function computeHistoryStats() {
+  return allTicks.map(t => {
+    const cells = t.payload.cells || [];
+    let s = 0, l = 0, g = 0, p = 0;
+    let maxT = -Infinity, sumT = 0, countT = 0;
+    cells.forEach(c => {
+      const pm = c.phase_mass || [0, 0, 0, 0];
+      s += pm[0]; l += pm[1]; g += pm[2]; p += pm[3];
+      if (c.temperature_K !== undefined && c.temperature_K !== null) {
+        if (c.temperature_K > maxT) maxT = c.temperature_K;
+        sumT += c.temperature_K;
+        countT++;
+      }
+    });
+    return {
+      tick: t.tick,
+      solid: s, liquid: l, gas: g, plasma: p,
+      meanT_C: countT ? sumT / countT - 273.15 : null,
+      maxT_C:  countT ? maxT - 273.15 : null,
+    };
+  });
+}
+
+function sparkline(values, opts) {
+  const { width = 240, height = 28, color = '#7dd3a0', minOverride, maxOverride } = opts || {};
+  const finite = values.filter(v => v !== null && v !== undefined && isFinite(v));
+  if (finite.length === 0) return '';
+  const min = minOverride !== undefined ? minOverride : Math.min(...finite);
+  const max = maxOverride !== undefined ? maxOverride : Math.max(...finite);
+  const range = max - min || 1;
+  const n = values.length;
+  const pts = values.map((v, i) => {
+    if (v === null || v === undefined || !isFinite(v)) return null;
+    const x = (i / Math.max(1, n - 1)) * width;
+    const y = height - ((v - min) / range) * height;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).filter(Boolean);
+  // Current-tick marker
+  const curX = (currentIdx / Math.max(1, n - 1)) * width;
+  return `
+    <svg width="${width}" height="${height}" style="display:block">
+      <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.2"></polyline>
+      <line x1="${curX}" y1="0" x2="${curX}" y2="${height}" stroke="#ffb86c" stroke-width="0.7" stroke-dasharray="2,2"></line>
+    </svg>`;
+}
+
+function renderHistory() {
+  const wrap = document.getElementById('history-panel-wrap');
+  const el = document.getElementById('history-panel');
+  if (!allTicks.length || allTicks.length < 2) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = '';
+  if (historyStats === null) historyStats = computeHistoryStats();
+
+  const seriesDef = [
+    { key: 'solid',  label: 'solid',   color: 'hsl(30,  60%, 55%)' },
+    { key: 'liquid', label: 'liquid',  color: 'hsl(200, 70%, 55%)' },
+    { key: 'gas',    label: 'gas',     color: 'hsl(50,  75%, 60%)' },
+    { key: 'plasma', label: 'plasma',  color: 'hsl(300, 60%, 60%)' },
+  ];
+
+  let html = '';
+  for (const s of seriesDef) {
+    const vals = historyStats.map(h => h[s.key]);
+    const finite = vals.filter(v => v > 0);
+    if (finite.length === 0) continue;
+    const last = vals[vals.length - 1];
+    html += `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;color:var(--text-dim);margin-bottom:2px">
+        <span><i style="display:inline-block;width:8px;height:8px;background:${s.color};vertical-align:middle;margin-right:4px"></i>${s.label}</span>
+        <span style="font-variant-numeric:tabular-nums">${last.toFixed(2)}</span>
+      </div>
+      ${sparkline(vals, { color: s.color, minOverride: 0 })}
+    </div>`;
+  }
+
+  // Temperature mean / max
+  const meanT = historyStats.map(h => h.meanT_C);
+  if (meanT.some(v => v !== null)) {
+    const last = meanT[meanT.length - 1];
+    html += `<div style="margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;color:var(--text-dim);margin-bottom:2px">
+        <span><i style="display:inline-block;width:8px;height:8px;background:#ff6b6b;vertical-align:middle;margin-right:4px"></i>mean T</span>
+        <span style="font-variant-numeric:tabular-nums">${last !== null ? last.toFixed(2) + ' °C' : '—'}</span>
+      </div>
+      ${sparkline(meanT, { color: '#ff6b6b' })}
+    </div>`;
+  }
+  const maxT = historyStats.map(h => h.maxT_C);
+  if (maxT.some(v => v !== null)) {
+    const last = maxT[maxT.length - 1];
+    html += `<div>
+      <div style="display:flex;justify-content:space-between;color:var(--text-dim);margin-bottom:2px">
+        <span><i style="display:inline-block;width:8px;height:8px;background:#ffb86c;vertical-align:middle;margin-right:4px"></i>max T</span>
+        <span style="font-variant-numeric:tabular-nums">${last !== null ? last.toFixed(2) + ' °C' : '—'}</span>
+      </div>
+      ${sparkline(maxT, { color: '#ffb86c' })}
+    </div>`;
+  }
+
+  el.innerHTML = html;
 }
 
 // ============================================================
