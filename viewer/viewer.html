@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VERDANT Debug Viewer</title>
+<title>VERDANT Viewer (gen5)</title>
 <style>
   :root {
     --bg: #0a0c0f;
@@ -18,28 +18,25 @@
     --warn: #ffb86c;
     --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html, body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 12px;
     height: 100%;
     overflow: hidden;
   }
-
   #app {
     display: grid;
-    grid-template-columns: 280px 1fr 320px;
-    grid-template-rows: 40px 1fr;
+    grid-template-columns: 280px 1fr 340px;
+    grid-template-rows: 44px 1fr 36px;
     grid-template-areas:
       "header header header"
-      "sidebar main inspector";
+      "sidebar main inspector"
+      "footer footer footer";
     height: 100vh;
   }
-
   header {
     grid-area: header;
     background: var(--panel);
@@ -49,20 +46,13 @@
     padding: 0 16px;
     gap: 16px;
   }
-
   header .title {
     font-weight: 700;
     letter-spacing: 0.05em;
     color: var(--accent);
   }
-
-  header .meta {
-    color: var(--text-dim);
-    font-size: 11px;
-  }
-
+  header .meta { color: var(--text-dim); font-size: 11px; }
   header .spacer { flex: 1; }
-
   header button, header label.file-btn {
     background: var(--panel-2);
     color: var(--text);
@@ -71,329 +61,346 @@
     font-family: var(--mono);
     font-size: 11px;
     cursor: pointer;
-    transition: border-color 0.15s;
   }
-
   header button:hover, header label.file-btn:hover {
     border-color: var(--accent);
   }
+  header input[type=file] { display: none; }
 
-  header input[type="file"] { display: none; }
-
-  aside.sidebar {
+  aside {
+    background: var(--panel);
+    padding: 12px;
+    overflow-y: auto;
+  }
+  #sidebar {
     grid-area: sidebar;
-    background: var(--panel);
     border-right: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 12px;
   }
-
-  aside.inspector {
+  #inspector {
     grid-area: inspector;
-    background: var(--panel);
     border-left: 1px solid var(--border);
-    overflow-y: auto;
-    padding: 12px;
   }
-
-  main {
+  #main {
     grid-area: main;
-    background: var(--bg);
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
+  }
+  #grid-svg {
+    width: 100%;
+    height: 100%;
+    background: #06080a;
+    display: block;
   }
 
-  .section {
-    margin-bottom: 20px;
-  }
-
-  .section h3 {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
-  }
-
-  .filter-row {
+  footer {
+    grid-area: footer;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 4px;
+    padding: 0 16px;
+    gap: 14px;
+    color: var(--text-dim);
     font-size: 11px;
   }
-
-  .filter-row label {
-    color: var(--text-dim);
-    flex-shrink: 0;
-    width: 70px;
-  }
-
-  .filter-row input, .filter-row select {
+  footer button {
     background: var(--panel-2);
     color: var(--text);
     border: 1px solid var(--border);
-    padding: 2px 6px;
+    padding: 3px 9px;
     font-family: var(--mono);
     font-size: 11px;
+    cursor: pointer;
+  }
+  footer button:disabled { color: var(--text-dim); cursor: not-allowed; }
+  footer input[type=range] {
     flex: 1;
-    min-width: 0;
+    accent-color: var(--accent);
+  }
+  footer .tick-label {
+    color: var(--text);
+    min-width: 130px;
+    font-variant-numeric: tabular-nums;
   }
 
+  .panel {
+    margin-bottom: 14px;
+  }
+  .panel h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
   .stat {
     display: flex;
     justify-content: space-between;
     padding: 2px 0;
-    font-size: 11px;
   }
-
   .stat .k { color: var(--text-dim); }
-  .stat .v { color: var(--text); }
+  .stat .v {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .v.warn { color: var(--accent-2); }
 
   .invariant {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 3px 4px;
-    margin-bottom: 2px;
-    font-size: 11px;
-    border-left: 2px solid transparent;
+    padding: 2px 4px;
+    border-radius: 2px;
   }
-
-  .invariant.pass { border-left-color: var(--pass); }
-  .invariant.fail { border-left-color: var(--fail); }
-
-  .invariant .status {
-    font-weight: bold;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-  }
-
   .invariant.pass .status { color: var(--pass); }
+  .invariant.fail { background: rgba(255,107,107,0.1); }
   .invariant.fail .status { color: var(--fail); }
-
-  #grid-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .cell {
-    stroke: #000;
-    stroke-width: 0.5;
-    cursor: pointer;
-    transition: stroke-width 0.1s;
-  }
-
-  .cell:hover {
-    stroke: var(--accent);
-    stroke-width: 2;
-  }
-
-  .cell.selected {
-    stroke: var(--accent);
-    stroke-width: 2.5;
-  }
-
-  .cell.ratcheted {
-    stroke: var(--accent-2);
-    stroke-width: 1.5;
-  }
-
-  .cell.culled {
-    stroke-dasharray: 2 2;
-  }
-
-  .cell.fractured {
-    stroke: var(--fail);
-    stroke-width: 1.5;
-  }
-
-  .cell.filtered-out {
-    opacity: 0.15;
-  }
+  .invariant.skipped .status { color: var(--text-dim); }
 
   .inspector-field {
-    margin-bottom: 6px;
-    font-size: 11px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
   }
-
+  .inspector-field:last-child { border-bottom: none; }
   .inspector-field .k {
     color: var(--text-dim);
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
   }
-
   .inspector-field .v {
     color: var(--text);
     word-break: break-all;
   }
-
-  .inspector-field pre {
+  .phase-bar {
+    display: flex;
+    width: 100%;
+    height: 10px;
     background: var(--panel-2);
-    padding: 6px;
     border: 1px solid var(--border);
-    font-size: 10px;
-    white-space: pre-wrap;
-    max-height: 200px;
-    overflow: auto;
+    margin-bottom: 4px;
   }
-
-  .empty-state {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--text-dim);
-    text-align: center;
-    font-size: 13px;
-    line-height: 1.8;
-  }
-
-  .drop-active {
-    background: rgba(125, 211, 160, 0.05);
-    outline: 1px dashed var(--accent);
-    outline-offset: -4px;
-  }
+  .phase-bar > div { height: 100%; }
+  .phase-solid  { background: hsl(30,  60%, 50%); }
+  .phase-liquid { background: hsl(200, 70%, 50%); }
+  .phase-gas    { background: hsl(50,  70%, 60%); }
+  .phase-plasma { background: hsl(300, 60%, 55%); }
+  .phase-vacuum { background: #2c3137; }
 
   .legend {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    background: rgba(18, 21, 25, 0.9);
-    border: 1px solid var(--border);
-    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
     font-size: 10px;
-    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .legend i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--border);
   }
 
-  .legend .swatch {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin-right: 4px;
-    vertical-align: middle;
-    border: 1px solid #000;
+  /* Cell visualization */
+  polygon.cell {
+    stroke: rgba(0,0,0,0.5);
+    stroke-width: 0.6;
+    cursor: pointer;
+  }
+  polygon.cell:hover { stroke: var(--accent); stroke-width: 1.5; }
+  polygon.cell.selected { stroke: var(--accent-2); stroke-width: 2; }
+
+  /* Color view selector */
+  .view-mode {
+    display: flex;
+    gap: 4px;
+  }
+  .view-mode button {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 6px;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: var(--mono);
+  }
+  .view-mode button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  select {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 3px 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    width: 100%;
   }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <span class="title">VERDANT · DEBUG VIEWER</span>
-    <span class="meta" id="file-meta">no file loaded</span>
-    <div class="spacer"></div>
+    <span class="title">VERDANT</span>
+    <span class="meta" id="run-meta">no run loaded</span>
+    <span class="spacer"></span>
     <label class="file-btn">
-      LOAD JSON
-      <input type="file" id="file-input" accept="application/json,.json">
+      load tick(s)
+      <input type="file" id="file-input" accept=".json" multiple>
     </label>
-    <button id="reset-btn">RESET FILTERS</button>
+    <button id="reset-zoom">reset view</button>
   </header>
 
-  <aside class="sidebar">
-    <div class="section">
-      <h3>Filters</h3>
-      <div class="filter-row">
-        <label>Element</label>
-        <select id="filter-element">
-          <option value="">any</option>
-        </select>
-      </div>
-      <div class="filter-row">
-        <label>Phase</label>
-        <select id="filter-phase">
-          <option value="">any</option>
-          <option value="solid">solid</option>
-          <option value="liquid">liquid</option>
-          <option value="gas">gas</option>
-          <option value="plasma">plasma</option>
-        </select>
-      </div>
-      <div class="filter-row">
-        <label>Mohs min</label>
-        <input type="number" id="filter-mohs-min" min="0" max="10" placeholder="0">
-      </div>
-      <div class="filter-row">
-        <label>Mohs max</label>
-        <input type="number" id="filter-mohs-max" min="0" max="10" placeholder="10">
-      </div>
-      <div class="filter-row">
-        <label>Flag</label>
-        <select id="filter-flag">
-          <option value="">none</option>
-          <option value="culled">culled</option>
-          <option value="fractured">fractured</option>
-          <option value="ratcheted_this_tick">ratcheted</option>
-        </select>
+  <aside id="sidebar">
+    <div class="panel">
+      <h3>view mode</h3>
+      <div class="view-mode" id="view-mode">
+        <button data-mode="identity" class="active">identity</button>
+        <button data-mode="temperature">temperature</button>
+        <button data-mode="saturation">saturation</button>
+        <button data-mode="pressure">pressure</button>
       </div>
     </div>
 
-    <div class="section">
-      <h3>Totals</h3>
+    <div class="panel">
+      <h3>run</h3>
+      <div id="run-panel" style="font-size:11px; line-height:1.5"></div>
+    </div>
+
+    <div class="panel">
+      <h3>totals</h3>
       <div id="totals-panel"></div>
     </div>
 
-    <div class="section">
-      <h3>Invariants</h3>
+    <div class="panel">
+      <h3>invariants (self-report)</h3>
       <div id="invariants-panel"></div>
     </div>
 
-    <div class="section">
-      <h3>Run</h3>
-      <div id="run-panel" style="font-size: 10px; color: var(--text-dim); word-break: break-all;"></div>
+    <div class="panel">
+      <h3>legend</h3>
+      <div class="legend" id="legend"></div>
     </div>
   </aside>
 
   <main id="main">
-    <div class="empty-state" id="empty-state">
-      Drag a schema-v1 JSON file here<br>
-      <span style="color: var(--text-dim); font-size: 11px;">or use LOAD JSON above</span>
-    </div>
-    <svg id="grid-svg" style="display:none"></svg>
-    <div class="legend" id="legend" style="display:none">
-      <strong>phase</strong><br>
-      <span class="swatch" style="background:#4a6fa5"></span>gas &nbsp;
-      <span class="swatch" style="background:#5fb3c2"></span>liquid &nbsp;
-      <span class="swatch" style="background:#8b7355"></span>solid &nbsp;
-      <span class="swatch" style="background:#c25fb3"></span>plasma<br>
-      <strong>flags</strong><br>
-      <span style="color:var(--accent-2)">━</span> ratcheted &nbsp;
-      <span style="color:var(--fail)">━</span> fractured &nbsp;
-      <span style="color:var(--text)">- - -</span> culled
-    </div>
+    <svg id="grid-svg" xmlns="http://www.w3.org/2000/svg"></svg>
   </main>
 
-  <aside class="inspector">
-    <h3 style="font-size:10px; text-transform:uppercase; letter-spacing:0.15em; color:var(--text-dim); margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:4px;">Cell Inspector</h3>
-    <div id="inspector-content">
-      <p style="color:var(--text-dim); font-size:11px;">click a cell to inspect</p>
+  <aside id="inspector">
+    <div id="inspector-content" style="color:var(--text-dim); font-size:11px;">
+      click a cell to inspect
     </div>
   </aside>
+
+  <footer>
+    <button id="tick-prev">&lt;</button>
+    <span class="tick-label" id="tick-label">no ticks loaded</span>
+    <button id="tick-next">&gt;</button>
+    <input type="range" id="tick-slider" min="0" max="0" value="0">
+    <button id="tick-play">play</button>
+  </footer>
 </div>
 
 <script>
-// ========== State ==========
+// ============================================================
+// State
+// ============================================================
+let allTicks = [];        // [{ tick, stage, payload }]
+let currentIdx = 0;
 let currentData = null;
 let selectedCellId = null;
-let filters = {
-  element: '',
-  phase: '',
-  mohsMin: null,
-  mohsMax: null,
-  flag: '',
-};
+let viewMode = 'identity';
+let playing = false;
+let playTimer = null;
 
-// ========== Hex coordinate math ==========
-// Axial (q, r) -> pixel (x, y) for pointy-top hex
+// Pan/zoom for SVG
+let panX = 0, panY = 0, zoom = 1;
+let dragging = false, dragStartX = 0, dragStartY = 0, dragStartPanX = 0, dragStartPanY = 0;
+
+// ============================================================
+// File loading
+// ============================================================
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  allTicks = [];
+  for (const f of files) {
+    try {
+      const text = await f.text();
+      const payload = JSON.parse(text);
+      allTicks.push({
+        tick: payload.tick ?? 0,
+        stage: payload.stage ?? 'unknown',
+        payload,
+        filename: f.name,
+      });
+    } catch (err) {
+      console.error(`failed to parse ${f.name}:`, err);
+    }
+  }
+  allTicks.sort((a, b) => a.tick - b.tick || a.stage.localeCompare(b.stage));
+  if (allTicks.length === 0) return;
+  currentIdx = 0;
+  document.getElementById('tick-slider').max = allTicks.length - 1;
+  document.getElementById('tick-slider').value = 0;
+  loadTick(0);
+});
+
+function loadTick(idx) {
+  if (idx < 0 || idx >= allTicks.length) return;
+  currentIdx = idx;
+  currentData = allTicks[idx].payload;
+  document.getElementById('tick-slider').value = idx;
+  document.getElementById('tick-label').textContent =
+    `tick ${allTicks[idx].tick} (${allTicks[idx].stage})  [${idx+1}/${allTicks.length}]`;
+  renderAll();
+}
+
+document.getElementById('tick-prev').addEventListener('click', () => loadTick(currentIdx - 1));
+document.getElementById('tick-next').addEventListener('click', () => loadTick(currentIdx + 1));
+document.getElementById('tick-slider').addEventListener('input', (e) => loadTick(parseInt(e.target.value)));
+document.getElementById('tick-play').addEventListener('click', () => {
+  playing = !playing;
+  document.getElementById('tick-play').textContent = playing ? 'pause' : 'play';
+  if (playing) {
+    playTimer = setInterval(() => {
+      const next = (currentIdx + 1) % allTicks.length;
+      loadTick(next);
+    }, 250);
+  } else {
+    clearInterval(playTimer);
+  }
+});
+
+// ============================================================
+// View mode
+// ============================================================
+document.querySelectorAll('#view-mode button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    viewMode = btn.dataset.mode;
+    document.querySelectorAll('#view-mode button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGrid();
+    renderLegend();
+  });
+});
+
+// ============================================================
+// Hex math
+// ============================================================
 function axialToPixel(q, r, size) {
   const x = size * Math.sqrt(3) * (q + r / 2);
   const y = size * 1.5 * r;
   return { x, y };
 }
-
 function hexPoints(cx, cy, size) {
   const pts = [];
   for (let i = 0; i < 6; i++) {
@@ -403,78 +410,103 @@ function hexPoints(cx, cy, size) {
   return pts.join(' ');
 }
 
-// ========== Color encoding ==========
-function cellColor(cell) {
-  const phase = cell.phase;
-  const pressure = cell.pressure_decoded;
-  const mohs = cell.mohs_level || 1;
+// ============================================================
+// Color encoding
+// ============================================================
+// Identity-phase hue map
+const PHASE_HUE = { solid: 30, liquid: 200, gas: 50, plasma: 300, void: 0 };
 
-  // Base hue per phase
-  const hues = { gas: 215, liquid: 190, solid: 30, plasma: 310 };
-  const h = hues[phase] ?? 0;
-
-  // Saturation: solid is duller (earthy), fluids more vivid
-  const s = phase === 'solid' ? 25 + mohs * 3 : 50;
-
-  // Lightness: log-normalized pressure, stays within readable band
-  let lNorm = 0.5;
-  if (pressure > 0) {
-    lNorm = Math.min(1, Math.log10(pressure + 1) / 7);
-  }
-  const l = 20 + lNorm * 40;  // 20-60%
-
+function cellColorIdentity(cell) {
+  const phase = (cell.identity && cell.identity.phase) || 'void';
+  if (phase === 'void') return '#2c3137';
+  const h = PHASE_HUE[phase] ?? 0;
+  // Saturation per cell EQ (computed approximately from phase_mass sum)
+  const pm = cell.phase_mass || [0,0,0,0];
+  const totalMass = pm.reduce((a,b) => a + b, 0);
+  // Lightness scales loosely with how much mass the cell carries (full EQ for that
+  // phase). Just clamp; precise EQ would need element/compound data we don't have here.
+  // 0.5 → ~40% lightness, 1.0+ → 60% lightness.
+  const lShift = Math.min(0.5, Math.log10(1 + totalMass) / 12);
+  const l = 32 + lShift * 100 * 0.5;
+  const s = phase === 'solid' ? 35 : 55;
   return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
-// ========== Filtering ==========
-function passesFilter(cell) {
-  if (filters.element && !cell.composition.some(([e, _]) => e === filters.element)) {
-    return false;
-  }
-  if (filters.phase && cell.phase !== filters.phase) return false;
-  if (filters.mohsMin !== null && cell.mohs_level < filters.mohsMin) return false;
-  if (filters.mohsMax !== null && cell.mohs_level > filters.mohsMax) return false;
-  if (filters.flag && !cell.flags[filters.flag]) return false;
-  return true;
+function cellColorTemperature(cell) {
+  const T = cell.temperature_K;
+  if (T === undefined || T === null) return '#2c3137';
+  // Cool→hot: blue (240) → red (0) through cyan/green/yellow
+  // Map T range 0..1000 K (clip outside) to hue 240..0
+  const tClamped = Math.max(0, Math.min(1000, T));
+  const hue = 240 * (1 - tClamped / 1000);
+  return `hsl(${hue}, 80%, 50%)`;
 }
 
-// ========== Render ==========
+function cellColorSaturation(cell) {
+  // Show per-phase saturation as identity-hued cell with lightness scaled by
+  // sum(phase_mass). For at-equilibrium cells we don't know exact EQ without
+  // compound props; approximate by total phase mass / a per-phase universal.
+  const pm = cell.phase_mass || [0,0,0,0];
+  const phase = (cell.identity && cell.identity.phase) || 'void';
+  if (phase === 'void') return '#2c3137';
+  const h = PHASE_HUE[phase] ?? 0;
+  const totalMass = pm.reduce((a,b) => a + b, 0);
+  // Use log scale to handle the 0 to ~100k range gracefully
+  const norm = Math.min(1, Math.log10(1 + totalMass) / 5);
+  const l = 15 + norm * 50;
+  return `hsl(${h}, 70%, ${l}%)`;
+}
+
+function cellColorPressure(cell) {
+  const p = cell.pressure_raw;
+  if (p === undefined || p === 0) return '#2c3137';
+  // Pressure is unsigned u16 deviation (current stub). Higher → redder.
+  const norm = Math.min(1, p / 10000);
+  const hue = 240 * (1 - norm);
+  return `hsl(${hue}, 70%, 45%)`;
+}
+
+function cellColor(cell) {
+  switch (viewMode) {
+    case 'temperature': return cellColorTemperature(cell);
+    case 'saturation':  return cellColorSaturation(cell);
+    case 'pressure':    return cellColorPressure(cell);
+    case 'identity':
+    default:            return cellColorIdentity(cell);
+  }
+}
+
+// ============================================================
+// Rendering
+// ============================================================
 function renderGrid() {
   const svg = document.getElementById('grid-svg');
   svg.innerHTML = '';
-
   if (!currentData) return;
-
-  const cells = currentData.cells;
-  const size = 28;  // hex radius in px
-
-  // Compute bounds
+  const cells = currentData.cells || [];
+  if (!cells.length) return;
+  const size = 28;
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   cells.forEach(c => {
     const { x, y } = axialToPixel(c.coord[0], c.coord[1], size);
-    if (x < minX) minX = x;
-    if (x > maxX) maxX = x;
-    if (y < minY) minY = y;
-    if (y > maxY) maxY = y;
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (y < minY) minY = y; if (y > maxY) maxY = y;
   });
   const pad = size * 2;
-  const vb = `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`;
-  svg.setAttribute('viewBox', vb);
+  const vbW = maxX - minX + pad * 2;
+  const vbH = maxY - minY + pad * 2;
+  svg.setAttribute('viewBox', `${minX - pad - panX} ${minY - pad - panY} ${vbW / zoom} ${vbH / zoom}`);
   svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
+  // Background grid layer
   cells.forEach(c => {
     const { x, y } = axialToPixel(c.coord[0], c.coord[1], size);
     const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     poly.setAttribute('points', hexPoints(x, y, size));
     poly.setAttribute('fill', cellColor(c));
-    const classes = ['cell'];
-    if (c.flags.culled) classes.push('culled');
-    if (c.flags.fractured) classes.push('fractured');
-    if (c.flags.ratcheted_this_tick) classes.push('ratcheted');
-    if (c.id === selectedCellId) classes.push('selected');
-    if (!passesFilter(c)) classes.push('filtered-out');
-    poly.setAttribute('class', classes.join(' '));
-    poly.dataset.cellId = c.id;
+    const cls = ['cell'];
+    if (c.id === selectedCellId) cls.push('selected');
+    poly.setAttribute('class', cls.join(' '));
     poly.addEventListener('click', () => {
       selectedCellId = c.id;
       renderGrid();
@@ -482,18 +514,48 @@ function renderGrid() {
     });
     svg.appendChild(poly);
 
-    // Tiny coord label for debug (very faint)
-    if (size > 20) {
-      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      label.setAttribute('x', x);
-      label.setAttribute('y', y + 3);
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('fill', 'rgba(255,255,255,0.25)');
-      label.setAttribute('font-size', '8');
-      label.setAttribute('font-family', 'monospace');
-      label.setAttribute('pointer-events', 'none');
-      label.textContent = `${c.coord[0]},${c.coord[1]}`;
-      svg.appendChild(label);
+    // Optional label: identity element symbol or T
+    if (size > 18) {
+      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      txt.setAttribute('x', x);
+      txt.setAttribute('y', y + 4);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('fill', 'rgba(255,255,255,0.55)');
+      txt.setAttribute('font-size', '8');
+      txt.setAttribute('font-family', 'monospace');
+      txt.setAttribute('pointer-events', 'none');
+      let label = '';
+      if (viewMode === 'temperature' && c.temperature_K !== undefined) {
+        label = `${c.temperature_K.toFixed(0)}K`;
+      } else if (viewMode === 'identity') {
+        label = (c.identity && c.identity.element) || '';
+      } else if (viewMode === 'pressure') {
+        label = c.pressure_raw > 0 ? `${c.pressure_raw}` : '';
+      }
+      txt.textContent = label;
+      svg.appendChild(txt);
+    }
+
+    // Petal velocity vectors (faint arrows for cells with non-trivial v)
+    if (viewMode === 'identity' && c.petals) {
+      c.petals.forEach((p, dirIdx) => {
+        const [vx, vy] = p.velocity || [0, 0];
+        const mag = Math.sqrt(vx * vx + vy * vy);
+        if (mag < 1e-3) return;
+        const len = Math.min(size * 0.6, mag * 5);
+        // Petal direction in pointy-top hex axial: 6 unit vectors
+        const dirAngles = [60, 120, 180, 240, 300, 0]; // pointy-top
+        const angRad = Math.PI / 180 * dirAngles[dirIdx];
+        const dx = Math.cos(angRad) * len;
+        const dy = Math.sin(angRad) * len;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x); line.setAttribute('y1', y);
+        line.setAttribute('x2', x + dx); line.setAttribute('y2', y + dy);
+        line.setAttribute('stroke', 'rgba(255,255,255,0.4)');
+        line.setAttribute('stroke-width', '0.7');
+        line.setAttribute('pointer-events', 'none');
+        svg.appendChild(line);
+      });
     }
   });
 }
@@ -506,58 +568,100 @@ function renderInspector() {
   }
   const cell = currentData.cells.find(c => c.id === selectedCellId);
   if (!cell) return;
-
   const field = (k, v) => `
     <div class="inspector-field">
       <div class="k">${k}</div>
       <div class="v">${v}</div>
     </div>`;
 
+  // Phase bar
+  const pf = cell.phase_fraction || [0,0,0,0];
+  const vac = Math.max(0, 1 - pf.reduce((a,b) => a + b, 0));
+  const phaseBar = `
+    <div class="phase-bar">
+      <div class="phase-solid"  style="width:${(pf[0]*100).toFixed(1)}%"></div>
+      <div class="phase-liquid" style="width:${(pf[1]*100).toFixed(1)}%"></div>
+      <div class="phase-gas"    style="width:${(pf[2]*100).toFixed(1)}%"></div>
+      <div class="phase-plasma" style="width:${(pf[3]*100).toFixed(1)}%"></div>
+      <div class="phase-vacuum" style="width:${(vac*100).toFixed(1)}%"></div>
+    </div>
+    <div style="font-size:10px; color:var(--text-dim)">
+      s ${pf[0].toFixed(3)} / l ${pf[1].toFixed(3)} / g ${pf[2].toFixed(3)} / p ${pf[3].toFixed(3)} / vac ${vac.toFixed(3)}
+    </div>`;
+
+  // Phase mass
+  const pm = cell.phase_mass || [0,0,0,0];
+  const pmStr = `
+    <div style="font-variant-numeric:tabular-nums">
+      s: ${pm[0].toFixed(3)}<br>
+      l: ${pm[1].toFixed(3)}<br>
+      g: ${pm[2].toFixed(3)}<br>
+      p: ${pm[3].toFixed(3)}<br>
+      <span style="color:var(--text-dim)">Σ = ${pm.reduce((a,b)=>a+b,0).toFixed(3)}</span>
+    </div>`;
+
+  // Composition
+  const comp = (cell.composition || [])
+    .map(([e, f]) => `${e}: ${f}/255 (${(f/255*100).toFixed(1)}%)`)
+    .join('<br>') || '—';
+
+  // Flags
+  const flags = Object.entries(cell.flags || {})
+    .filter(([k, v]) => v)
+    .map(([k]) => k)
+    .join(', ') || '—';
+
   el.innerHTML =
     field('ID', cell.id) +
     field('COORD (q, r)', cell.coord.join(', ')) +
-    field('PHASE', cell.phase) +
-    field('MOHS LEVEL', cell.mohs_level) +
-    field('PRESSURE (raw)', cell.pressure_raw) +
-    field('PRESSURE (decoded)', cell.pressure_decoded.toLocaleString()) +
-    field('ENERGY', cell.energy) +
-    field('COMPOSITION', cell.composition.map(([e, f]) =>
-      `${e}: ${f}/255 (${(f/255*100).toFixed(1)}%)`).join('<br>')) +
-    field('FLAGS', Object.entries(cell.flags)
-      .filter(([k, v]) => v)
-      .map(([k, v]) => k)
-      .join(', ') || '—') +
-    field('GRADIENT (6 dirs)', cell.gradient.join(', ')) +
-    field('BIDS SENT', `<pre>${JSON.stringify(cell.bids_sent, null, 2)}</pre>`) +
-    field('BIDS RECEIVED', `<pre>${JSON.stringify(cell.bids_received, null, 2)}</pre>`);
+    field('IDENTITY', `${(cell.identity && cell.identity.phase) || '—'} · ${(cell.identity && cell.identity.element) || '—'}`) +
+    field('PHASE FRACTION', phaseBar) +
+    field('PHASE MASS (hex)', pmStr) +
+    field('TEMPERATURE', cell.temperature_K !== undefined ? `${cell.temperature_K.toFixed(2)} K` : '—') +
+    field('ENERGY (raw, log10(1+J)·M)', cell.energy_raw ?? '—') +
+    field('PRESSURE (raw, dev)', cell.pressure_raw ?? '—') +
+    field('MOHS', cell.mohs_level ?? '—') +
+    field('COMPOSITION', comp) +
+    field('FLAGS', flags) +
+    field('SUSTAINED OVERPRESSURE', cell.sustained_overpressure !== undefined ? cell.sustained_overpressure.toFixed(4) : '—');
 }
 
 function renderSidebar() {
   if (!currentData) return;
 
+  // Run meta
+  const runEl = document.getElementById('run-panel');
+  runEl.innerHTML = `
+    <div><strong>scenario:</strong> ${currentData.scenario || '—'}</div>
+    <div><strong>tick:</strong> ${currentData.tick ?? '—'}</div>
+    <div><strong>stage:</strong> ${currentData.stage || '—'}</div>
+    <div><strong>cycle:</strong> ${currentData.cycle ?? '—'}</div>
+    <div><strong>elements:</strong> ${(currentData.allowed_elements || []).join(', ') || '—'}</div>
+    <div style="color:var(--text-dim); margin-top:4px; font-size:10px; word-break:break-all">
+      ${currentData.element_table_hash || '—'}
+    </div>`;
+
   // Totals
   const t = currentData.totals || {};
   const totalsEl = document.getElementById('totals-panel');
   let html = '';
-  if (t.mass_by_element) {
-    Object.entries(t.mass_by_element).forEach(([k, v]) => {
-      html += `<div class="stat"><span class="k">mass ${k}</span><span class="v">${v.toLocaleString()}</span></div>`;
+  if (t.mass_by_element_by_phase) {
+    Object.entries(t.mass_by_element_by_phase).forEach(([el, byPhase]) => {
+      const total = Object.values(byPhase).reduce((a,b) => a + b, 0);
+      html += `<div class="stat"><span class="k">${el}</span><span class="v">${total.toFixed(2)}</span></div>`;
     });
   }
   if (t.energy_total !== undefined) {
-    html += `<div class="stat"><span class="k">energy</span><span class="v">${t.energy_total.toLocaleString()}</span></div>`;
+    html += `<div class="stat"><span class="k">energy_J</span><span class="v">${t.energy_total.toFixed(2)}</span></div>`;
   }
-  if (t.cells_by_phase) {
-    Object.entries(t.cells_by_phase).forEach(([k, v]) => {
+  if (t.cells_by_dominant_phase) {
+    Object.entries(t.cells_by_dominant_phase).forEach(([k, v]) => {
       if (v > 0) html += `<div class="stat"><span class="k">${k}</span><span class="v">${v}</span></div>`;
     });
   }
-  if (t.cells_ratcheted_this_tick) {
-    html += `<div class="stat"><span class="k">ratcheted</span><span class="v" style="color:var(--accent-2)">${t.cells_ratcheted_this_tick}</span></div>`;
-  }
-  if (t.cells_culled) {
-    html += `<div class="stat"><span class="k">culled</span><span class="v">${t.cells_culled}</span></div>`;
-  }
+  ['cells_culled', 'cells_fractured', 'cells_ratcheted_this_tick', 'cells_excluded'].forEach(k => {
+    if (t[k]) html += `<div class="stat"><span class="k">${k}</span><span class="v warn">${t[k]}</span></div>`;
+  });
   totalsEl.innerHTML = html;
 
   // Invariants
@@ -569,125 +673,82 @@ function renderSidebar() {
     </div>
   `).join('');
 
-  // Run meta
-  const runEl = document.getElementById('run-panel');
-  runEl.innerHTML = `
-    <div><strong>run:</strong> ${currentData.run_id || '—'}</div>
-    <div><strong>scenario:</strong> ${currentData.scenario || '—'}</div>
-    <div><strong>tick:</strong> ${currentData.tick ?? '—'}</div>
-    <div><strong>stage:</strong> ${currentData.stage || '—'}</div>
-    <div><strong>cycle:</strong> ${currentData.cycle ?? '—'}</div>
-    <div><strong>elements:</strong> ${(currentData.allowed_elements || []).join(', ') || '—'}</div>
-    <div style="margin-top:4px"><strong>hash:</strong> ${currentData.element_table_hash || '—'}</div>
-  `;
-
-  // Element dropdown
-  const elementSelect = document.getElementById('filter-element');
-  const currentVal = elementSelect.value;
-  elementSelect.innerHTML = '<option value="">any</option>';
-  (currentData.allowed_elements || []).forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e;
-    opt.textContent = e;
-    if (e === currentVal) opt.selected = true;
-    elementSelect.appendChild(opt);
-  });
-
-  // Header meta
-  document.getElementById('file-meta').textContent =
-    `${currentData.run_id || 'unknown'} · tick ${currentData.tick} · ${currentData.stage}`;
+  // Run-meta header
+  const tickInfo = currentData.scenario
+    ? `${currentData.scenario} · tick ${currentData.tick} · ${currentData.cells.length} cells`
+    : 'no run loaded';
+  document.getElementById('run-meta').textContent = tickInfo;
 }
 
-// ========== File loading ==========
-function loadJSON(data) {
-  if (data.schema_version !== 1) {
-    alert(`Schema version mismatch: got ${data.schema_version}, expected 1`);
-    return;
+function renderLegend() {
+  const el = document.getElementById('legend');
+  let html = '';
+  if (viewMode === 'identity' || viewMode === 'saturation') {
+    Object.entries(PHASE_HUE).forEach(([k, h]) => {
+      if (k === 'void') {
+        html += `<span><i style="background:#2c3137"></i>${k}</span>`;
+      } else {
+        const s = k === 'solid' ? 35 : 55;
+        html += `<span><i style="background:hsl(${h}, ${s}%, 50%)"></i>${k}</span>`;
+      }
+    });
+  } else if (viewMode === 'temperature') {
+    [0, 250, 500, 750, 1000].forEach(T => {
+      const hue = 240 * (1 - T / 1000);
+      html += `<span><i style="background:hsl(${hue}, 80%, 50%)"></i>${T} K</span>`;
+    });
+  } else if (viewMode === 'pressure') {
+    [0, 2500, 5000, 7500, 10000].forEach(p => {
+      const hue = 240 * (1 - Math.min(1, p / 10000));
+      html += `<span><i style="background:hsl(${hue}, 70%, 45%)"></i>${p}</span>`;
+    });
   }
-  currentData = data;
-  selectedCellId = null;
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('grid-svg').style.display = 'block';
-  document.getElementById('legend').style.display = 'block';
-  renderSidebar();
+  el.innerHTML = html;
+}
+
+function renderAll() {
   renderGrid();
   renderInspector();
+  renderSidebar();
+  renderLegend();
 }
 
-document.getElementById('file-input').addEventListener('change', (e) => {
-  const f = e.target.files[0];
-  if (!f) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    try {
-      loadJSON(JSON.parse(ev.target.result));
-    } catch (err) {
-      alert(`Parse error: ${err.message}`);
-    }
-  };
-  reader.readAsText(f);
+// ============================================================
+// Pan + zoom (drag SVG, scroll to zoom)
+// ============================================================
+const svg = document.getElementById('grid-svg');
+svg.addEventListener('mousedown', (e) => {
+  dragging = true;
+  dragStartX = e.clientX; dragStartY = e.clientY;
+  dragStartPanX = panX; dragStartPanY = panY;
+  svg.style.cursor = 'grabbing';
 });
-
-// Drag & drop
-const main = document.getElementById('main');
-['dragenter', 'dragover'].forEach(ev => {
-  document.addEventListener(ev, (e) => {
-    e.preventDefault();
-    main.classList.add('drop-active');
-  });
+window.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  panX = dragStartPanX + (e.clientX - dragStartX);
+  panY = dragStartPanY + (e.clientY - dragStartY);
+  renderGrid();
 });
-['dragleave', 'drop'].forEach(ev => {
-  document.addEventListener(ev, (e) => {
-    e.preventDefault();
-    if (ev === 'drop' || e.target === main) {
-      main.classList.remove('drop-active');
-    }
-  });
+window.addEventListener('mouseup', () => {
+  dragging = false;
+  svg.style.cursor = 'grab';
 });
-document.addEventListener('drop', (e) => {
+svg.addEventListener('wheel', (e) => {
   e.preventDefault();
-  const f = e.dataTransfer.files[0];
-  if (!f) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    try {
-      loadJSON(JSON.parse(ev.target.result));
-    } catch (err) {
-      alert(`Parse error: ${err.message}`);
-    }
-  };
-  reader.readAsText(f);
+  zoom *= e.deltaY < 0 ? 1.1 : 0.9;
+  zoom = Math.max(0.1, Math.min(10, zoom));
+  renderGrid();
+}, { passive: false });
+
+document.getElementById('reset-zoom').addEventListener('click', () => {
+  panX = 0; panY = 0; zoom = 1;
+  renderGrid();
 });
 
-// ========== Filter events ==========
-document.getElementById('filter-element').addEventListener('change', (e) => {
-  filters.element = e.target.value;
-  renderGrid();
-});
-document.getElementById('filter-phase').addEventListener('change', (e) => {
-  filters.phase = e.target.value;
-  renderGrid();
-});
-document.getElementById('filter-mohs-min').addEventListener('input', (e) => {
-  filters.mohsMin = e.target.value === '' ? null : parseInt(e.target.value);
-  renderGrid();
-});
-document.getElementById('filter-mohs-max').addEventListener('input', (e) => {
-  filters.mohsMax = e.target.value === '' ? null : parseInt(e.target.value);
-  renderGrid();
-});
-document.getElementById('filter-flag').addEventListener('change', (e) => {
-  filters.flag = e.target.value;
-  renderGrid();
-});
-document.getElementById('reset-btn').addEventListener('click', () => {
-  filters = { element: '', phase: '', mohsMin: null, mohsMax: null, flag: '' };
-  document.querySelectorAll('aside.sidebar input, aside.sidebar select').forEach(el => {
-    if (el.type === 'number') el.value = '';
-    else el.value = '';
-  });
-  renderGrid();
-});
+// ============================================================
+// Boot
+// ============================================================
+renderLegend();
 </script>
 </body>
 </html>

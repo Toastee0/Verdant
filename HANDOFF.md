@@ -358,7 +358,7 @@ python checker/verify_v2.py runs/<name>/tick_NNNNN_post_integration.json \
 python checker/diff_ticks_v2.py golden_v2/<name>_tick_NN.json \
        runs/<name>/tick_NN_post_integration.json
 
-# Full regression (all 10 scenarios)
+# Full regression (all scenarios)
 python -m checker.regression_v2
 
 # Self-tests
@@ -368,6 +368,24 @@ python -m checker.test_diff_ticks_v2
 python -m checker.regression       # 5 scenarios on schema-v1
 python -m checker.test_diff_ticks  # 8 self-tests
 ```
+
+### Viewer
+
+`viewer/viewer.html` is a single-file HTML5 viewer for schema-v2 emissions.
+Open it in a browser (file:// works — no server needed), click "load
+tick(s)", and pick one or more JSON files from a scenario's output
+directory. Pick all tick files at once (Ctrl-A) to scrub/play through
+the run.
+
+Controls:
+- **View modes** (sidebar top): identity, temperature, saturation, pressure
+- **Mouse drag** to pan; **scroll** to zoom; "reset view" to recentre
+- **Click a cell** to inspect — full phase fraction bar, per-channel
+  phase_mass, T, energy_raw, composition, flags, sustained_overpressure
+- **Tick slider / play** button (bottom) cycles through all loaded ticks
+- Cell labels show element identity (in identity mode) or T value
+  (in temperature mode); petal velocity vectors render as faint lines
+  on cells with non-trivial motion
 
 ---
 
