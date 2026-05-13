@@ -103,6 +103,16 @@ can resume without re-deriving the architecture decisions.
 **Validation:** `python -m checker.regression_v2` → 16/16 PASS.
 `python -m checker.test_diff_ticks_v2` → 11/11 PASS.
 
+**⚠️ NEXT FOUNDATIONAL WORK: pressure.** Despite the green regression, the
+sim is missing a load-bearing primitive. Without real pressure: ice doesn't
+float in water, Si in vacuum doesn't evaporate, `g5_pressure_drop` tests
+raw-number gradient not physical pressure. User diagnosis (verbatim):
+*"it's a waste of time to do any simulation without pressure."* Read
+**[PRESSURE_HANDOFF.md](PRESSURE_HANDOFF.md)** before any further work —
+it contains the implementation plan (5 phases), 7 open design questions
+awaiting user verdict, and the recommended pattern (write
+`pressure_model_design.md` for chat-session review → implement Phase 1 → iterate).
+
 Per user direction: keep doing physics scenarios; ping when eyeballs needed
 (viewer port). M6'.1 is "interesting enough" for first eyeball gate but user
 authorised continuing physics work.
