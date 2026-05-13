@@ -56,13 +56,13 @@ if TYPE_CHECKING:
     from .scenario import WorldConfig
 
 
-# Per-phase mass conductance — first-order tunable. Solid is non-zero so
-# sustained gravity loading eventually moves rock; gas equilibrates fast.
-# These constants were originally tuned for the pre-Q_KG=1 era when
-# phase_mass was in hex-units of ~3.14e-8 kg. To preserve flow behaviour
-# under kg-native phase_mass, phi is scaled by FLOW_SCALE_KG below. The
-# right long-term fix is physically-grounded permeability constants in
-# m²/(Pa·s), wired through Darcy's law — M7+ work.
+# Per-phase mass conductance — legacy hex-unit-era values. With the
+# FLOW_SCALE_KG bridge (~3.14e-8) the per-cycle flow is small. Proper
+# kg-native Darcy permeability (m²/(Pa·s), per-phase viscosity-based
+# mobility) lands in M7'.4 — without it, hydrostatic flow under
+# 9.8 m/s² gravity at our 0.1-m cell scale is too slow to show visible
+# buoyancy in <100 ticks. t1_buoyancy ships as a scaffold scenario;
+# meaningful flow needs M7'.4 calibration.
 PHASE_CONDUCTANCE = np.array([
     1e-6,   # solid  — non-opportunistic; only flows under sustained loading
     1e-3,   # liquid — modest opportunistic flow
@@ -70,9 +70,10 @@ PHASE_CONDUCTANCE = np.array([
     1e-2,   # plasma — gas-like for mass; thermal amplification at M5'.5
 ], dtype=np.float32)
 
-# Converts old hex-unit-era flow to kg-native flow. Equal to the legacy
-# Q_KG ≈ 3.143e-8 kg/hex. Keeps the magnitudes of pre-kg-native scenarios
-# (Si melt, ratchet, pressure-drop) numerically comparable.
+# Converts hex-unit-era flow magnitudes to kg-native phase_mass. Equal
+# to the legacy Q_KG ≈ 3.143e-8 kg/hex. Will be retired in M7'.4 when
+# K_PHASE_CONDUCTANCE values are recalibrated to physically-grounded
+# per-phase mobilities.
 FLOW_SCALE_KG: float = 2329.0 * 1.0e-6 / 74088.0    # ≈ 3.1435e-8
 
 
@@ -136,10 +137,36 @@ def run_region_kernels(
     neighbors = np.array(grid.neighbors, dtype=np.int32)        # (N, 6)
     valid = neighbors >= 0                                       # (N, 6)
 
-    # Per-direction pressure deltas (positive = self higher → outgoing flow)
+    # Per-direction pressure deltas (positive = self higher → outgoing flow).
+    # M7'.2 adds the per-face hydrostatic correction:
+    #
+    #     ΔP_total(A, d) = (P_A − P_B) + ρ̄ × cell_size × (g · d̂_d)
+    #
+    # where d̂_d is the unit vector from A's centre toward B's centre and
+    # ρ̄ = (ρ_A + ρ_B) / 2. When A is below B in gravity (d̂_d points "up",
+    # opposite to g), g · d̂_d is negative, so the correction reduces ΔP
+    # — fluid "wants" to flow downward (against d̂_d), which means more
+    # flow goes from B → A than the bare pressure gradient suggests.
+    # Buoyancy emerges from the ρ̄ factor: a denser cell next to a less-
+    # dense cell makes the correction asymmetric, driving the denser
+    # phase down and the lighter phase up.
     P_padded = np.concatenate([derived.pressure, np.zeros(1, dtype=np.float32)])
     nbr_P = P_padded[neighbors]                                  # (N, 6)
-    dP = derived.pressure[:, None] - nbr_P                       # (N, 6)
+    dP_raw = derived.pressure[:, None] - nbr_P                   # (N, 6)
+
+    # Hydrostatic correction. ρ̄ from derived.density (already mass-derived
+    # via phase_mass × Q_KG / volume in compute_thermal_blends).
+    from .grid import DIRECTION_UNIT_VECS
+    dir_vecs = np.array(DIRECTION_UNIT_VECS, dtype=np.float32)   # (6, 2)
+    g_dot_d = (derived.gravity_vec[:, None, :] * dir_vecs[None, :, :]).sum(axis=2)  # (N, 6)
+    # Average density across the edge (use neighbour density too)
+    density_padded = np.concatenate([derived.density, np.zeros(1, dtype=np.float32)])
+    nbr_density = density_padded[neighbors]
+    rho_avg = 0.5 * (derived.density[:, None] + nbr_density)     # (N, 6)
+    cell_size = float(world.cell_size_m)
+    hydro_correction = rho_avg * cell_size * g_dot_d              # (N, 6)
+    dP = dP_raw + hydro_correction
+
     downhill = (dP > 0) & valid                                  # (N, 6)
     effective_dP = np.where(downhill, dP, 0.0).astype(np.float32)
 
@@ -248,8 +275,15 @@ def _apply_cohesion_attractor(
     for p in range(N_PHASES):
         eq_per_cell[:, p] = compute_eq_phase(cells, element_table, world, p)
 
-    # Saturation per cell per phase
-    saturation = cells.phase_mass / np.maximum(eq_per_cell, 1e-12)   # (N, 4)
+    # Saturation per cell per phase. Cells with no per-phase EQ
+    # (void / vacuum / cells whose composition can't form this phase) get
+    # saturation = 0, NOT phase_mass / 1e-12 — that would explode if any
+    # crumb of mass landed there. Void neighbours therefore never look
+    # "highly saturated" to the attractor, which is the right physics:
+    # vacuum doesn't pull droplets toward it.
+    has_eq = eq_per_cell > 1e-9
+    saturation = np.zeros_like(eq_per_cell)
+    np.divide(cells.phase_mass, eq_per_cell, out=saturation, where=has_eq)
 
     # Neighbour saturation (padded sentinel row of zeros for invalid neighbours)
     sat_padded = np.concatenate(
@@ -258,7 +292,14 @@ def _apply_cohesion_attractor(
     nbr_sat = sat_padded[neighbors]                                  # (N, 6, 4)
 
     # Pull gradient: positive ⇒ neighbour more saturated → mass flows out.
+    # Also gate by neighbour having a *meaningful* per-phase EQ — if the
+    # neighbour can't hold this phase (no compatible composition), the
+    # "saturation" comparison is meaningless and would either be 0 (fine)
+    # or spurious.
+    has_eq_padded = np.concatenate([has_eq, np.zeros((1, N_PHASES), dtype=bool)], axis=0)
+    nbr_has_eq = has_eq_padded[neighbors]                             # (N, 6, 4)
     sat_pull = np.maximum(nbr_sat - saturation[:, None, :], 0.0)     # (N, 6, 4)
+    sat_pull = np.where(nbr_has_eq, sat_pull, 0.0)
 
     # Attractor amplitude per (cell, dir, phase). Note phase_mass (not
     # phase_fraction) — under-dense cells have proportionally less mass

@@ -53,6 +53,7 @@ SCENARIOS: tuple[ScenarioCheck, ...] = (
     ScenarioCheck("t1_humidity",           "reference_sim_v2.scenarios.t1_humidity",           5,  5),
     ScenarioCheck("t1_condensation",       "reference_sim_v2.scenarios.t1_condensation",       5,  5),
     ScenarioCheck("t1_droplet_migration",  "reference_sim_v2.scenarios.t1_droplet_migration",  5,  5),
+    ScenarioCheck("t1_buoyancy",           "reference_sim_v2.scenarios.t1_buoyancy",           5,  5),
 )
 
 

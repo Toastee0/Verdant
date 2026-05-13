@@ -38,6 +38,25 @@ NEIGHBOR_DELTAS: tuple[tuple[int, int], ...] = (
 # in direction OPPOSITE[d].
 OPPOSITE_DIRECTION: tuple[int, ...] = (3, 4, 5, 0, 1, 2)
 
+# Per-direction unit vectors in Cartesian (x, y) for pointy-top axial layout.
+# Used by the M7'.2 hydrostatic pressure correction: ρ × g_vec · dir_d ×
+# cell_size gives the gravity-driven pressure offset across the face in
+# direction d.
+#
+# Mapping (matches NEIGHBOR_DELTAS):
+#   axial (q, r) → Cartesian (x, y) = (√3 · (q + r/2), 3/2 · r) × cell_size
+#   each NEIGHBOR_DELTA scaled to a unit vector below.
+import math as _math
+_SQ3 = _math.sqrt(3.0)
+DIRECTION_UNIT_VECS: tuple[tuple[float, float], ...] = (
+    ( 1.0,         0.0),                # 0: east
+    ( 0.5, -_SQ3 / 2),                  # 1: north-east
+    (-0.5, -_SQ3 / 2),                  # 2: north-west
+    (-1.0,         0.0),                # 3: west
+    (-0.5,  _SQ3 / 2),                  # 4: south-west
+    ( 0.5,  _SQ3 / 2),                  # 5: south-east
+)
+
 
 @dataclass(frozen=True)
 class HexGrid:

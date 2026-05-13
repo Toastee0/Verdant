@@ -423,9 +423,15 @@ def compute_cohesion(
         if not valid.any():
             continue
         nbr_majority = np.where(valid, majority[np.where(valid, nids, 0)], 0)
-        # Boolean: same majority element and both non-void (majority != 0)
+        # Same majority element on both sides → standard cohesion
         match = valid & (majority != 0) & (majority == nbr_majority)
         cohesion[match, d] = 1.0 * purity[match]
+        # Void neighbour (no composition) → no material to clash with;
+        # flow into vacuum is unhindered. Use the cell's own purity so
+        # a pure-material cell evaporates / falls into vacuum freely
+        # (M7'.2 — needed for hydrostatic flow into void cells).
+        nbr_void = valid & (nbr_majority == 0)
+        cohesion[nbr_void, d] = purity[nbr_void]
 
     return cohesion
 
