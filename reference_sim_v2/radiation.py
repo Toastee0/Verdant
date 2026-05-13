@@ -105,9 +105,15 @@ def apply_radiation(
             ΔU_J = -(P_per_face_J_per_s * dt)
             delta_E_J[pmask] += ΔU_J.astype(np.float32)
 
-    # Apply through log encoding (gen5 stores energy_raw = log10(1+E_J)×M)
+    # Apply through log encoding + sub-quantum residual (M5'.7c). At high
+    # E_J (1 kg Si liquid at 2500 K ≈ 6 kJ) the per-quantum energy is
+    # ~1.8 J, and a per-cycle radiation ΔE of ~1 J would round-trip back
+    # to the same raw value. The residual accumulator carries the
+    # sub-quantum part across cycles so cooling actually progresses.
     from .encoding import decode_energy_J, encode_energy_J
-    current_J = decode_energy_J(cells.energy_raw)
-    cells.energy_raw[:] = encode_energy_J(current_J + delta_E_J)
+    target_J = decode_energy_J(cells.energy_raw) + delta_E_J + cells.energy_residual
+    new_raw  = encode_energy_J(target_J)
+    cells.energy_residual[:] = (target_J - decode_energy_J(new_raw)).astype(np.float32)
+    cells.energy_raw[:] = new_raw
 
     return int(radiates.sum())

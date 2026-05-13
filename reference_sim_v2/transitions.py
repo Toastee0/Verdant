@@ -244,12 +244,17 @@ def apply_phase_transitions(
             cells.phase_mass[cid, current_phase] -= np.float32(delta_mass_units)
             cells.phase_mass[cid, target_phase]  += np.float32(delta_mass_units)
 
-            # Apply latent heat through log-encoding decode/re-encode
+            # Apply latent heat through log-encoding with sub-quantum
+            # residual carry-over (M5'.7c). At kg-native scale the per-
+            # transition ΔE can be sub-quantum at high cell energies.
             delta_mass_kg_actual = delta_mass_units * kg_per_unit
             delta_E_J = L_J_per_kg * delta_mass_kg_actual
             current_E_J = decode_energy_J_scalar(int(cells.energy_raw[cid]))
-            new_E_J = max(0.0, current_E_J + delta_E_J)
-            cells.energy_raw[cid] = np.uint16(encode_energy_J_scalar(new_E_J))
+            target_E_J = max(0.0, current_E_J + delta_E_J + float(cells.energy_residual[cid]))
+            new_raw = encode_energy_J_scalar(target_E_J)
+            new_decoded = decode_energy_J_scalar(new_raw)
+            cells.energy_residual[cid] = np.float32(target_E_J - new_decoded)
+            cells.energy_raw[cid] = np.uint16(new_raw)
 
             any_transitioned = True
 
@@ -324,10 +329,15 @@ def apply_ratchet(
         new_mohs = np.minimum(cells.mohs_level[fire_mask].astype(np.int32) + 1, MOHS_MAX)
         cells.mohs_level[fire_mask] = new_mohs.astype(np.uint8)
         cells.flags[fire_mask] |= FLAG_RATCHETED
-        # Compression work added to energy through log-encoded round-trip.
+        # Compression work added to energy through log-encoded round-trip
+        # with sub-quantum residual carry-over.
         from .encoding import decode_energy_J, encode_energy_J
-        fired_E_J = decode_energy_J(cells.energy_raw[fire_mask]) + RATCHET_COMPRESSION_WORK_J
-        cells.energy_raw[fire_mask] = encode_energy_J(fired_E_J)
+        target_E_J = (decode_energy_J(cells.energy_raw[fire_mask])
+                      + RATCHET_COMPRESSION_WORK_J
+                      + cells.energy_residual[fire_mask])
+        new_raw = encode_energy_J(target_E_J)
+        cells.energy_residual[fire_mask] = (target_E_J - decode_energy_J(new_raw)).astype(np.float32)
+        cells.energy_raw[fire_mask] = new_raw
         # Reset integrator on fired cells
         new_integrator[fire_mask] = 0.0
 

@@ -1,5 +1,5 @@
 {
-  "run_id": "g5_ratchet_20260512T023456",
+  "run_id": "g5_ratchet_20260513T011048",
   "scenario": "g5_ratchet",
   "tick": 30,
   "cycle": 30,
@@ -43,7 +43,7 @@
         0.0
       ],
       "pressure_raw": 50000,
-      "energy_raw": 20359,
+      "energy_raw": 20358,
       "mohs_level": 7,
       "sustained_overpressure": 1148.4375,
       "identity": {
@@ -11858,7 +11858,7 @@
         "plasma": 0.0
       }
     },
-    "energy_total": 27353.8203125,
+    "energy_total": 27353.71875,
     "momentum_total": [
       0.0,
       0.0
@@ -11900,13 +11900,13 @@
     }
   ],
   "cycle_timing_ms": {
-    "sub_pass_0_ms": 2.619900042191148,
-    "sub_pass_1_ms": 1.8741998355835676,
-    "sub_pass_2_ms": 2.085300162434578,
-    "sub_pass_3_ms": 1.8700000364333391,
-    "sub_pass_4_ms": 1.8676999025046825,
-    "sub_pass_5_ms": 1.8482999876141548,
-    "sub_pass_6_ms": 1.8923000898212194,
-    "cycle_total_ms": 14.062899863347411
+    "sub_pass_0_ms": 2.747999969869852,
+    "sub_pass_1_ms": 1.8811000045388937,
+    "sub_pass_2_ms": 2.0906999707221985,
+    "sub_pass_3_ms": 1.878300216048956,
+    "sub_pass_4_ms": 1.9194998312741518,
+    "sub_pass_5_ms": 1.9598000217229128,
+    "sub_pass_6_ms": 1.8843000289052725,
+    "cycle_total_ms": 14.36699996702373
   }
 }
