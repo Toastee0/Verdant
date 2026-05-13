@@ -97,17 +97,139 @@ class DerivedFields:
 # --------------------------------------------------------------------------
 
 def decode_pressure_to_f32(cells: CellArrays) -> np.ndarray:
-    """Decode u16 pressure_raw → f32 deviation from equilibrium center.
-
-    M5'.1 STUB: returns raw cast to f32 (no scaling). Real log-scale signed
-    encoding lands at M5'.5 when pressure dynamics need to operate in
-    physical units. The convention is unchanged:
-      - raw == 0 ⇒ deviation == 0 (cell at equilibrium)
-      - positive raw ⇒ positive deviation (mass wants to flow out)
-
-    Until M5'.5, scenarios should set pressure_raw=0 to mean equilibrium.
-    """
+    """Legacy entry point — kept so existing callers still resolve, but the
+    real pressure is now computed by `compute_pressure_eq` from cell
+    physical state (phase_mass × Q_KG vs. composition-weighted equilibrium
+    density × cell volume). Scenarios that set `pressure_raw` at init get
+    that value added on top as a legacy seed (decays away to whatever
+    the density physics says is the right deviation)."""
     return cells.pressure_raw.astype(np.float32)
+
+
+# Compressibility constant — pressure per unit relative mass excess.
+# Per gen5 §"Per-cell state": "Pressure is expressed as deviation from
+# the phase density equilibrium center" — i.e. the deviation IS the
+# pressure. M7'.1 takes that literally: P_eq is dimensionless relative
+# excess (mass_actual / mass_eq − 1), scaled by this constant. Setting
+# K=1 keeps gradient magnitudes O(1) and matches the scale of the
+# legacy `pressure_raw` field that scenarios already use as a flow seed
+# (e.g. g5_pressure_drop sets pressure_raw=5000 — under K=1 the
+# computed P_eq adds at most ~1 to that, so legacy seeded gradients
+# dominate and existing scenario behaviour carries over).
+#
+# Physical Pa-grounded bulk moduli (K_water=2.2 GPa etc.) land in M7'.4
+# with proper per-phase EoS + implicit integration. For now, K=1 keeps
+# Phase 1 numerically tame while pressure becomes physically meaningful.
+K_PRESSURE_BULK: float = 1.0
+
+
+def compute_pressure_eq(
+    cells: CellArrays,
+    element_table,
+    world: "WorldConfig",
+) -> np.ndarray:
+    """Per-cell phase-equilibrium pressure (M7'.1) — gen5 design's primary
+    pressure concept. Returns float32[N] in Pa.
+
+    Pressure = deviation from equilibrium mass density:
+        P_eq = K_PRESSURE_BULK × (mass_actual / mass_eq − 1)
+
+    where:
+      - mass_actual = sum(phase_mass) × Q_KG = the cell's actual kg
+      - mass_eq     = ρ_eq_blend × V_cell = the kg the cell would hold at
+                      equilibrium given its current composition and phase
+                      distribution
+
+    ρ_eq_blend is composition-weighted (per-element densities) and phase-
+    mass-weighted (each phase channel contributes proportional to its
+    actual mass, not its phase_fraction — same convention as
+    `compute_thermal_blends` for cp).
+
+    Convention:
+      - mass_actual > mass_eq → P_eq > 0 (compressed; mass wants to flow out)
+      - mass_actual < mass_eq → P_eq < 0 (rarefied; mass wants to flow in)
+      - At equilibrium: P_eq = 0
+      - Vacuum (no mass): mass_actual = 0, mass_eq = 0 → P_eq = 0
+        (the *floor* per design doc, not the negative-extreme)
+
+    Compound cells use their CompoundProperties density override.
+    Untagged cells use composition-weighted element densities.
+
+    Adds the scenario-seeded `cells.pressure_raw` (legacy linear cast)
+    as an additive override so existing scenarios that pre-set a pressure
+    gradient still drive flow.
+    """
+    n = cells.n
+    out = np.zeros(n, dtype=np.float32)
+    if n == 0:
+        return out
+
+    volume = float(world.cell_size_m) ** 3
+
+    # ρ_eq per cell per phase (kg/m³). Same machinery as compute_eq_phase
+    # but vectorised across phases. Lazy import to avoid the
+    # cell → compounds → cell circular dependency.
+    from .compounds import get_compound_properties
+
+    density_per_phase = np.zeros((n, N_PHASES), dtype=np.float32)
+    compound_id = cells.compound_id
+    untagged = (compound_id == 0)
+
+    # Compound cells
+    for cid_val in np.unique(compound_id):
+        if cid_val == 0:
+            continue
+        props = get_compound_properties(int(cid_val))
+        if props is None:
+            continue
+        mask = (compound_id == cid_val)
+        density_per_phase[mask, PHASE_SOLID]  = props.density_solid
+        density_per_phase[mask, PHASE_LIQUID] = props.density_liquid
+        density_per_phase[mask, PHASE_GAS]    = props.density_gas
+        density_per_phase[mask, PHASE_PLASMA] = props.density_gas
+
+    # Atomic-blend cells
+    if untagged.any():
+        for slot in range(COMPOSITION_SLOTS):
+            eids = cells.composition[:, slot, 0]
+            fracs = cells.composition[:, slot, 1].astype(np.float32) / 255.0
+            for element in element_table:
+                mask = (eids == element.element_id) & untagged & (fracs > 0)
+                if not mask.any():
+                    continue
+                density_per_phase[mask, PHASE_SOLID]  += element.density_solid    * fracs[mask]
+                density_per_phase[mask, PHASE_LIQUID] += element.density_liquid   * fracs[mask]
+                density_per_phase[mask, PHASE_GAS]    += element.density_gas_stp  * fracs[mask]
+                density_per_phase[mask, PHASE_PLASMA] += element.density_gas_stp  * fracs[mask]
+
+    # ρ_eq_blend is VOLUMETRIC — each phase contributes by the cell's
+    # volumetric phase_fraction (compute_phase_fraction_from_mass already
+    # set phase_fraction earlier in run_derive from kg-conserving volume
+    # math). Mass-weighted blending would over-emphasise denser phases
+    # in mixed cells: a humid air cell with a 1% liquid droplet by volume
+    # has actual density ≈ ρ_gas + 1% × ρ_liquid, not the mass-weighted
+    # average (which is dominated by the liquid because ρ_liquid >> ρ_gas).
+    pf = cells.phase_fraction       # volumetric (already-derived this cycle)
+    ρ_eq_blend = (pf * density_per_phase).sum(axis=1)
+
+    # P_eq = K × (mass_actual / mass_eq - 1).
+    pm = cells.phase_mass
+    total_mass = pm.sum(axis=1)
+    mass_actual = total_mass * np.float32(Q_KG)
+    mass_eq     = ρ_eq_blend * np.float32(volume)
+    has_mass    = mass_eq > 1e-12
+
+    # Cells with zero mass → P_eq = 0 (vacuum, pressure floor)
+    np.divide(mass_actual, mass_eq, out=out, where=(mass_eq > 1e-12))
+    out = (out - 1.0) * np.float32(K_PRESSURE_BULK)
+    out[~has_mass] = 0.0
+
+    # Legacy scenario seed: cells.pressure_raw set at init (linear cast)
+    # adds on top. Lets g5_pressure_drop / g5_ratchet / etc. drive their
+    # initial gradients via the existing scenario-seed mechanism while we
+    # haven't yet ported them to true mass-excess inputs.
+    out += cells.pressure_raw.astype(np.float32)
+    return out.astype(np.float32)
 
 
 # --------------------------------------------------------------------------
@@ -342,8 +464,9 @@ def run_derive(
     # Temperature
     derived.temperature[:] = compute_temperature(cells, element_table, world)
 
-    # Pressure decode
-    derived.pressure[:] = decode_pressure_to_f32(cells)
+    # Pressure (M7'.1) — P_eq = K × (mass_actual / mass_eq − 1) per cell,
+    # plus legacy `pressure_raw` seed. Replaces the M5'.1 linear-cast stub.
+    derived.pressure[:] = compute_pressure_eq(cells, element_table, world)
 
     # Gravity vector field (M5'.2): Newton-seed borders, Jacobi diffuse
     # interior. For zero-gravity scenarios this returns the zero field.
